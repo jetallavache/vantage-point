@@ -9,6 +9,7 @@ import {
 describe("Authors reducer", () => {
   const initialState = {
     items: [],
+    currentAuthor: null,
     loading: false,
     error: null,
     currentPage: 1,
@@ -28,7 +29,16 @@ describe("Authors reducer", () => {
   it("should handle fetchAuthorsSuccess", () => {
     const loadingState = { ...initialState, loading: true };
     const action = fetchAuthorsSuccess({
-      items: [{ id: 1, fullName: "Test Author" }],
+      items: [
+        {
+          id: 1,
+          name: "Test",
+          lastName: "Author",
+          secondName: "",
+          createdAt: 123456789,
+          updatedAt: 123456789,
+        },
+      ],
       currentPage: 1,
       totalPages: 1,
       total: 1,
@@ -38,7 +48,8 @@ describe("Authors reducer", () => {
 
     expect(state.loading).toBe(false);
     expect(state.items).toHaveLength(1);
-    expect(state.items[0].fullName).toBe("Test Author");
+    expect(state.items[0].name).toBe("Test");
+    expect(state.items[0].lastName).toBe("Author");
     expect(state.error).toBe(null);
   });
 
