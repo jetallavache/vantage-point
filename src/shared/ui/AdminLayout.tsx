@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Layout, Menu, Button, Drawer, Typography } from "antd";
 import {
   FileTextOutlined,
@@ -10,6 +10,7 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/model/actions";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 const { Header, Sider, Content } = Layout;
 const { Title } = Typography;
@@ -23,17 +24,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [drawerVisible, setDrawerVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+  const isMobile = useIsMobile();
 
   const menuItems = [
     {
@@ -73,7 +64,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       onClick={handleMenuClick}
       style={{
         fontSize: "16px",
-        fontWeight: 500
+        fontWeight: 500,
       }}
     />
   );
@@ -91,7 +82,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               color: "white",
               fontSize: "20px",
               fontWeight: "bold",
-              borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
             }}
           >
             Vantage Point
@@ -100,7 +91,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </Sider>
       )}
 
-      <Layout style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      <Layout
+        style={{ height: "100vh", display: "flex", flexDirection: "column" }}
+      >
         <Header
           style={{
             background: "#fff",
@@ -109,7 +102,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             justifyContent: isMobile ? "space-between" : "flex-end",
             alignItems: "center",
             borderBottom: "1px solid #f0f0f0",
-            flexShrink: 0
+            flexShrink: 0,
           }}
         >
           {isMobile && (
@@ -125,9 +118,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               </Title>
             </div>
           )}
-          <Button 
-            type="text" 
-            icon={<LogoutOutlined />} 
+          <Button
+            type="text"
+            icon={<LogoutOutlined />}
             onClick={handleLogout}
             size="large"
             style={{ fontSize: "16px" }}
@@ -138,12 +131,12 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
         <Content
           style={{
-            margin: "16px",
-            padding: "24px",
+            margin: isMobile ? "2px" : "16px",
+            padding: isMobile ? "4px" : "24px",
             background: "#fff",
             borderRadius: "8px",
             overflow: "auto",
-            flex: 1
+            flex: 1,
           }}
         >
           {children}
