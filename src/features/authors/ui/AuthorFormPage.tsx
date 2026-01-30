@@ -17,6 +17,7 @@ import {
 import { CreateAuthorRequest, UpdateAuthorRequest } from "../model/types";
 import { authorSchema, AuthorFormData } from "../validation/schemas";
 import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
 
 const { TextArea } = Input;
 
@@ -106,11 +107,7 @@ const AuthorFormPage: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        padding: isMobile ? "8px" : "0",
-      }}
-    >
+    <SafeAreaWrapper>
       <Button
         type="text"
         icon={<ArrowLeftOutlined />}
@@ -190,7 +187,7 @@ const AuthorFormPage: React.FC = () => {
           </Form.Item>
         </Form>
       </Card>
-    </div>
+    </SafeAreaWrapper>
   );
 };
 

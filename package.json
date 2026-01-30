@@ -37,7 +37,7 @@
     "vitest": "^4.0.18"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview",

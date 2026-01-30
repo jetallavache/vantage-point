@@ -19,6 +19,7 @@ import {
   selectAuthorsError,
 } from "../model/selectors";
 import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -78,7 +79,7 @@ const AuthorDetailPage: React.FC = () => {
     `${author.lastName} ${author.name} ${author.secondName || ""}`.trim();
 
   return (
-    <div style={{ padding: isMobile ? "8px" : "0" }}>
+    <SafeAreaWrapper>
       <div style={{ marginBottom: isMobile ? 16 : 24 }}>
         <Button
           type="text"
@@ -147,7 +148,7 @@ const AuthorDetailPage: React.FC = () => {
           </Text>
         </div>
       </Card>
-    </div>
+    </SafeAreaWrapper>
   );
 };
 

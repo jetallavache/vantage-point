@@ -76,7 +76,7 @@ const AuthorsPage: React.FC = () => {
     {
       title: "Действия",
       key: "actions",
-      width: 100,
+      width: 80,
       fixed: "right" as any,
       render: (_: any, record: any) => (
         <Space onClick={(e) => e.stopPropagation()}>
@@ -115,11 +115,10 @@ const AuthorsPage: React.FC = () => {
   const showPagination = pagination.total > pagination.pageSize;
 
   return (
-    <div>
+    <div style={{ padding: isMobile ? "8px" : "0" }}>
       <div
         style={{
           marginBottom: 16,
-          padding: 6,
           display: "flex",
           justifyContent: "flex-end",
           alignItems: "center",

@@ -11,6 +11,7 @@ import {
 } from "../model/selectors";
 import { HashTag } from "../../../shared/ui/HashTag";
 import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -67,7 +68,7 @@ const TagDetailPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: isMobile ? "8px" : "0" }}>
+    <SafeAreaWrapper>
       <div
         style={{
           marginBottom: isMobile ? 16 : 24,
@@ -91,18 +92,7 @@ const TagDetailPage: React.FC = () => {
         </Button>
       </div>
 
-      <Card>
-        <div
-          style={{
-            marginBottom: isMobile ? "16px" : "24px",
-            marginTop: isMobile ? "16px" : "0",
-          }}
-        >
-          <HashTag tag={tag.name} />
-        </div>
-
-        <Divider />
-
+      <Card title={<HashTag tag={tag.name} />}>
         <Space
           direction="vertical"
           size={isMobile ? "small" : "middle"}
@@ -111,27 +101,23 @@ const TagDetailPage: React.FC = () => {
           <div>
             <Text strong>Код: </Text>
             <Text>{tag.code}</Text>
-          </div>
-
-          <div>
+            <br />
             <Text strong>Сортировка: </Text>
             <Text>{tag.sort}</Text>
           </div>
+
+          <div style={{ color: "#666", fontSize: isMobile ? "14px" : "16px" }}>
+            <Text type="secondary">
+              Создано: {new Date(tag.createdAt).toLocaleString()}
+            </Text>
+            <br />
+            <Text type="secondary">
+              Обновлено: {new Date(tag.updatedAt).toLocaleString()}
+            </Text>
+          </div>
         </Space>
-
-        <Divider />
-
-        <div style={{ color: "#666", fontSize: isMobile ? "14px" : "16px" }}>
-          <Text type="secondary">
-            Создано: {new Date(tag.createdAt).toLocaleString()}
-          </Text>
-          <br />
-          <Text type="secondary">
-            Обновлено: {new Date(tag.updatedAt).toLocaleString()}
-          </Text>
-        </div>
       </Card>
-    </div>
+    </SafeAreaWrapper>
   );
 };
 

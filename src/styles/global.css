@@ -1,6 +1,3 @@
-/* Global styles for improved UI/UX */
-
-/* Fix body overflow for proper layout */
 html,
 body,
 #root {
@@ -8,7 +5,6 @@ body,
   overflow: hidden;
 }
 
-/* Table improvements */
 .ant-table-small .ant-table-tbody > tr > td {
   font-size: 14px;
   line-height: 1.4;
@@ -19,14 +15,12 @@ body,
   font-weight: 600;
 }
 
-/* Pagination improvements */
 .ant-pagination-small .ant-pagination-item,
 .ant-pagination-small .ant-pagination-prev,
 .ant-pagination-small .ant-pagination-next {
   font-size: 14px;
 }
 
-/* Menu improvements */
 .ant-menu-item {
   font-size: 16px !important;
   font-weight: 500 !important;
@@ -36,7 +30,6 @@ body,
   font-size: 16px !important;
 }
 
-/* Button improvements */
 .ant-btn-lg {
   font-size: 16px;
 }
@@ -45,23 +38,31 @@ body,
   padding: 24px !important;
 }
 
-/* Typography improvements */
 h1 {
   font-size: 24px !important;
   font-weight: 600 !important;
   margin-bottom: 16px !important;
 }
 
-/* Mobile responsive improvements */
 @media (max-width: 768px) {
+  .ant-table .ant-table-container {
+    border: solid 0.5px #cccccc54 !important;
+    border-end-start-radius: 8px;
+    border-end-end-radius: 8px;
+  }
+
+  /* .ant-table .ant-table-content {
+    padding: 0 8px !important;
+  } */
+
   .ant-table-small .ant-table-tbody > tr > td {
-    font-size: 13px;
-    padding: 8px 4px;
+    font-size: 13px !important;
+    padding: 8px 4px !important;
   }
 
   .ant-table-small .ant-table-thead > tr > th {
-    font-size: 13px;
-    padding: 8px 4px;
+    font-size: 13px !important;
+    padding: 8px 4px !important;
   }
 
   .ant-card .ant-card-body {
@@ -70,16 +71,15 @@ h1 {
 
   h1 {
     font-size: 20px !important;
+    margin-bottom: unset !important;
   }
 }
 
-/* Card improvements for login page */
 .ant-card-head-title {
   font-size: 18px;
   font-weight: 600;
 }
 
-/* Layout improvements */
 .ant-layout {
   background: var(--ant-color-bg-layout);
 }

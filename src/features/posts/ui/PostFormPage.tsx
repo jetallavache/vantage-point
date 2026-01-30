@@ -18,6 +18,7 @@ import {
 import { selectTagsItems } from "../../tags/model/selectors";
 import { selectAuthorsItems } from "../../authors/model/selectors";
 import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
 
 const { TextArea } = Input;
 
@@ -110,11 +111,7 @@ const PostFormPage: React.FC = () => {
   }
 
   return (
-    <div
-      style={{
-        padding: isMobile ? "8px" : "0",
-      }}
-    >
+    <SafeAreaWrapper>
       <Button
         type="text"
         icon={<ArrowLeftOutlined />}
@@ -220,7 +217,7 @@ const PostFormPage: React.FC = () => {
           </Form.Item>
         </Form>
       </Card>
-    </div>
+    </SafeAreaWrapper>
   );
 };
 

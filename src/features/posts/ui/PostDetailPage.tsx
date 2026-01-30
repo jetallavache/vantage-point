@@ -22,6 +22,7 @@ import {
 } from "../model/selectors";
 import { HashTag } from "../../../shared/ui/HashTag";
 import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -78,7 +79,7 @@ const PostDetailPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: isMobile ? "8px" : "0" }}>
+    <SafeAreaWrapper>
       <div style={{ marginBottom: isMobile ? 16 : 24 }}>
         <Button
           icon={<ArrowLeftOutlined />}
@@ -98,7 +99,7 @@ const PostDetailPage: React.FC = () => {
         </Button>
       </div>
 
-      <Card>
+      <Card title={`ID #${post.id}`}>
         <div
           style={{
             display: "flex",
@@ -193,7 +194,7 @@ const PostDetailPage: React.FC = () => {
         {post.text && (
           <div
             style={{
-              marginTop: isMobile ? "8px" : "16px",
+              margin: isMobile ? "8px 0" : "16px 0",
               borderTop: "1px solid #f0f0f0",
               paddingTop: isMobile ? "8px" : "16px",
             }}
@@ -214,7 +215,7 @@ const PostDetailPage: React.FC = () => {
           </div>
         )}
       </Card>
-    </div>
+    </SafeAreaWrapper>
   );
 };
 

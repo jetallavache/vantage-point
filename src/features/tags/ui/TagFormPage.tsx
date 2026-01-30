@@ -16,6 +16,7 @@ import {
 import { CreateTagRequest, UpdateTagRequest } from "../model/types";
 import { tagSchema, TagFormData } from "../validation/schemas";
 import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
 
 const TagFormPage: React.FC = () => {
   const navigate = useNavigate();
@@ -78,11 +79,7 @@ const TagFormPage: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        padding: isMobile ? "8px" : "0",
-      }}
-    >
+    <SafeAreaWrapper>
       <Button
         type="text"
         icon={<ArrowLeftOutlined />}
@@ -140,7 +137,7 @@ const TagFormPage: React.FC = () => {
           </Form.Item>
         </Form>
       </Card>
-    </div>
+    </SafeAreaWrapper>
   );
 };
 

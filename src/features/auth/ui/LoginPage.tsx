@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginRequest } from "../model/actions";
 import { selectAuthLoading, selectAuthError } from "../model/selectors";
 import { loginSchema, LoginFormData } from "../validation/schemas";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 export const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const loading = useSelector(selectAuthLoading);
   const error = useSelector(selectAuthError);
+  const isMobile = useIsMobile();
 
   const onFinish = (values: LoginFormData) => {
     const result = loginSchema.safeParse(values);
@@ -23,9 +25,10 @@ export const LoginPage: React.FC = () => {
       style={{
         display: "flex",
         justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
+        flexDirection: "column",
+        minHeight: isMobile ? "-webkit-fill-available" : "100vh",
         padding: "16px",
+        paddingBottom: "calc(20px + env(safe-area-inset-bottom))",
         background: "var(--ant-color-bg-layout)",
       }}
     >
