@@ -23,7 +23,7 @@ function* loginSaga(
 
     yield put(loginSuccess());
     // Используем обычную навигацию вместо connected-react-router
-    window.location.href = "/";
+    window.location.href = "/vantage-point/";
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка входа";
@@ -54,7 +54,7 @@ function* refreshTokenSaga(): Generator<any, void, any> {
 
 function* logoutSaga(): Generator<any, void, any> {
   tokenStorage.clearTokens();
-  window.location.href = "/login";
+  window.location.href = "/vantage-point/login";
 }
 
 export function* authSaga(): Generator<any, void, any> {

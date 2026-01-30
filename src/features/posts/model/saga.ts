@@ -69,7 +69,7 @@ function* createPostSaga(
   try {
     yield call(postsApi.createPost, action.payload);
     yield put(createPostSuccess());
-    window.location.href = "/posts";
+    window.location.href = "/vantage-point/posts";
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка создания поста";
@@ -83,7 +83,7 @@ function* updatePostSaga(
   try {
     yield call(postsApi.updatePost, action.payload);
     yield put(updatePostSuccess());
-    window.location.href = "/posts";
+    window.location.href = "/vantage-point/posts";
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка обновления поста";
