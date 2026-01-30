@@ -38,6 +38,9 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Fix SPA routing
+        run: cp dist/index.html dist/404.html
+
       - name: Test
         run: pnpm test
 

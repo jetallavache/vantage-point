@@ -16,6 +16,7 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <BrowserRouter
+        basename="/vantage-point"
         future={{
           v7_startTransition: true,
           v7_relativeSplatPath: true,
