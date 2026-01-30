@@ -19,7 +19,6 @@ export const fetchPostsFailure = createAction<string>(
   "posts/fetchPostsFailure"
 );
 
-// Fetch post detail
 export const fetchPostDetailRequest = createAction<number>(
   "posts/fetchPostDetailRequest"
 );

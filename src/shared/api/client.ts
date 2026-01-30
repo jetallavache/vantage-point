@@ -74,14 +74,12 @@ class ApiClient {
       headers,
     });
 
-    // Если 401 и это не повторный запрос, пытаемся обновить токен
     if (response.status === 401 && requireAuth && !_isRetry) {
       try {
         await this.refreshToken();
-        // Повторяем запрос с новым токеном
+
         return this.request<T>(endpoint, { ...config, _isRetry: true });
       } catch (error) {
-        // Если refresh не удался, перенаправляем на логин
         window.location.href = "/vantage-point/";
         throw error;
       }
@@ -95,7 +93,6 @@ class ApiClient {
     return response.json();
   }
 
-  // Специальный метод для запросов, которым нужны заголовки (например, пагинация)
   private async requestWithHeaders<T>(
     endpoint: string,
     config: RequestConfig = {}
@@ -117,17 +114,15 @@ class ApiClient {
       headers,
     });
 
-    // Если 401 и это не повторный запрос, пытаемся обновить токен
     if (response.status === 401 && requireAuth && !_isRetry) {
       try {
         await this.refreshToken();
-        // Повторяем запрос с новым токеном
+
         return this.requestWithHeaders<T>(endpoint, {
           ...config,
           _isRetry: true,
         });
       } catch (error) {
-        // Если refresh не удался, перенаправляем на логин
         window.location.href = "/vantage-point/";
         throw error;
       }
@@ -150,7 +145,6 @@ class ApiClient {
     return this.request<T>(endpoint, { ...config, method: "GET" });
   }
 
-  // GET запрос с заголовками для пагинации
   getWithHeaders<T>(
     endpoint: string,
     config?: RequestConfig

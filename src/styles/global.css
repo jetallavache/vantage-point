@@ -51,10 +51,6 @@ h1 {
     border-end-end-radius: 8px;
   }
 
-  /* .ant-table .ant-table-content {
-    padding: 0 8px !important;
-  } */
-
   .ant-table-small .ant-table-tbody > tr > td {
     font-size: 13px !important;
     padding: 8px 4px !important;

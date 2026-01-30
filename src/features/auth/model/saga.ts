@@ -22,7 +22,7 @@ function* loginSaga(
     tokenStorage.setTokens(response.access_token, response.refresh_token);
 
     yield put(loginSuccess());
-    // Используем обычную навигацию вместо connected-react-router
+
     window.location.href = "/vantage-point/";
   } catch (error) {
     const message =
