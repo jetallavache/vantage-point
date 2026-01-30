@@ -185,6 +185,7 @@ const PostsPage: React.FC = () => {
         dataSource={posts}
         loading={loading}
         rowKey="id"
+        size="small"
         scroll={{ x: 600 }}
         onRow={(record) => ({
           onClick: () => handleViewDetail(record.id),
@@ -201,9 +202,13 @@ const PostsPage: React.FC = () => {
                 showQuickJumper: true,
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} из ${total}`,
+                size: "small"
               }
             : false
         }
+        style={{
+          fontSize: "14px"
+        }}
       />
     </div>
   );

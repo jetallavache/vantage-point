@@ -1,0 +1,79 @@
+/* Global styles for improved UI/UX */
+
+/* Fix body overflow for proper layout */
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Table improvements */
+.ant-table-small .ant-table-tbody > tr > td {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.ant-table-small .ant-table-thead > tr > th {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Pagination improvements */
+.ant-pagination-small .ant-pagination-item,
+.ant-pagination-small .ant-pagination-prev,
+.ant-pagination-small .ant-pagination-next {
+  font-size: 14px;
+}
+
+/* Menu improvements */
+.ant-menu-item {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
+.ant-menu-item-icon {
+  font-size: 16px !important;
+}
+
+/* Button improvements */
+.ant-btn-lg {
+  font-size: 16px;
+}
+
+/* Typography improvements */
+h1 {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  margin-bottom: 16px !important;
+}
+
+/* Mobile responsive improvements */
+@media (max-width: 768px) {
+  .ant-table-small .ant-table-tbody > tr > td {
+    font-size: 13px;
+    padding: 8px 4px;
+  }
+  
+  .ant-table-small .ant-table-thead > tr > th {
+    font-size: 13px;
+    padding: 8px 4px;
+  }
+  
+  h1 {
+    font-size: 20px !important;
+  }
+}
+
+/* Card improvements for login page */
+.ant-card-head-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Layout improvements */
+.ant-layout {
+  background: var(--ant-color-bg-layout);
+}
+
+.ant-layout-content {
+  background: #fff;
+}

@@ -7,6 +7,7 @@ import ruRU from "antd/locale/ru_RU";
 import { store } from "./shared/store";
 import App from "./App";
 import "./index.css";
+import "./styles/global.css";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

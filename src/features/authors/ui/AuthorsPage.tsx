@@ -134,6 +134,7 @@ const AuthorsPage: React.FC = () => {
         dataSource={authors}
         loading={loading}
         rowKey="id"
+        size="small"
         onRow={(record) => ({
           onClick: () => handleViewDetail(record.id),
           style: { cursor: "pointer" },
@@ -150,9 +151,13 @@ const AuthorsPage: React.FC = () => {
                 showQuickJumper: true,
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} из ${total}`,
+                size: "small"
               }
             : false
         }
+        style={{
+          fontSize: "14px"
+        }}
       />
     </div>
   );

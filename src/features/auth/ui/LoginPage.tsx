@@ -25,10 +25,25 @@ export const LoginPage: React.FC = () => {
         justifyContent: "center",
         alignItems: "center",
         minHeight: "100vh",
-        background: "#f0f2f5",
+        padding: "16px",
+        background: "var(--ant-color-bg-layout)",
       }}
     >
-      <Card title="Вход в систему" style={{ width: 400 }}>
+      <Card 
+        title="Вход в систему" 
+        style={{ 
+          width: "100%",
+          maxWidth: 400,
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+        }}
+        styles={{
+          header: {
+            textAlign: "center",
+            fontSize: "18px",
+            fontWeight: 600
+          }
+        }}
+      >
         {error && (
           <Alert
             message={error}

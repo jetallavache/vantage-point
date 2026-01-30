@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Button, Drawer } from "antd";
+import { Layout, Menu, Button, Drawer, Typography } from "antd";
 import {
   FileTextOutlined,
   UserOutlined,
@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/model/actions";
 
 const { Header, Sider, Content } = Layout;
+const { Title } = Typography;
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -70,11 +71,15 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       selectedKeys={[location.pathname]}
       items={menuItems}
       onClick={handleMenuClick}
+      style={{
+        fontSize: "16px",
+        fontWeight: 500
+      }}
     />
   );
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout style={{ height: "100vh", overflow: "hidden" }}>
       {!isMobile && (
         <Sider theme="dark" width={200}>
           <div
@@ -84,8 +89,9 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               alignItems: "center",
               justifyContent: "center",
               color: "white",
-              fontSize: 18,
+              fontSize: "20px",
               fontWeight: "bold",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.1)"
             }}
           >
             Vantage Point
@@ -94,7 +100,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         </Sider>
       )}
 
-      <Layout>
+      <Layout style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
         <Header
           style={{
             background: "#fff",
@@ -102,6 +108,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             display: "flex",
             justifyContent: isMobile ? "space-between" : "flex-end",
             alignItems: "center",
+            borderBottom: "1px solid #f0f0f0",
+            flexShrink: 0
           }}
         >
           {isMobile && (
@@ -110,13 +118,20 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
                 type="text"
                 icon={<MenuOutlined />}
                 onClick={() => setDrawerVisible(true)}
+                size="large"
               />
-              <span style={{ fontSize: 16, fontWeight: "bold" }}>
+              <Title level={4} style={{ margin: 0, fontSize: "18px" }}>
                 Vantage Point
-              </span>
+              </Title>
             </div>
           )}
-          <Button type="text" icon={<LogoutOutlined />} onClick={handleLogout}>
+          <Button 
+            type="text" 
+            icon={<LogoutOutlined />} 
+            onClick={handleLogout}
+            size="large"
+            style={{ fontSize: "16px" }}
+          >
             Выйти
           </Button>
         </Header>
@@ -127,6 +142,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             padding: "24px",
             background: "#fff",
             borderRadius: "8px",
+            overflow: "auto",
+            flex: 1
           }}
         >
           {children}
@@ -135,7 +152,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
 
       {isMobile && (
         <Drawer
-          title="Vantage Point"
+          title={
+            <Title level={4} style={{ margin: 0, fontSize: "18px" }}>
+              Vantage Point
+            </Title>
+          }
           placement="left"
           onClose={() => setDrawerVisible(false)}
           open={drawerVisible}
