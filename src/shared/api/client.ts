@@ -45,7 +45,7 @@ class ApiClient {
 
     if (!response.ok) {
       tokenStorage.clearTokens();
-      window.location.href = "/vantage-point/login";
+      window.location.href = "/vantage-point/";
       throw new Error("Refresh failed");
     }
 
@@ -82,7 +82,7 @@ class ApiClient {
         return this.request<T>(endpoint, { ...config, _isRetry: true });
       } catch (error) {
         // Если refresh не удался, перенаправляем на логин
-        window.location.href = "/vantage-point/login";
+        window.location.href = "/vantage-point/";
         throw error;
       }
     }
@@ -128,7 +128,7 @@ class ApiClient {
         });
       } catch (error) {
         // Если refresh не удался, перенаправляем на логин
-        window.location.href = "/vantage-point/login";
+        window.location.href = "/vantage-point/";
         throw error;
       }
     }

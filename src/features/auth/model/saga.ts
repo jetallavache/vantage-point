@@ -54,7 +54,7 @@ function* refreshTokenSaga(): Generator<any, void, any> {
 
 function* logoutSaga(): Generator<any, void, any> {
   tokenStorage.clearTokens();
-  window.location.href = "/vantage-point/login";
+  window.location.href = "/vantage-point/";
 }
 
 export function* authSaga(): Generator<any, void, any> {
