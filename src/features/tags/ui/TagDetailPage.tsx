@@ -67,7 +67,7 @@ const TagDetailPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: isMobile ? "8px" : "24px" }}>
+    <div style={{ padding: isMobile ? "8px" : "0" }}>
       <div
         style={{
           marginBottom: isMobile ? 16 : 24,
@@ -92,7 +92,12 @@ const TagDetailPage: React.FC = () => {
       </div>
 
       <Card>
-        <div style={{ marginBottom: isMobile ? "16px" : "24px" }}>
+        <div
+          style={{
+            marginBottom: isMobile ? "16px" : "24px",
+            marginTop: isMobile ? "16px" : "0",
+          }}
+        >
           <HashTag tag={tag.name} />
         </div>
 

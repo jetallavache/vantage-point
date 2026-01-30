@@ -112,9 +112,7 @@ const PostFormPage: React.FC = () => {
   return (
     <div
       style={{
-        maxWidth: 800,
-        margin: "0 auto",
-        padding: isMobile ? "8px" : "20px",
+        padding: isMobile ? "8px" : "0",
       }}
     >
       <Button

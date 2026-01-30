@@ -78,7 +78,7 @@ const AuthorDetailPage: React.FC = () => {
     `${author.lastName} ${author.name} ${author.secondName || ""}`.trim();
 
   return (
-    <div style={{ padding: isMobile ? "8px" : "24px" }}>
+    <div style={{ padding: isMobile ? "8px" : "0" }}>
       <div style={{ marginBottom: isMobile ? 16 : 24 }}>
         <Button
           type="text"

@@ -78,13 +78,14 @@ const PostDetailPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: isMobile ? "8px" : "24px" }}>
+    <div style={{ padding: isMobile ? "8px" : "0" }}>
       <div style={{ marginBottom: isMobile ? 16 : 24 }}>
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(-1)}
           style={{ marginRight: 16 }}
           size={isMobile ? "small" : "middle"}
+          type="text"
         >
           {isMobile ? "Назад" : "Назад к списку"}
         </Button>
