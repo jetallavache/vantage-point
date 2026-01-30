@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Table, Button, Space, Popconfirm, Image, Tag, Tooltip } from "antd";
+import { Table, Button, Space, Popconfirm, Image, Tooltip } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,7 @@ import {
   selectPostsLoading,
   selectPostsPagination,
 } from "../model/selectors";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const PostsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const PostsPage: React.FC = () => {
   const posts = useSelector(selectPostsItems);
   const loading = useSelector(selectPostsLoading);
   const pagination = useSelector(selectPostsPagination);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     dispatch(fetchPostsRequest({ page: 1 }));
@@ -39,7 +41,7 @@ const PostsPage: React.FC = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      width: 80,
+      width: 50,
       responsive: ["lg"] as any,
     },
     {
@@ -47,7 +49,7 @@ const PostsPage: React.FC = () => {
       dataIndex: "previewPicture",
       key: "previewPicture",
       width: 100,
-      responsive: ["md"] as any,
+      responsive: ["lg"] as any,
       render: (previewPicture: any) => (
         <Image
           width={60}
@@ -62,8 +64,7 @@ const PostsPage: React.FC = () => {
       title: "Код",
       dataIndex: "code",
       key: "code",
-      width: 120,
-      responsive: ["sm"] as any,
+      width: 50,
     },
     {
       title: "Заголовок",
@@ -115,7 +116,7 @@ const PostsPage: React.FC = () => {
       dataIndex: "createdAt",
       key: "createdAt",
       width: 120,
-      responsive: ["lg"] as any,
+      responsive: ["sm"] as any,
       render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
@@ -166,15 +167,15 @@ const PostsPage: React.FC = () => {
           marginBottom: 16,
           padding: 6,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           alignItems: "center",
         }}
       >
-        <h1>Посты</h1>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => navigate("/posts/form")}
+          size={isMobile ? "small" : "middle"}
         >
           Добавить пост
         </Button>
@@ -186,7 +187,6 @@ const PostsPage: React.FC = () => {
         loading={loading}
         rowKey="id"
         size="small"
-        scroll={{ x: 600 }}
         onRow={(record) => ({
           onClick: () => handleViewDetail(record.id),
           style: { cursor: "pointer" },
@@ -202,12 +202,12 @@ const PostsPage: React.FC = () => {
                 showQuickJumper: true,
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} из ${total}`,
-                size: "small"
+                size: "small",
               }
             : false
         }
         style={{
-          fontSize: "14px"
+          fontSize: "14px",
         }}
       />
     </div>

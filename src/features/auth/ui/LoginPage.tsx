@@ -29,19 +29,19 @@ export const LoginPage: React.FC = () => {
         background: "var(--ant-color-bg-layout)",
       }}
     >
-      <Card 
-        title="Вход в систему" 
-        style={{ 
+      <Card
+        title="Вход в систему"
+        style={{
           width: "100%",
           maxWidth: 400,
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)"
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
         }}
         styles={{
           header: {
             textAlign: "center",
             fontSize: "18px",
-            fontWeight: 600
-          }
+            fontWeight: 600,
+          },
         }}
       >
         {error && (

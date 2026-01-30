@@ -14,6 +14,7 @@ import {
   selectAuthorsLoading,
   selectAuthorsPagination,
 } from "../model/selectors";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const AuthorsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const AuthorsPage: React.FC = () => {
   const authors = useSelector(selectAuthorsItems);
   const loading = useSelector(selectAuthorsLoading);
   const pagination = useSelector(selectAuthorsPagination);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     dispatch(fetchAuthorsRequest({ page: 1 }));
@@ -51,7 +53,7 @@ const AuthorsPage: React.FC = () => {
       title: "ID",
       dataIndex: "id",
       key: "id",
-      width: 80,
+      width: 50,
       responsive: ["lg"] as any,
     },
     {
@@ -119,12 +121,16 @@ const AuthorsPage: React.FC = () => {
           marginBottom: 16,
           padding: 6,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           alignItems: "center",
         }}
       >
-        <h1>Авторы</h1>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleAdd}
+          size={isMobile ? "small" : "middle"}
+        >
           Добавить автора
         </Button>
       </div>
@@ -139,7 +145,6 @@ const AuthorsPage: React.FC = () => {
           onClick: () => handleViewDetail(record.id),
           style: { cursor: "pointer" },
         })}
-        scroll={{ x: 400 }}
         pagination={
           showPagination
             ? {
@@ -151,12 +156,12 @@ const AuthorsPage: React.FC = () => {
                 showQuickJumper: true,
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} из ${total}`,
-                size: "small"
+                size: "small",
               }
             : false
         }
         style={{
-          fontSize: "14px"
+          fontSize: "14px",
         }}
       />
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -21,6 +21,7 @@ import {
   selectPostsError,
 } from "../model/selectors";
 import { HashTag } from "../../../shared/ui/HashTag";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -31,17 +32,7 @@ const PostDetailPage: React.FC = () => {
   const post = useSelector(selectCurrentPost);
   const loading = useSelector(selectPostsLoading);
   const error = useSelector(selectPostsError);
-
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (id) {
@@ -87,11 +78,11 @@ const PostDetailPage: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: isMobile ? "16px" : "24px" }}>
+    <div style={{ padding: isMobile ? "8px" : "24px" }}>
       <div style={{ marginBottom: isMobile ? 16 : 24 }}>
         <Button
           icon={<ArrowLeftOutlined />}
-          onClick={() => navigate("/posts")}
+          onClick={() => navigate(-1)}
           style={{ marginRight: 16 }}
           size={isMobile ? "small" : "middle"}
         >
@@ -114,7 +105,6 @@ const PostDetailPage: React.FC = () => {
             flexDirection: isMobile ? "column" : "row",
           }}
         >
-          {/* Левая часть - основная информация */}
           <div style={{ flex: 1 }}>
             <Title
               level={2}
@@ -176,7 +166,6 @@ const PostDetailPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Правая часть - обложка */}
           {post.previewPicture && (
             <div
               style={{
@@ -193,24 +182,21 @@ const PostDetailPage: React.FC = () => {
                   width: "100%",
                   height: "auto",
                   borderRadius: "8px",
+                  margin: isMobile ? "0" : "24px 0",
                 }}
               />
             </div>
           )}
         </div>
 
-        {/* Текст поста */}
         {post.text && (
           <div
             style={{
-              marginTop: isMobile ? "16px" : "24px",
+              marginTop: isMobile ? "8px" : "16px",
               borderTop: "1px solid #f0f0f0",
-              paddingTop: isMobile ? "16px" : "24px",
+              paddingTop: isMobile ? "8px" : "16px",
             }}
           >
-            <Title level={4} style={{ fontSize: isMobile ? "16px" : "18px" }}>
-              Содержание
-            </Title>
             <div
               style={{
                 background: "#fafafa",

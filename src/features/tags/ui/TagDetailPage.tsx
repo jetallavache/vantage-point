@@ -10,6 +10,7 @@ import {
   selectTagsError,
 } from "../model/selectors";
 import { HashTag } from "../../../shared/ui/HashTag";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -20,6 +21,7 @@ const TagDetailPage: React.FC = () => {
   const tag = useSelector(selectCurrentTag);
   const loading = useSelector(selectTagsLoading);
   const error = useSelector(selectTagsError);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (id) {
@@ -65,26 +67,42 @@ const TagDetailPage: React.FC = () => {
   }
 
   return (
-    <div>
-      <div style={{ marginBottom: 24 }}>
+    <div style={{ padding: isMobile ? "8px" : "24px" }}>
+      <div
+        style={{
+          marginBottom: isMobile ? 16 : 24,
+        }}
+      >
         <Button
+          type="text"
           icon={<ArrowLeftOutlined />}
-          onClick={() => navigate("/tags")}
+          onClick={() => navigate(-1)}
           style={{ marginRight: 16 }}
+          size={isMobile ? "small" : "middle"}
         >
-          Назад к списку
+          {isMobile ? "Назад" : "Назад к списку"}
         </Button>
-        <Button type="primary" onClick={() => navigate(`/tags/edit/${tag.id}`)}>
+        <Button
+          type="primary"
+          onClick={() => navigate(`/tags/edit/${tag.id}`)}
+          size={isMobile ? "small" : "middle"}
+        >
           Редактировать
         </Button>
       </div>
 
       <Card>
-        <HashTag tag={tag.name} />
+        <div style={{ marginBottom: isMobile ? "16px" : "24px" }}>
+          <HashTag tag={tag.name} />
+        </div>
 
         <Divider />
 
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+        <Space
+          direction="vertical"
+          size={isMobile ? "small" : "middle"}
+          style={{ width: "100%" }}
+        >
           <div>
             <Text strong>Код: </Text>
             <Text>{tag.code}</Text>
@@ -98,7 +116,7 @@ const TagDetailPage: React.FC = () => {
 
         <Divider />
 
-        <div style={{ color: "#666" }}>
+        <div style={{ color: "#666", fontSize: isMobile ? "14px" : "16px" }}>
           <Text type="secondary">
             Создано: {new Date(tag.createdAt).toLocaleString()}
           </Text>

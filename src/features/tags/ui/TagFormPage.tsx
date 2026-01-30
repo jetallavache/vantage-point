@@ -15,6 +15,7 @@ import {
 } from "../model/selectors";
 import { CreateTagRequest, UpdateTagRequest } from "../model/types";
 import { tagSchema, TagFormData } from "../validation/schemas";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const TagFormPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const TagFormPage: React.FC = () => {
   const loading = useSelector(selectTagsLoading);
   const error = useSelector(selectTagsError);
   const [form] = Form.useForm();
+  const isMobile = useIsMobile();
 
   const isEditing = Boolean(id);
   const tag = isEditing ? tags.find((t: any) => t.id === Number(id)) : null;
@@ -76,21 +78,24 @@ const TagFormPage: React.FC = () => {
   };
 
   return (
-    <div>
-      <div style={{ marginBottom: 24 }}>
-        <Button
-          icon={<ArrowLeftOutlined />}
-          onClick={() => navigate("/tags")}
-          style={{ marginRight: 16 }}
-        >
-          Назад
-        </Button>
-        <h1 style={{ display: "inline" }}>
-          {isEditing ? "Редактировать тег" : "Добавить тег"}
-        </h1>
-      </div>
+    <div
+      style={{
+        maxWidth: 800,
+        margin: "0 auto",
+        padding: isMobile ? "8px" : "24px",
+      }}
+    >
+      <Button
+        type="text"
+        icon={<ArrowLeftOutlined />}
+        onClick={() => navigate(-1)}
+        style={{ marginBottom: isMobile ? 16 : 24 }}
+        size={isMobile ? "small" : "middle"}
+      >
+        {isMobile ? "Назад" : "Назад к списку"}
+      </Button>
 
-      <Card>
+      <Card title={isEditing ? "Редактировать тег" : "Добавить тег"}>
         <Form
           form={form}
           layout="vertical"
@@ -126,7 +131,12 @@ const TagFormPage: React.FC = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size={isMobile ? "small" : "middle"}
+            >
               {isEditing ? "Сохранить" : "Создать"}
             </Button>
           </Form.Item>

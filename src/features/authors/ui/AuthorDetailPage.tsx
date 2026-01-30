@@ -18,6 +18,7 @@ import {
   selectAuthorsLoading,
   selectAuthorsError,
 } from "../model/selectors";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -28,6 +29,7 @@ const AuthorDetailPage: React.FC = () => {
   const author = useSelector(selectCurrentAuthor);
   const loading = useSelector(selectAuthorsLoading);
   const error = useSelector(selectAuthorsError);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (id) {
@@ -76,18 +78,21 @@ const AuthorDetailPage: React.FC = () => {
     `${author.lastName} ${author.name} ${author.secondName || ""}`.trim();
 
   return (
-    <div>
-      <div style={{ marginBottom: 24 }}>
+    <div style={{ padding: isMobile ? "8px" : "24px" }}>
+      <div style={{ marginBottom: isMobile ? 16 : 24 }}>
         <Button
+          type="text"
           icon={<ArrowLeftOutlined />}
-          onClick={() => navigate("/authors")}
+          onClick={() => navigate(-1)}
           style={{ marginRight: 16 }}
+          size={isMobile ? "small" : "middle"}
         >
-          Назад к списку
+          {isMobile ? "Назад" : "Назад к списку"}
         </Button>
         <Button
           type="primary"
           onClick={() => navigate(`/authors/edit/${author.id}`)}
+          size={isMobile ? "small" : "middle"}
         >
           Редактировать
         </Button>
@@ -99,7 +104,7 @@ const AuthorDetailPage: React.FC = () => {
             display: "flex",
             alignItems: "flex-start",
             gap: 24,
-            marginBottom: 24,
+            marginBottom: isMobile ? "16px" : "24px",
           }}
         >
           <Avatar src={author.avatar?.url} icon={<UserOutlined />} size={120} />

@@ -17,6 +17,7 @@ import {
 } from "../model/selectors";
 import { selectTagsItems } from "../../tags/model/selectors";
 import { selectAuthorsItems } from "../../authors/model/selectors";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const { TextArea } = Input;
 
@@ -34,23 +35,21 @@ const PostFormPage: React.FC = () => {
 
   const [fileList, setFileList] = useState<any[]>([]);
   const [validationErrors, _setValidationErrors] = useState<any>({});
+  const isMobile = useIsMobile();
 
-  const isEdit = !!id;
+  const isEditing = !!id;
 
   useEffect(() => {
-    // Загружаем все теги и авторов для выбора
     dispatch(fetchTagsRequest({ page: 1 }));
     dispatch(fetchAuthorsRequest({ page: 1 }));
 
-    // Если редактируем пост, загружаем его данные
-    if (isEdit && id) {
+    if (isEditing && id) {
       dispatch(fetchPostDetailRequest(Number(id)));
     }
-  }, [dispatch, isEdit, id]);
+  }, [dispatch, isEditing, id]);
 
-  // Заполняем форму данными поста при редактировании
   useEffect(() => {
-    if (currentPost && isEdit) {
+    if (currentPost && isEditing) {
       form.setFieldsValue({
         code: currentPost.code || "",
         title: currentPost.title || "",
@@ -60,7 +59,6 @@ const PostFormPage: React.FC = () => {
           currentPost.tagIds || currentPost.tags?.map((tag) => tag.id) || [],
       });
 
-      // Устанавливаем изображение если есть
       if (currentPost.previewPicture) {
         setFileList([
           {
@@ -72,10 +70,10 @@ const PostFormPage: React.FC = () => {
         ]);
       }
     }
-  }, [currentPost, isEdit, form]);
+  }, [currentPost, isEditing, form]);
 
   const handleBack = () => {
-    navigate("/posts");
+    navigate(-1);
   };
 
   const handleSubmit = (values: any) => {
@@ -88,7 +86,7 @@ const PostFormPage: React.FC = () => {
       previewPicture: fileList[0]?.originFileObj,
     };
 
-    if (isEdit) {
+    if (isEditing) {
       dispatch(updatePostRequest({ ...data, id: parseInt(id!, 10) }));
     } else {
       dispatch(createPostRequest(data));
@@ -112,17 +110,24 @@ const PostFormPage: React.FC = () => {
   }
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "20px" }}>
+    <div
+      style={{
+        maxWidth: 800,
+        margin: "0 auto",
+        padding: isMobile ? "8px" : "20px",
+      }}
+    >
       <Button
         type="text"
         icon={<ArrowLeftOutlined />}
         onClick={handleBack}
-        style={{ marginBottom: 16 }}
+        style={{ marginBottom: isMobile ? 16 : 24 }}
+        size={isMobile ? "small" : "middle"}
       >
-        Вернуться к списку
+        {isMobile ? "Назад" : "Назад к списку"}
       </Button>
 
-      <Card title={isEdit ? "Редактировать пост" : "Добавить пост"}>
+      <Card title={isEditing ? "Редактировать пост" : "Добавить пост"}>
         {error && (
           <Alert
             message="Ошибка"
@@ -206,8 +211,13 @@ const PostFormPage: React.FC = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading}>
-              {isEdit ? "Сохранить" : "Создать"}
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              size={isMobile ? "small" : "middle"}
+            >
+              {isEditing ? "Сохранить" : "Создать"}
             </Button>
           </Form.Item>
         </Form>

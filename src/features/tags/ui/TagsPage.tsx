@@ -10,6 +10,7 @@ import {
   selectTagsPagination,
 } from "../model/selectors";
 import { HashTag } from "../../../shared/ui/HashTag";
+import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const TagsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const TagsPage: React.FC = () => {
   const tags = useSelector(selectTagsItems);
   const loading = useSelector(selectTagsLoading);
   const pagination = useSelector(selectTagsPagination);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     dispatch(fetchTagsRequest({ page: 1 }));
@@ -119,12 +121,16 @@ const TagsPage: React.FC = () => {
           marginBottom: 16,
           padding: 6,
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           alignItems: "center",
         }}
       >
-        <h1>Теги</h1>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleAdd}
+          size={isMobile ? "small" : "middle"}
+        >
           Добавить тег
         </Button>
       </div>
@@ -151,12 +157,12 @@ const TagsPage: React.FC = () => {
                 showQuickJumper: true,
                 showTotal: (total, range) =>
                   `${range[0]}-${range[1]} из ${total}`,
-                size: "small"
+                size: "small",
               }
             : false
         }
         style={{
-          fontSize: "14px"
+          fontSize: "14px",
         }}
       />
     </div>
