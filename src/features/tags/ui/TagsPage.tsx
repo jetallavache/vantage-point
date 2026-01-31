@@ -9,8 +9,7 @@ import {
   selectTagsLoading,
   selectTagsPagination,
 } from "../model/selectors";
-import { HashTag } from "../../../shared/ui/HashTag";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { HashTag, useIsMobile } from "../../../shared";
 
 const TagsPage: React.FC = () => {
   const dispatch = useDispatch();

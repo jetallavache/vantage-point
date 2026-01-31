@@ -17,7 +17,7 @@ import {
   deleteTagFailure,
 } from "./actions";
 import { tagsApi } from "../api";
-import { ApiException } from "../../../shared/api/errors";
+import { ApiException } from "../../../shared";
 
 function* fetchTagsSaga(
   action: ReturnType<typeof fetchTagsRequest>

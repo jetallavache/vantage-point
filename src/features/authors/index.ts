@@ -11,6 +11,9 @@ export const authorsModule: ISagaModule<any> = {
 };
 
 export { default as AuthorsPage } from "./ui/AuthorsPage";
+export { default as AuthorFormPage } from "./ui/AuthorFormPage";
+export { default as AuthorDetailPage } from "./ui/AuthorDetailPage";
+export { authorsApi } from "./api";
 export * from "./model/types";
 export * from "./model/actions";
 export * from "./model/selectors";

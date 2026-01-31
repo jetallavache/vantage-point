@@ -1,5 +1,5 @@
 import { createSelector } from "@reduxjs/toolkit";
-import { RootState } from "../../../shared/store";
+import type { RootState } from "../../../shared";
 
 export const selectPosts = (state: RootState) => state.posts;
 export const selectPostsItems = (state: RootState) => state.posts?.items || [];

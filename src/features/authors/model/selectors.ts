@@ -1,4 +1,4 @@
-import { RootState } from "../../../shared/store";
+import type { RootState } from "../../../shared";
 import { createSelector } from "@reduxjs/toolkit";
 
 export const selectAuthors = (state: RootState) => state.authors;

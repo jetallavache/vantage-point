@@ -16,8 +16,7 @@ import {
 } from "../model/selectors";
 import { CreateAuthorRequest, UpdateAuthorRequest } from "../model/types";
 import { authorSchema, AuthorFormData } from "../validation/schemas";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
-import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
+import { useIsMobile, SafeAreaWrapper } from "../../../shared";
 
 const { TextArea } = Input;
 

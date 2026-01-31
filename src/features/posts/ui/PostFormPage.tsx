@@ -17,8 +17,7 @@ import {
 } from "../model/selectors";
 import { selectTagsItems } from "../../tags/model/selectors";
 import { selectAuthorsItems } from "../../authors/model/selectors";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
-import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
+import { useIsMobile, SafeAreaWrapper } from "../../../shared";
 
 const { TextArea } = Input;
 

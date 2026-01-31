@@ -1,30 +1,35 @@
 import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Spin } from "antd";
-import { LoginPage } from "./features/auth/ui/LoginPage";
-import { PrivateRoute } from "./shared/ui/PrivateRoute";
-import { AdminLayout } from "./shared/ui/AdminLayout";
+import { LoginPage } from "./features/auth";
+import { PrivateRoute, AdminLayout } from "./shared";
 
-const PostsPage = React.lazy(() => import("./features/posts/ui/PostsPage"));
-const PostDetailPage = React.lazy(
-  () => import("./features/posts/ui/PostDetailPage")
+const PostsPage = React.lazy(() =>
+  import("./features/posts").then((m) => ({ default: m.PostsPage }))
 );
-const PostFormPage = React.lazy(
-  () => import("./features/posts/ui/PostFormPage")
+const PostDetailPage = React.lazy(() =>
+  import("./features/posts").then((m) => ({ default: m.PostDetailPage }))
 );
-const AuthorsPage = React.lazy(
-  () => import("./features/authors/ui/AuthorsPage")
+const PostFormPage = React.lazy(() =>
+  import("./features/posts").then((m) => ({ default: m.PostFormPage }))
 );
-const AuthorFormPage = React.lazy(
-  () => import("./features/authors/ui/AuthorFormPage")
+const AuthorsPage = React.lazy(() =>
+  import("./features/authors").then((m) => ({ default: m.AuthorsPage }))
 );
-const AuthorDetailPage = React.lazy(
-  () => import("./features/authors/ui/AuthorDetailPage")
+const AuthorFormPage = React.lazy(() =>
+  import("./features/authors").then((m) => ({ default: m.AuthorFormPage }))
 );
-const TagsPage = React.lazy(() => import("./features/tags/ui/TagsPage"));
-const TagFormPage = React.lazy(() => import("./features/tags/ui/TagFormPage"));
-const TagDetailPage = React.lazy(
-  () => import("./features/tags/ui/TagDetailPage")
+const AuthorDetailPage = React.lazy(() =>
+  import("./features/authors").then((m) => ({ default: m.AuthorDetailPage }))
+);
+const TagsPage = React.lazy(() =>
+  import("./features/tags").then((m) => ({ default: m.TagsPage }))
+);
+const TagFormPage = React.lazy(() =>
+  import("./features/tags").then((m) => ({ default: m.TagFormPage }))
+);
+const TagDetailPage = React.lazy(() =>
+  import("./features/tags").then((m) => ({ default: m.TagDetailPage }))
 );
 
 const LoadingSpinner = () => (

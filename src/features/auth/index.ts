@@ -9,3 +9,9 @@ export const authModule: ISagaModule<any> = {
   },
   sagas: [authSaga],
 };
+
+export { LoginPage } from "./ui/LoginPage";
+export { authApi } from "./api";
+export * from "./model/types";
+export * from "./model/actions";
+export * from "./model/selectors";

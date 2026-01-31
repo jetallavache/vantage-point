@@ -9,8 +9,7 @@ import {
   refreshTokenFailure,
 } from "./actions";
 import { authApi } from "../api";
-import { tokenStorage } from "../../../shared/api/token-storage";
-import { ApiException } from "../../../shared/api/errors";
+import { tokenStorage, ApiException } from "../../../shared";
 import { TokenResponse } from "./types";
 
 function* loginSaga(

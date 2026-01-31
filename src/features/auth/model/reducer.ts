@@ -9,7 +9,7 @@ import {
   refreshTokenSuccess,
   refreshTokenFailure,
 } from "./actions";
-import { tokenStorage } from "../../../shared/api/token-storage";
+import { tokenStorage } from "../../../shared";
 
 const initialState: AuthState = {
   isAuthenticated: !!tokenStorage.getAccessToken(),

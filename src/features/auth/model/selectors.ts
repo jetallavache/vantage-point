@@ -1,4 +1,4 @@
-import { RootState } from "../../../shared/store";
+import type { RootState } from "../../../shared";
 
 export const selectAuth = (state: RootState) => state.auth;
 export const selectIsAuthenticated = (state: RootState) =>

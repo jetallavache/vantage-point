@@ -11,6 +11,9 @@ export const tagsModule: ISagaModule<any> = {
 };
 
 export { default as TagsPage } from "./ui/TagsPage";
+export { default as TagFormPage } from "./ui/TagFormPage";
+export { default as TagDetailPage } from "./ui/TagDetailPage";
+export { tagsApi } from "./api";
 export * from "./model/types";
 export * from "./model/actions";
 export * from "./model/selectors";

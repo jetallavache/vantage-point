@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginRequest } from "../model/actions";
 import { selectAuthLoading, selectAuthError } from "../model/selectors";
 import { loginSchema, LoginFormData } from "../validation/schemas";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { useIsMobile } from "../../../shared";
 
 export const LoginPage: React.FC = () => {
   const dispatch = useDispatch();

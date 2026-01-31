@@ -17,7 +17,7 @@ import {
   deletePostFailure,
 } from "./actions";
 import { postsApi } from "../api";
-import { ApiException } from "../../../shared/api/errors";
+import { ApiException } from "../../../shared";
 
 function* fetchPostsSaga(
   action: ReturnType<typeof fetchPostsRequest>

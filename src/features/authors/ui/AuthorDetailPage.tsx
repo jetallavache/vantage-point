@@ -18,8 +18,7 @@ import {
   selectAuthorsLoading,
   selectAuthorsError,
 } from "../model/selectors";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
-import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
+import { useIsMobile, SafeAreaWrapper } from "../../../shared";
 
 const { Title, Text, Paragraph } = Typography;
 

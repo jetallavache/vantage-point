@@ -1,4 +1,4 @@
-import { apiClient } from "../../../shared/api/client";
+import { apiClient } from "../../../shared";
 import { CreatePostRequest, UpdatePostRequest } from "../model/types";
 
 export const postsApi = {

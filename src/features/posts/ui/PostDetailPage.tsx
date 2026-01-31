@@ -18,9 +18,7 @@ import {
   selectPostsLoading,
   selectPostsError,
 } from "../model/selectors";
-import { HashTag } from "../../../shared/ui/HashTag";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
-import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
+import { HashTag, useIsMobile, SafeAreaWrapper } from "../../../shared";
 
 const { Title, Paragraph, Text } = Typography;
 

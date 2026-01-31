@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { ConfigProvider } from "antd";
 import ruRU from "antd/locale/ru_RU";
-import { store } from "./shared/store";
+import { store } from "./shared";
 import App from "./App";
 import "./index.css";
 import "./styles/global.css";

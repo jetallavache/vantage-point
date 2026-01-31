@@ -17,7 +17,7 @@ import {
   deleteAuthorFailure,
 } from "./actions";
 import { authorsApi } from "../api";
-import { ApiException } from "../../../shared/api/errors";
+import { ApiException } from "../../../shared";
 
 function* fetchAuthorsSaga(
   action: ReturnType<typeof fetchAuthorsRequest>

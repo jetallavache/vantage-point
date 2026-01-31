@@ -15,8 +15,7 @@ import {
 } from "../model/selectors";
 import { CreateTagRequest, UpdateTagRequest } from "../model/types";
 import { tagSchema, TagFormData } from "../validation/schemas";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
-import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
+import { useIsMobile, SafeAreaWrapper } from "../../../shared";
 
 const TagFormPage: React.FC = () => {
   const navigate = useNavigate();

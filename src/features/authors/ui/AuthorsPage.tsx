@@ -14,7 +14,7 @@ import {
   selectAuthorsLoading,
   selectAuthorsPagination,
 } from "../model/selectors";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
+import { useIsMobile } from "../../../shared";
 
 const AuthorsPage: React.FC = () => {
   const dispatch = useDispatch();

@@ -4,13 +4,12 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchPostsRequest, deletePostRequest } from "../model/actions";
-import { HashTag } from "../../../shared/ui/HashTag";
+import { HashTag, useIsMobile } from "../../../shared";
 import {
   selectPostsItems,
   selectPostsLoading,
   selectPostsPagination,
 } from "../model/selectors";
-import { useIsMobile } from "../../../shared/hooks/useIsMobile";
 
 const PostsPage: React.FC = () => {
   const dispatch = useDispatch();
