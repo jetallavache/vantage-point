@@ -18,42 +18,15 @@ import {
   selectPostsLoading,
   selectPostsError,
 } from "../model/selectors";
-import { HashTag, useIsMobile, SafeAreaWrapper } from "../../../shared";
+import {
+  HashTag,
+  useIsMobile,
+  SafeAreaWrapper,
+  formatPublishDate,
+  formatDateTime,
+} from "../../../shared";
 
 const { Title, Paragraph, Text } = Typography;
-
-const formatPublishDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays === 1) return "Вчера";
-  if (diffDays <= 4) return `${diffDays} дня назад`;
-  if (diffDays <= 7) return `${diffDays} дней назад`;
-
-  const options: Intl.DateTimeFormatOptions = {
-    day: "numeric",
-    month: "long",
-    year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
-  };
-
-  return date.toLocaleDateString("ru-RU", options);
-};
-
-const formatTimeDate = (dateString: string): string => {
-  const date = new Date(dateString);
-
-  const options: Intl.DateTimeFormatOptions = {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  };
-
-  return date.toLocaleDateString("ru-RU", options);
-};
 
 const PostDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -268,24 +241,14 @@ const PostDetailPage: React.FC = () => {
             </div>
           )}
 
-          <div
-            style={{
-              borderTop: "1px solid #f0f0f0",
-              paddingTop: "16px",
-              display: "flex",
-              flexDirection: isMobile ? "column" : "row",
-              gap: isMobile ? "8px" : "24px",
-            }}
-          >
-            <div>
-              <Text type="secondary" italic>
-                Опубликовано {formatTimeDate(post.createdAt)}
-              </Text>
-              <br />
-              <Text type="secondary" italic>
-                Последнее ред. {formatTimeDate(post.updatedAt)}
-              </Text>
-            </div>
+          <div>
+            <Text type="secondary" italic>
+              Опубликовано {formatDateTime(post.createdAt)}
+            </Text>
+            <br />
+            <Text type="secondary" italic>
+              Последнее ред. {formatDateTime(post.updatedAt)}
+            </Text>
           </div>
         </div>
       </Card>
