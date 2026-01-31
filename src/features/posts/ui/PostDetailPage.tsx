@@ -26,6 +26,40 @@ import { SafeAreaWrapper } from "../../../shared/ui/SafeAreaWrapper";
 
 const { Title, Paragraph, Text } = Typography;
 
+const formatPublishDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - date.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 1) return "Вчера";
+  if (diffDays <= 4) return `${diffDays} дня назад`;
+  if (diffDays <= 7) return `${diffDays} дней назад`;
+
+  const options: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+  };
+
+  return date.toLocaleDateString("ru-RU", options);
+};
+
+const formatTimeDate = (dateString: string): string => {
+  const date = new Date(dateString);
+
+  const options: Intl.DateTimeFormatOptions = {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  return date.toLocaleDateString("ru-RU", options);
+};
+
 const PostDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -80,7 +114,11 @@ const PostDetailPage: React.FC = () => {
 
   return (
     <SafeAreaWrapper>
-      <div style={{ marginBottom: isMobile ? 16 : 24 }}>
+      <div
+        style={{
+          marginBottom: isMobile ? 16 : 24,
+        }}
+      >
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(-1)}
@@ -99,121 +137,165 @@ const PostDetailPage: React.FC = () => {
         </Button>
       </div>
 
-      <Card title={`ID #${post.id}`}>
-        <div
-          style={{
-            display: "flex",
-            gap: isMobile ? "16px" : "24px",
-            flexDirection: isMobile ? "column" : "row",
-          }}
-        >
-          <div style={{ flex: 1 }}>
+      <Card title={`Пост #${post.id}`}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+          {/* Заголовок и дата */}
+          <div>
             <Title
               level={2}
-              style={{
-                fontSize: isMobile ? "20px" : "24px",
-                marginBottom: "16px",
-              }}
+              style={{ margin: 0, fontSize: isMobile ? "20px" : "28px" }}
             >
               {post.title}
             </Title>
-
-            <div style={{ marginBottom: "16px" }}>
-              <Text strong>Код: </Text>
-              <Text code>{post.code}</Text>
-            </div>
-
-            {post.author && (
-              <div style={{ marginBottom: "16px" }}>
-                <Text strong>Автор: </Text>
-                <Space>
-                  <Avatar
-                    src={post.author.avatar?.url}
-                    icon={<UserOutlined />}
-                    size="small"
-                  />
-                  <Text>{post.author.fullName}</Text>
-                </Space>
-              </div>
-            )}
-
-            {post.tags && post.tags.length > 0 && (
-              <div style={{ marginBottom: "16px" }}>
-                <Text strong>Теги: </Text>
-                <Space size={[0, 8]} wrap>
-                  {post.tags.map((tag: any, i: number) => (
-                    <HashTag
-                      key={tag.id || i}
-                      tag={tag.name || tag}
-                      id={tag.id}
-                      index={i}
-                    />
-                  ))}
-                </Space>
-              </div>
-            )}
-
-            <div style={{ marginBottom: "16px" }}>
-              <Text strong>Создан: </Text>
-              <Text type="secondary">
-                {new Date(post.createdAt).toLocaleString()}
-              </Text>
-            </div>
-
-            <div style={{ marginBottom: "16px" }}>
-              <Text strong>Обновлен: </Text>
-              <Text type="secondary">
-                {new Date(post.updatedAt).toLocaleString()}
-              </Text>
-            </div>
+            <Text
+              type="secondary"
+              style={{ fontSize: isMobile ? "14px" : "16px" }}
+            >
+              {formatPublishDate(post.createdAt)}
+            </Text>
           </div>
 
-          {post.previewPicture && (
-            <div
-              style={{
-                width: isMobile ? "100%" : "200px",
-                maxWidth: isMobile ? "300px" : "200px",
-                margin: isMobile ? "0 auto" : "0",
-                flexShrink: 0,
-              }}
-            >
-              <Image
-                src={post.previewPicture.url}
-                alt={post.previewPicture.name}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  borderRadius: "8px",
-                  margin: isMobile ? "0" : "24px 0",
-                }}
-              />
-            </div>
-          )}
-        </div>
-
-        {post.text && (
+          {/* Основной контент */}
           <div
             style={{
-              margin: isMobile ? "8px 0" : "16px 0",
-              borderTop: "1px solid #f0f0f0",
-              paddingTop: isMobile ? "8px" : "16px",
+              display: "grid",
+              gridTemplateColumns: isMobile
+                ? "1fr"
+                : "minmax(0, 2fr) minmax(300px, 1fr)",
+              gap: "24px",
+              alignItems: "center",
             }}
           >
+            {/* Изображение */}
+            {post.previewPicture && (
+              <div
+                style={{
+                  width: "100%",
+                  maxHeight: isMobile ? "50vh" : "31vh",
+                  overflow: "hidden",
+                  borderRadius: "8px",
+                  backgroundColor: "#f5f5f5",
+                }}
+              >
+                <Image
+                  src={post.previewPicture.url}
+                  alt={post.previewPicture.name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                  preview={{
+                    mask: "Увеличить",
+                  }}
+                />
+              </div>
+            )}
+
             <div
               style={{
                 background: "#fafafa",
-                padding: isMobile ? "12px" : "16px",
-                borderRadius: "6px",
-                whiteSpace: "pre-wrap",
-                fontSize: isMobile ? "14px" : "16px",
-                lineHeight: "1.6",
-                wordBreak: "break-word",
+                padding: "20px",
+                borderRadius: "8px",
+                height:
+                  isMobile || !post.previewPicture ? "auto" : "fit-content",
+                minHeight: isMobile || !post.previewPicture ? "auto" : "200px",
               }}
             >
-              {post.text}
+              <Space
+                direction="vertical"
+                size="middle"
+                style={{ width: "100%" }}
+              >
+                {post.author && (
+                  <div>
+                    <Text
+                      type="secondary"
+                      style={{ display: "block", marginBottom: "8px" }}
+                    >
+                      Автор
+                    </Text>
+                    <Space>
+                      <Avatar
+                        src={post.author.avatar?.url}
+                        icon={<UserOutlined />}
+                        size="small"
+                      />
+                      <Text>{post.author.fullName}</Text>
+                    </Space>
+                  </div>
+                )}
+
+                {post.tags && post.tags.length > 0 && (
+                  <div>
+                    <Text
+                      type="secondary"
+                      style={{ display: "block", marginBottom: "8px" }}
+                    >
+                      Теги
+                    </Text>
+                    <Space size={[0, 8]} wrap>
+                      {post.tags.map((tag: any, i: number) => (
+                        <HashTag
+                          key={tag.id || i}
+                          tag={tag.name || tag}
+                          id={tag.id}
+                          index={i}
+                        />
+                      ))}
+                    </Space>
+                  </div>
+                )}
+
+                <div>
+                  <Text
+                    type="secondary"
+                    style={{ display: "block", marginBottom: "8px" }}
+                  >
+                    Код статьи
+                  </Text>
+                  <Text code style={{ fontSize: "14px" }}>
+                    {post.code}
+                  </Text>
+                </div>
+              </Space>
             </div>
           </div>
-        )}
+
+          {post.text && (
+            <div>
+              <Paragraph
+                style={{
+                  fontSize: isMobile ? "16px" : "18px",
+                  lineHeight: "1.6",
+                  whiteSpace: "pre-wrap",
+                }}
+              >
+                {post.text}
+              </Paragraph>
+            </div>
+          )}
+
+          <div
+            style={{
+              borderTop: "1px solid #f0f0f0",
+              paddingTop: "16px",
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: isMobile ? "8px" : "24px",
+            }}
+          >
+            <div>
+              <Text type="secondary" italic>
+                Опубликовано {formatTimeDate(post.createdAt)}
+              </Text>
+              <br />
+              <Text type="secondary" italic>
+                Последнее ред. {formatTimeDate(post.updatedAt)}
+              </Text>
+            </div>
+          </div>
+        </div>
       </Card>
     </SafeAreaWrapper>
   );
