@@ -9,7 +9,12 @@ import {
   selectTagsLoading,
   selectTagsError,
 } from "../model/selectors";
-import { HashTag, useIsMobile, SafeAreaWrapper } from "../../../shared";
+import {
+  HashTag,
+  useIsMobile,
+  SafeAreaWrapper,
+  formatDateTime,
+} from "../../../shared";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -104,13 +109,13 @@ const TagDetailPage: React.FC = () => {
             <Text>{tag.sort}</Text>
           </div>
 
-          <div style={{ color: "#666", fontSize: isMobile ? "14px" : "16px" }}>
-            <Text type="secondary">
-              Создано: {new Date(tag.createdAt).toLocaleString()}
+          <div>
+            <Text type="secondary" italic>
+              Создан {formatDateTime(tag.createdAt)}
             </Text>
             <br />
-            <Text type="secondary">
-              Обновлено: {new Date(tag.updatedAt).toLocaleString()}
+            <Text type="secondary" italic>
+              Последнее ред. {formatDateTime(tag.updatedAt)}
             </Text>
           </div>
         </Space>

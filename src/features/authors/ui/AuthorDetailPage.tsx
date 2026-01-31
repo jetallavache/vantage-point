@@ -18,7 +18,7 @@ import {
   selectAuthorsLoading,
   selectAuthorsError,
 } from "../model/selectors";
-import { useIsMobile, SafeAreaWrapper } from "../../../shared";
+import { useIsMobile, SafeAreaWrapper, formatDateTime } from "../../../shared";
 
 const { Title, Text, Paragraph } = Typography;
 
@@ -131,19 +131,13 @@ const AuthorDetailPage: React.FC = () => {
 
         <Divider />
 
-        <div style={{ color: "#666" }}>
-          <Text type="secondary">
-            Создано:{" "}
-            {author
-              ? new Date(author.createdAt || Date.now()).toLocaleString()
-              : "--"}
+        <div>
+          <Text type="secondary" italic>
+            Добавлен {formatDateTime(author.createdAt)}
           </Text>
           <br />
-          <Text type="secondary">
-            Обновлено:{" "}
-            {author
-              ? new Date(author.updatedAt || Date.now()).toLocaleString()
-              : "--"}
+          <Text type="secondary" italic>
+            Последнее ред. {formatDateTime(author.updatedAt)}
           </Text>
         </div>
       </Card>
