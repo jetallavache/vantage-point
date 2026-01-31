@@ -26,6 +26,7 @@ export const LoginPage: React.FC = () => {
         display: "flex",
         justifyContent: "center",
         flexDirection: "column",
+        alignItems: "center",
         minHeight: isMobile ? "-webkit-fill-available" : "100vh",
         padding: "16px",
         paddingBottom: "calc(20px + env(safe-area-inset-bottom))",
