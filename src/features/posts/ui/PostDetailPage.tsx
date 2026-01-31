@@ -5,13 +5,11 @@ import {
   Card,
   Typography,
   Image,
-  Tag,
   Space,
   Button,
   Result,
   Spin,
   Avatar,
-  Divider,
 } from "antd";
 import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
 import { fetchPostDetailRequest } from "../model/actions";
@@ -52,7 +50,6 @@ const formatTimeDate = (dateString: string): string => {
     day: "numeric",
     month: "long",
     year: "numeric",
-
     hour: "2-digit",
     minute: "2-digit",
   };
@@ -139,7 +136,6 @@ const PostDetailPage: React.FC = () => {
 
       <Card title={`Пост #${post.id}`}>
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          {/* Заголовок и дата */}
           <div>
             <Title
               level={2}
@@ -155,7 +151,6 @@ const PostDetailPage: React.FC = () => {
             </Text>
           </div>
 
-          {/* Основной контент */}
           <div
             style={{
               display: "grid",
@@ -166,7 +161,6 @@ const PostDetailPage: React.FC = () => {
               alignItems: "center",
             }}
           >
-            {/* Изображение */}
             {post.previewPicture && (
               <div
                 style={{
