@@ -29,4 +29,12 @@ export const tagsApi = {
   deleteTag: (id: number) => {
     return apiClient.delete(`/manage/tags/remove?id=${id}`);
   },
+
+  bulkDeleteTags: (ids: number[]) => {
+    const params = new URLSearchParams();
+    ids.forEach((id) => params.append("id", id.toString()));
+    return apiClient.delete(
+      `/manage/tags/multiple-remove?${params.toString()}`
+    );
+  },
 };

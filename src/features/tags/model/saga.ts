@@ -15,6 +15,9 @@ import {
   deleteTagRequest,
   deleteTagSuccess,
   deleteTagFailure,
+  deleteBulkTagsRequest,
+  deleteBulkTagsSuccess,
+  deleteBulkTagsFailure,
 } from "./actions";
 import { tagsApi } from "../api";
 import { ApiException } from "../../../shared";
@@ -111,10 +114,26 @@ function* deleteTagSaga(
   }
 }
 
+function* bulkDeleteTagsSaga(
+  action: ReturnType<typeof deleteBulkTagsRequest>
+): Generator<any, void, any> {
+  try {
+    yield call(tagsApi.bulkDeleteTags, action.payload);
+    yield put(deleteBulkTagsSuccess(action.payload));
+    const { message } = yield import("antd");
+    message.success(`Теги: ${action.payload.toLocaleString()} удалены`);
+  } catch (error) {
+    const message =
+      error instanceof ApiException ? error.message : "Ошибка удаления тегов";
+    yield put(deleteBulkTagsFailure(message));
+  }
+}
+
 export function* tagsSaga(): Generator<any, void, any> {
   yield takeEvery(fetchTagsRequest.type, fetchTagsSaga);
   yield takeEvery(fetchTagDetailRequest.type, fetchTagDetailSaga);
   yield takeEvery(createTagRequest.type, createTagSaga);
   yield takeEvery(updateTagRequest.type, updateTagSaga);
   yield takeEvery(deleteTagRequest.type, deleteTagSaga);
+  yield takeEvery(deleteBulkTagsRequest.type, bulkDeleteTagsSaga);
 }
