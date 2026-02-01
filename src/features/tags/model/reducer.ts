@@ -111,7 +111,6 @@ export const tagsReducer = createReducer(initialState, (builder) => {
     })
     .addCase(deleteBulkTagsSuccess, (state, action) => {
       state.loading = false;
-
       state.items = state.items.filter(
         (item) => !action.payload.includes(item.id)
       );

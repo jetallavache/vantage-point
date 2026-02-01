@@ -3,7 +3,7 @@ export {
   AdminLayout,
   SafeAreaWrapper,
   HashTag,
-  TagsTableToolbar,
+  MultipleRemoveItem,
 } from "./ui";
 export { apiClient, tokenStorage, ApiException } from "./api";
 export { store, history } from "./store";

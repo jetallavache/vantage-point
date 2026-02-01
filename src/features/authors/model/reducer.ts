@@ -17,6 +17,9 @@ import {
   deleteAuthorRequest,
   deleteAuthorSuccess,
   deleteAuthorFailure,
+  deleteBulkAuthorsRequest,
+  deleteBulkAuthorsSuccess,
+  deleteBulkAuthorsFailure,
 } from "./actions";
 
 const initialState: AuthorsState = {
@@ -103,6 +106,21 @@ export const authorsReducer = createReducer(initialState, (builder) => {
       state.total = Math.max(0, state.total - 1);
     })
     .addCase(deleteAuthorFailure, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    })
+    .addCase(deleteBulkAuthorsRequest, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(deleteBulkAuthorsSuccess, (state, action) => {
+      state.loading = false;
+      state.items = state.items.filter(
+        (item) => !action.payload.includes(item.id)
+      );
+      state.total = Math.max(0, state.total - action.payload.length);
+    })
+    .addCase(deleteBulkAuthorsFailure, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });

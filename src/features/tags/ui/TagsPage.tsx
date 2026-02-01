@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Space, Popconfirm, Tag, Tooltip, Modal } from "antd";
+import { Table, Button, Space, Popconfirm, Tooltip, Modal } from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -13,8 +13,9 @@ import {
   selectTagsLoading,
   selectTagsPagination,
 } from "../model/selectors";
-import { HashTag, useIsMobile, TagsTableToolbar } from "../../../shared";
+import { HashTag, useIsMobile, MultipleRemoveItem } from "../../../shared";
 import { TableRowSelection } from "antd/es/table/interface";
+import { Tag } from "../model/types";
 
 const TagsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -25,7 +26,7 @@ const TagsPage: React.FC = () => {
   const isMobile = useIsMobile();
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
-  const rowSelection: TableRowSelection<typeof Tag> = {
+  const rowSelection: TableRowSelection<Tag> = {
     selectedRowKeys,
     onChange: (keys) => {
       setSelectedRowKeys(keys as number[]);
@@ -45,10 +46,6 @@ const TagsPage: React.FC = () => {
       },
     });
   };
-
-  useEffect(() => {
-    console.log(selectedRowKeys);
-  }, [selectedRowKeys]);
 
   useEffect(() => {
     dispatch(fetchTagsRequest({ page: 1 }));
@@ -154,7 +151,7 @@ const TagsPage: React.FC = () => {
           alignItems: "center",
         }}
       >
-        <TagsTableToolbar
+        <MultipleRemoveItem
           selectedCount={selectedRowKeys.length}
           onBulkDelete={handleBulkDelete}
         />

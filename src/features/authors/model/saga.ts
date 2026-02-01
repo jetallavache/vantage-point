@@ -15,6 +15,9 @@ import {
   deleteAuthorRequest,
   deleteAuthorSuccess,
   deleteAuthorFailure,
+  deleteBulkAuthorsRequest,
+  deleteBulkAuthorsSuccess,
+  deleteBulkAuthorsFailure,
 } from "./actions";
 import { authorsApi } from "../api";
 import { ApiException } from "../../../shared";
@@ -116,10 +119,26 @@ function* deleteAuthorSaga(
   }
 }
 
+function* bulkDeleteAuthorsSaga(
+  action: ReturnType<typeof deleteBulkAuthorsRequest>
+): Generator<any, void, any> {
+  try {
+    yield call(authorsApi.bulkDeleteAuthors, action.payload);
+    yield put(deleteBulkAuthorsSuccess(action.payload));
+    const { message } = yield import("antd");
+    message.success(`Авторы: ${action.payload.toLocaleString()} удалены`);
+  } catch (error) {
+    const message =
+      error instanceof ApiException ? error.message : "Ошибка удаления авторов";
+    yield put(deleteBulkAuthorsFailure(message));
+  }
+}
+
 export function* authorsSaga(): Generator<any, void, any> {
   yield takeEvery(fetchAuthorsRequest.type, fetchAuthorsSaga);
   yield takeEvery(fetchAuthorDetailRequest.type, fetchAuthorDetailSaga);
   yield takeEvery(createAuthorRequest.type, createAuthorSaga);
   yield takeEvery(updateAuthorRequest.type, updateAuthorSaga);
   yield takeEvery(deleteAuthorRequest.type, deleteAuthorSaga);
+  yield takeEvery(deleteBulkAuthorsRequest.type, bulkDeleteAuthorsSaga);
 }

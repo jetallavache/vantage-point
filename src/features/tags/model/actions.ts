@@ -42,11 +42,11 @@ export const deleteTagSuccess = createAction<number>("tags/deleteTagSuccess");
 export const deleteTagFailure = createAction<string>("tags/deleteTagFailure");
 
 export const deleteBulkTagsRequest = createAction<number[]>(
-  "tags/deleteBulkTagRequest"
+  "tags/deleteBulkTagsRequest"
 );
 export const deleteBulkTagsSuccess = createAction<number[]>(
-  "tags/deleteBulkTagSuccess"
+  "tags/deleteBulkTagsSuccess"
 );
 export const deleteBulkTagsFailure = createAction<string>(
-  "tags/deleteBulkTagFailure"
+  "tags/deleteBulkTagsFailure"
 );

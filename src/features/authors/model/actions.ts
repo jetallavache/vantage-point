@@ -4,18 +4,15 @@ import {
   CreateAuthorRequest,
   UpdateAuthorRequest,
   FetchAuthorsRequest,
+  FetchAuthorsSuccess,
 } from "./types";
 
 export const fetchAuthorsRequest = createAction<FetchAuthorsRequest>(
   "authors/fetchAuthorsRequest"
 );
-export const fetchAuthorsSuccess = createAction<{
-  items: Author[];
-  currentPage: number;
-  totalPages: number;
-  total: number;
-  perPage: number;
-}>("authors/fetchAuthorsSuccess");
+export const fetchAuthorsSuccess = createAction<FetchAuthorsSuccess>(
+  "authors/fetchAuthorsSuccess"
+);
 export const fetchAuthorsFailure = createAction<string>(
   "authors/fetchAuthorsFailure"
 );
@@ -60,4 +57,14 @@ export const deleteAuthorSuccess = createAction<number>(
 );
 export const deleteAuthorFailure = createAction<string>(
   "authors/deleteAuthorFailure"
+);
+
+export const deleteBulkAuthorsRequest = createAction<number[]>(
+  "Authors/deleteBulkAuthorsRequest"
+);
+export const deleteBulkAuthorsSuccess = createAction<number[]>(
+  "Authors/deleteBulkAuthorsSuccess"
+);
+export const deleteBulkAuthorsFailure = createAction<string>(
+  "Authors/deleteBulkAuthorsFailure"
 );

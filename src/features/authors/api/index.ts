@@ -57,4 +57,12 @@ export const authorsApi = {
   deleteAuthor: (id: number) => {
     return apiClient.delete(`/manage/authors/remove?id=${id}`);
   },
+
+  bulkDeleteAuthors: (ids: number[]) => {
+    const params = new URLSearchParams();
+    ids.forEach((id) => params.append("id", id.toString()));
+    return apiClient.delete(
+      `/manage/authors/multiple-remove?${params.toString()}`
+    );
+  },
 };

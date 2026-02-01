@@ -8,14 +8,13 @@ type Props = {
   onBulkDelete: () => void;
 };
 
-export const TagsTableToolbar = ({ selectedCount, onBulkDelete }: Props) => {
+export const MultipleRemoveItem = ({ selectedCount, onBulkDelete }: Props) => {
   return (
     <Space
       style={{
         width: "100%",
         justifyContent: "flex-start",
         gap: "1em",
-        // marginBottom: 12,
       }}
     >
       <Button
@@ -28,7 +27,7 @@ export const TagsTableToolbar = ({ selectedCount, onBulkDelete }: Props) => {
       </Button>
 
       <Text type="secondary">
-        {selectedCount > 0 && `Выбрано тегов: ${selectedCount}`}
+        {selectedCount > 0 && `Выбрано: ${selectedCount}`}
       </Text>
     </Space>
   );
