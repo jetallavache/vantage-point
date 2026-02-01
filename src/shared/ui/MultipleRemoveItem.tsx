@@ -1,5 +1,6 @@
 import { Button, Space, Typography } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { useIsMobile } from "../hooks";
 
 const { Text } = Typography;
 
@@ -9,6 +10,8 @@ type Props = {
 };
 
 export const MultipleRemoveItem = ({ selectedCount, onBulkDelete }: Props) => {
+  const isMobil = useIsMobile();
+
   return (
     <Space
       style={{
@@ -22,6 +25,7 @@ export const MultipleRemoveItem = ({ selectedCount, onBulkDelete }: Props) => {
         icon={<DeleteOutlined />}
         disabled={selectedCount === 0}
         onClick={onBulkDelete}
+        size={isMobil ? "small" : "middle"}
       >
         Удалить
       </Button>

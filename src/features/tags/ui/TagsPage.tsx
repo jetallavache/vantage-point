@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Space, Popconfirm, Tooltip, Modal } from "antd";
+import {
+  Table,
+  Button,
+  Space,
+  Popconfirm,
+  Tooltip,
+  Modal,
+  message,
+} from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -43,6 +51,7 @@ const TagsPage: React.FC = () => {
       onOk: () => {
         dispatch(deleteBulkTagsRequest(selectedRowKeys));
         setSelectedRowKeys([]);
+        message.success(`Теги: ${selectedRowKeys.toLocaleString()} удалены`);
       },
     });
   };

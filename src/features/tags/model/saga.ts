@@ -75,8 +75,6 @@ function* createTagSaga(
   try {
     const response: any = yield call(tagsApi.createTag, action.payload);
     yield put(createTagSuccess(response));
-    const { message } = yield import("antd");
-    message.success("Тег создан");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка создания тега";
@@ -90,8 +88,6 @@ function* updateTagSaga(
   try {
     const response: any = yield call(tagsApi.updateTag, action.payload);
     yield put(updateTagSuccess(response));
-    const { message } = yield import("antd");
-    message.success("Тег обновлен");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка обновления тега";
@@ -105,8 +101,6 @@ function* deleteTagSaga(
   try {
     yield call(tagsApi.deleteTag, action.payload);
     yield put(deleteTagSuccess(action.payload));
-    const { message } = yield import("antd");
-    message.success("Тег удален");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка удаления тега";
@@ -120,8 +114,6 @@ function* bulkDeleteTagsSaga(
   try {
     yield call(tagsApi.bulkDeleteTags, action.payload);
     yield put(deleteBulkTagsSuccess(action.payload));
-    const { message } = yield import("antd");
-    message.success(`Теги: ${action.payload.toLocaleString()} удалены`);
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка удаления тегов";

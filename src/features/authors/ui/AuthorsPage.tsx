@@ -8,6 +8,7 @@ import {
   Tooltip,
   Tag,
   Modal,
+  message,
 } from "antd";
 import {
   PlusOutlined,
@@ -57,6 +58,7 @@ const AuthorsPage: React.FC = () => {
       onOk: () => {
         dispatch(deleteBulkAuthorsRequest(selectedRowKeys));
         setSelectedRowKeys([]);
+        message.success(`Авторы: ${selectedRowKeys.toLocaleString()} удалены`);
       },
     });
   };

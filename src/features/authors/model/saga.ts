@@ -78,8 +78,6 @@ function* createAuthorSaga(
   try {
     const response: any = yield call(authorsApi.createAuthor, action.payload);
     yield put(createAuthorSuccess(response));
-    const { message } = yield import("antd");
-    message.success("Автор создан");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка создания автора";
@@ -93,8 +91,6 @@ function* updateAuthorSaga(
   try {
     const response: any = yield call(authorsApi.updateAuthor, action.payload);
     yield put(updateAuthorSuccess(response));
-    const { message } = yield import("antd");
-    message.success("Автор обновлен");
   } catch (error) {
     const message =
       error instanceof ApiException
@@ -110,8 +106,6 @@ function* deleteAuthorSaga(
   try {
     yield call(authorsApi.deleteAuthor, action.payload);
     yield put(deleteAuthorSuccess(action.payload));
-    const { message } = yield import("antd");
-    message.success("Автор удален");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка удаления автора";
@@ -125,8 +119,6 @@ function* bulkDeleteAuthorsSaga(
   try {
     yield call(authorsApi.bulkDeleteAuthors, action.payload);
     yield put(deleteBulkAuthorsSuccess(action.payload));
-    const { message } = yield import("antd");
-    message.success(`Авторы: ${action.payload.toLocaleString()} удалены`);
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка удаления авторов";
