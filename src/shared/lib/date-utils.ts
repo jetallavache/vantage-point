@@ -4,8 +4,10 @@ export const formatPublishDate = (dateString: string): string => {
   const diffTime = Math.abs(now.getTime() - date.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 1) return "вчера";
-  if (diffDays <= 7) return `${diffDays} дня назад`;
+  if (diffDays === 0) return "Сегодня";
+  if (diffDays === 1) return "Вчера";
+  if (diffDays <= 4) return `${diffDays} дня назад`;
+  if (diffDays <= 7) return `${diffDays} дней назад`;
 
   const options: Intl.DateTimeFormatOptions = {
     day: "numeric",
