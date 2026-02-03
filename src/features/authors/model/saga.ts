@@ -15,6 +15,9 @@ import {
   deleteAuthorRequest,
   deleteAuthorSuccess,
   deleteAuthorFailure,
+  deleteBulkAuthorsRequest,
+  deleteBulkAuthorsSuccess,
+  deleteBulkAuthorsFailure,
 } from "./actions";
 import { authorsApi } from "../api";
 import { ApiException } from "../../../shared";
@@ -75,8 +78,6 @@ function* createAuthorSaga(
   try {
     const response: any = yield call(authorsApi.createAuthor, action.payload);
     yield put(createAuthorSuccess(response));
-    const { message } = yield import("antd");
-    message.success("Автор создан");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка создания автора";
@@ -90,8 +91,6 @@ function* updateAuthorSaga(
   try {
     const response: any = yield call(authorsApi.updateAuthor, action.payload);
     yield put(updateAuthorSuccess(response));
-    const { message } = yield import("antd");
-    message.success("Автор обновлен");
   } catch (error) {
     const message =
       error instanceof ApiException
@@ -107,12 +106,23 @@ function* deleteAuthorSaga(
   try {
     yield call(authorsApi.deleteAuthor, action.payload);
     yield put(deleteAuthorSuccess(action.payload));
-    const { message } = yield import("antd");
-    message.success("Автор удален");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка удаления автора";
     yield put(deleteAuthorFailure(message));
+  }
+}
+
+function* bulkDeleteAuthorsSaga(
+  action: ReturnType<typeof deleteBulkAuthorsRequest>
+): Generator<any, void, any> {
+  try {
+    yield call(authorsApi.bulkDeleteAuthors, action.payload);
+    yield put(deleteBulkAuthorsSuccess(action.payload));
+  } catch (error) {
+    const message =
+      error instanceof ApiException ? error.message : "Ошибка удаления авторов";
+    yield put(deleteBulkAuthorsFailure(message));
   }
 }
 
@@ -122,4 +132,5 @@ export function* authorsSaga(): Generator<any, void, any> {
   yield takeEvery(createAuthorRequest.type, createAuthorSaga);
   yield takeEvery(updateAuthorRequest.type, updateAuthorSaga);
   yield takeEvery(deleteAuthorRequest.type, deleteAuthorSaga);
+  yield takeEvery(deleteBulkAuthorsRequest.type, bulkDeleteAuthorsSaga);
 }

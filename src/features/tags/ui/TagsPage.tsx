@@ -1,15 +1,29 @@
-import React, { useEffect } from "react";
-import { Table, Button, Space, Popconfirm, Tag, Tooltip } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Table,
+  Button,
+  Space,
+  Popconfirm,
+  Tooltip,
+  Modal,
+  message,
+} from "antd";
 import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchTagsRequest, deleteTagRequest } from "../model/actions";
+import {
+  fetchTagsRequest,
+  deleteTagRequest,
+  deleteBulkTagsRequest,
+} from "../model/actions";
 import {
   selectTagsItems,
   selectTagsLoading,
   selectTagsPagination,
 } from "../model/selectors";
-import { HashTag, useIsMobile } from "../../../shared";
+import { HashTag, useIsMobile, MultipleRemoveItem } from "../../../shared";
+import { TableRowSelection } from "antd/es/table/interface";
+import { Tag } from "../model/types";
 
 const TagsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -18,6 +32,29 @@ const TagsPage: React.FC = () => {
   const loading = useSelector(selectTagsLoading);
   const pagination = useSelector(selectTagsPagination);
   const isMobile = useIsMobile();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+
+  const rowSelection: TableRowSelection<Tag> = {
+    selectedRowKeys,
+    onChange: (keys) => {
+      setSelectedRowKeys(keys as number[]);
+    },
+  };
+
+  const handleBulkDelete = () => {
+    Modal.confirm({
+      title: "Удалить выбранные теги?",
+      content: `Будет удалено тегов: ${selectedRowKeys.length}`,
+      okText: "Удалить",
+      cancelText: "Отмена",
+      okButtonProps: { danger: true },
+      onOk: () => {
+        dispatch(deleteBulkTagsRequest(selectedRowKeys));
+        setSelectedRowKeys([]);
+        message.success(`Теги: ${selectedRowKeys.toLocaleString()} удалены`);
+      },
+    });
+  };
 
   useEffect(() => {
     dispatch(fetchTagsRequest({ page: 1 }));
@@ -75,7 +112,7 @@ const TagsPage: React.FC = () => {
     {
       title: "Действия",
       key: "actions",
-      width: 80,
+      width: 85,
       fixed: "right" as any,
       render: (_: any, record: any) => (
         <Space onClick={(e) => e.stopPropagation()}>
@@ -123,6 +160,10 @@ const TagsPage: React.FC = () => {
           alignItems: "center",
         }}
       >
+        <MultipleRemoveItem
+          selectedCount={selectedRowKeys.length}
+          onBulkDelete={handleBulkDelete}
+        />
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -134,10 +175,11 @@ const TagsPage: React.FC = () => {
       </div>
 
       <Table
+        rowKey="id"
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={tags}
         loading={loading}
-        rowKey="id"
         size="small"
         onRow={(record) => ({
           onClick: () => handleViewDetail(record.id),

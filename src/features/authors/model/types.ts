@@ -42,3 +42,11 @@ export interface UpdateAuthorRequest extends CreateAuthorRequest {
 export interface FetchAuthorsRequest {
   page: number;
 }
+
+export interface FetchAuthorsSuccess {
+  items: Author[];
+  currentPage: number;
+  totalPages: number;
+  total: number;
+  perPage: number;
+}

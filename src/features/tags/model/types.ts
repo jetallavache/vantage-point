@@ -31,3 +31,11 @@ export interface UpdateTagRequest extends CreateTagRequest {
 export interface FetchTagsRequest {
   page: number;
 }
+
+export interface FetchTagsSuccess {
+  items: Tag[];
+  currentPage: number;
+  totalPages: number;
+  total: number;
+  perPage: number;
+}

@@ -15,6 +15,9 @@ import {
   deleteTagRequest,
   deleteTagSuccess,
   deleteTagFailure,
+  deleteBulkTagsRequest,
+  deleteBulkTagsSuccess,
+  deleteBulkTagsFailure,
 } from "./actions";
 import { tagsApi } from "../api";
 import { ApiException } from "../../../shared";
@@ -72,8 +75,6 @@ function* createTagSaga(
   try {
     const response: any = yield call(tagsApi.createTag, action.payload);
     yield put(createTagSuccess(response));
-    const { message } = yield import("antd");
-    message.success("Тег создан");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка создания тега";
@@ -87,8 +88,6 @@ function* updateTagSaga(
   try {
     const response: any = yield call(tagsApi.updateTag, action.payload);
     yield put(updateTagSuccess(response));
-    const { message } = yield import("antd");
-    message.success("Тег обновлен");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка обновления тега";
@@ -102,12 +101,23 @@ function* deleteTagSaga(
   try {
     yield call(tagsApi.deleteTag, action.payload);
     yield put(deleteTagSuccess(action.payload));
-    const { message } = yield import("antd");
-    message.success("Тег удален");
   } catch (error) {
     const message =
       error instanceof ApiException ? error.message : "Ошибка удаления тега";
     yield put(deleteTagFailure(message));
+  }
+}
+
+function* bulkDeleteTagsSaga(
+  action: ReturnType<typeof deleteBulkTagsRequest>
+): Generator<any, void, any> {
+  try {
+    yield call(tagsApi.bulkDeleteTags, action.payload);
+    yield put(deleteBulkTagsSuccess(action.payload));
+  } catch (error) {
+    const message =
+      error instanceof ApiException ? error.message : "Ошибка удаления тегов";
+    yield put(deleteBulkTagsFailure(message));
   }
 }
 
@@ -117,4 +127,5 @@ export function* tagsSaga(): Generator<any, void, any> {
   yield takeEvery(createTagRequest.type, createTagSaga);
   yield takeEvery(updateTagRequest.type, updateTagSaga);
   yield takeEvery(deleteTagRequest.type, deleteTagSaga);
+  yield takeEvery(deleteBulkTagsRequest.type, bulkDeleteTagsSaga);
 }

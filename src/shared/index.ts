@@ -1,4 +1,10 @@
-export { PrivateRoute, AdminLayout, SafeAreaWrapper, HashTag } from "./ui";
+export {
+  PrivateRoute,
+  AdminLayout,
+  SafeAreaWrapper,
+  HashTag,
+  MultipleRemoveItem,
+} from "./ui";
 export { apiClient, tokenStorage, ApiException } from "./api";
 export { store, history } from "./store";
 export { useIsMobile } from "./hooks";

@@ -4,18 +4,15 @@ import {
   CreateTagRequest,
   UpdateTagRequest,
   FetchTagsRequest,
+  FetchTagsSuccess,
 } from "./types";
 
 export const fetchTagsRequest = createAction<FetchTagsRequest>(
   "tags/fetchTagsRequest"
 );
-export const fetchTagsSuccess = createAction<{
-  items: Tag[];
-  currentPage: number;
-  totalPages: number;
-  total: number;
-  perPage: number;
-}>("tags/fetchTagsSuccess");
+export const fetchTagsSuccess = createAction<FetchTagsSuccess>(
+  "tags/fetchTagsSuccess"
+);
 export const fetchTagsFailure = createAction<string>("tags/fetchTagsFailure");
 
 export const fetchTagDetailRequest = createAction<number>(
@@ -43,3 +40,13 @@ export const updateTagFailure = createAction<string>("tags/updateTagFailure");
 export const deleteTagRequest = createAction<number>("tags/deleteTagRequest");
 export const deleteTagSuccess = createAction<number>("tags/deleteTagSuccess");
 export const deleteTagFailure = createAction<string>("tags/deleteTagFailure");
+
+export const deleteBulkTagsRequest = createAction<number[]>(
+  "tags/deleteBulkTagsRequest"
+);
+export const deleteBulkTagsSuccess = createAction<number[]>(
+  "tags/deleteBulkTagsSuccess"
+);
+export const deleteBulkTagsFailure = createAction<string>(
+  "tags/deleteBulkTagsFailure"
+);

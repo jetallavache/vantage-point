@@ -16,6 +16,9 @@ import {
   deleteTagRequest,
   deleteTagSuccess,
   deleteTagFailure,
+  deleteBulkTagsRequest,
+  deleteBulkTagsSuccess,
+  deleteBulkTagsFailure,
 } from "./actions";
 
 const initialState: TagsState = {
@@ -99,6 +102,21 @@ export const tagsReducer = createReducer(initialState, (builder) => {
       state.total = Math.max(0, state.total - 1);
     })
     .addCase(deleteTagFailure, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    })
+    .addCase(deleteBulkTagsRequest, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(deleteBulkTagsSuccess, (state, action) => {
+      state.loading = false;
+      state.items = state.items.filter(
+        (item) => !action.payload.includes(item.id)
+      );
+      state.total = Math.max(0, state.total - action.payload.length);
+    })
+    .addCase(deleteBulkTagsFailure, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });

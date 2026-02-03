@@ -121,7 +121,7 @@ const PostsPage: React.FC = () => {
     {
       title: "Действия",
       key: "actions",
-      width: 80,
+      width: 85,
       fixed: "right" as any,
       render: (_: any, record: any) => (
         <Space onClick={(e) => e.stopPropagation()}>

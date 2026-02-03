@@ -1,5 +1,15 @@
-import React, { useEffect } from "react";
-import { Table, Button, Space, Popconfirm, Avatar, Tooltip } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Table,
+  Button,
+  Space,
+  Popconfirm,
+  Avatar,
+  Tooltip,
+  Tag,
+  Modal,
+  message,
+} from "antd";
 import {
   PlusOutlined,
   EditOutlined,
@@ -8,13 +18,19 @@ import {
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchAuthorsRequest, deleteAuthorRequest } from "../model/actions";
+import {
+  fetchAuthorsRequest,
+  deleteAuthorRequest,
+  deleteBulkAuthorsRequest,
+} from "../model/actions";
 import {
   selectAuthorsItems,
   selectAuthorsLoading,
   selectAuthorsPagination,
 } from "../model/selectors";
-import { useIsMobile } from "../../../shared";
+import { MultipleRemoveItem, useIsMobile } from "../../../shared";
+import { TableRowSelection } from "antd/lib/table/interface";
+import { Author } from "../model/types";
 
 const AuthorsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -23,6 +39,29 @@ const AuthorsPage: React.FC = () => {
   const loading = useSelector(selectAuthorsLoading);
   const pagination = useSelector(selectAuthorsPagination);
   const isMobile = useIsMobile();
+  const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
+
+  const rowSelection: TableRowSelection<Author> = {
+    selectedRowKeys,
+    onChange: (keys) => {
+      setSelectedRowKeys(keys as number[]);
+    },
+  };
+
+  const handleBulkDelete = () => {
+    Modal.confirm({
+      title: "Удалить выбранных авторов?",
+      content: `Будет удалено авторов: ${selectedRowKeys.length}`,
+      okText: "Удалить",
+      cancelText: "Отмена",
+      okButtonProps: { danger: true },
+      onOk: () => {
+        dispatch(deleteBulkAuthorsRequest(selectedRowKeys));
+        setSelectedRowKeys([]);
+        message.success(`Авторы: ${selectedRowKeys.toLocaleString()} удалены`);
+      },
+    });
+  };
 
   useEffect(() => {
     dispatch(fetchAuthorsRequest({ page: 1 }));
@@ -76,7 +115,7 @@ const AuthorsPage: React.FC = () => {
     {
       title: "Действия",
       key: "actions",
-      width: 80,
+      width: 85,
       fixed: "right" as any,
       render: (_: any, record: any) => (
         <Space onClick={(e) => e.stopPropagation()}>
@@ -124,6 +163,10 @@ const AuthorsPage: React.FC = () => {
           alignItems: "center",
         }}
       >
+        <MultipleRemoveItem
+          selectedCount={selectedRowKeys.length}
+          onBulkDelete={handleBulkDelete}
+        />
         <Button
           type="primary"
           icon={<PlusOutlined />}
@@ -135,10 +178,11 @@ const AuthorsPage: React.FC = () => {
       </div>
 
       <Table
+        rowKey="id"
+        rowSelection={rowSelection}
         columns={columns}
         dataSource={authors}
         loading={loading}
-        rowKey="id"
         size="small"
         onRow={(record) => ({
           onClick: () => handleViewDetail(record.id),
