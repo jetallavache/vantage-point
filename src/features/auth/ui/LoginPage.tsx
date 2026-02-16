@@ -5,32 +5,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { loginRequest } from "../model/actions";
 import { selectAuthLoading, selectAuthError } from "../model/selectors";
 import { loginSchema, LoginFormData } from "../validation/schemas";
-import { useIsMobile } from "../../../shared";
+import { SafeAreaWrapper, useIsMobile, useZodRules } from "../../../shared";
 
 export const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
   const loading = useSelector(selectAuthLoading);
   const error = useSelector(selectAuthError);
   const isMobile = useIsMobile();
+  const [form] = Form.useForm<LoginFormData>();
+  const rules = useZodRules(loginSchema);
 
   const onFinish = (values: LoginFormData) => {
-    const result = loginSchema.safeParse(values);
-    if (result.success) {
-      dispatch(loginRequest(result.data));
-    }
+    dispatch(loginRequest(values));
   };
 
   return (
-    <div
+    <SafeAreaWrapper
       style={{
         display: "flex",
-        justifyContent: "center",
         flexDirection: "column",
+        justifyContent: "center",
         alignItems: "center",
-        minHeight: isMobile ? "-webkit-fill-available" : "100vh",
-        padding: "16px",
-        paddingBottom: "calc(20px + env(safe-area-inset-bottom))",
-        background: "var(--ant-color-bg-layout)",
       }}
     >
       <Card
@@ -57,18 +52,18 @@ export const LoginPage: React.FC = () => {
           />
         )}
 
-        <Form name="login" onFinish={onFinish} autoComplete="off" size="large">
-          <Form.Item
-            name="email"
-            rules={[{ required: true, message: "Введите email" }]}
-          >
+        <Form
+          form={form}
+          name="login"
+          onFinish={onFinish}
+          autoComplete="off"
+          size="large"
+        >
+          <Form.Item name="email" rules={rules.email}>
             <Input prefix={<UserOutlined />} placeholder="Email" type="email" />
           </Form.Item>
 
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: "Введите пароль" }]}
-          >
+          <Form.Item name="password" rules={rules.password}>
             <Input.Password prefix={<LockOutlined />} placeholder="Пароль" />
           </Form.Item>
 
@@ -79,6 +74,6 @@ export const LoginPage: React.FC = () => {
           </Form.Item>
         </Form>
       </Card>
-    </div>
+    </SafeAreaWrapper>
   );
 };
