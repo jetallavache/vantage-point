@@ -6,16 +6,18 @@ import { authReducer } from "../../features/auth/model/reducer";
 import { postsReducer } from "../../features/posts/model/reducer";
 import { authorsReducer } from "../../features/authors/model/reducer";
 import { tagsReducer } from "../../features/tags/model/reducer";
+import { menuReducer } from "../../features/menu/model/reducer";
 import { authSaga } from "../../features/auth/model/saga";
 import { postsSaga } from "../../features/posts/model/saga";
 import { authorsSaga } from "../../features/authors/model/saga";
 import { tagsSaga } from "../../features/tags/model/saga";
+import { menuSaga } from "../../features/menu/model/saga";
 
 export const history = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware();
 
 function* rootSaga(): Generator<any, void, any> {
-  yield all([authSaga(), postsSaga(), authorsSaga(), tagsSaga()]);
+  yield all([authSaga(), postsSaga(), authorsSaga(), tagsSaga(), menuSaga()]);
 }
 
 export const store = configureStore({
@@ -24,6 +26,7 @@ export const store = configureStore({
     posts: postsReducer,
     authors: authorsReducer,
     tags: tagsReducer,
+    menu: menuReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
