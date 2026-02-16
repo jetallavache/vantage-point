@@ -9,7 +9,8 @@ import {
   refreshTokenFailure,
 } from "./actions";
 import { authApi } from "../api";
-import { tokenStorage, ApiException } from "../../../shared";
+import { tokenStorage } from "../../../shared";
+import { showApiError } from "../../../shared/lib";
 import { TokenResponse } from "./types";
 
 function* loginSaga(
@@ -24,9 +25,8 @@ function* loginSaga(
 
     window.location.href = "/vantage-point/";
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка входа";
-    yield put(loginFailure(message));
+    yield call(showApiError, error);
+    yield put(loginFailure("Ошибка входа"));
   }
 }
 
