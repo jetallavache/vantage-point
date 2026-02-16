@@ -5,7 +5,7 @@ describe("Tag validation schemas", () => {
   describe("tagSchema", () => {
     it("should validate correct tag data", () => {
       const validData = {
-        code: "react",
+        code: "12",
         name: "React",
         sort: 1,
       };
