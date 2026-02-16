@@ -20,25 +20,23 @@ import {
   deleteBulkAuthorsFailure,
 } from "./actions";
 import { authorsApi } from "../api";
-import { ApiException } from "../../../shared";
+import { showApiError } from "../../../shared/lib";
 
 function* fetchAuthorsSaga(
   action: ReturnType<typeof fetchAuthorsRequest>
 ): Generator<any, void, any> {
   try {
     const { page } = action.payload;
-
     const response: any = yield call(authorsApi.fetchAuthors, page);
 
     const headers = response.headers || {};
-
     const totalCount = parseInt(headers["x-pagination-total-count"] || "0", 10);
     const pageCount = parseInt(headers["x-pagination-page-count"] || "1", 10);
     const currentPage = parseInt(
       headers["x-pagination-current-page"] || "1",
       10
     );
-    const itemsPerPage = parseInt(headers["x-pagination-per-page"] || "9", 10);
+    const itemsPerPage = parseInt(headers["x-pagination-per-page"] || "10", 10);
 
     yield put(
       fetchAuthorsSuccess({
@@ -50,9 +48,8 @@ function* fetchAuthorsSaga(
       })
     );
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка загрузки авторов";
-    yield put(fetchAuthorsFailure(message));
+    yield call(showApiError, error);
+    yield put(fetchAuthorsFailure("Ошибка загрузки авторов"));
   }
 }
 
@@ -66,9 +63,8 @@ function* fetchAuthorDetailSaga(
     );
     yield put(fetchAuthorDetailSuccess(response.data || response));
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка загрузки автора";
-    yield put(fetchAuthorDetailFailure(message));
+    yield call(showApiError, error);
+    yield put(fetchAuthorDetailFailure("Ошибка загрузки автора"));
   }
 }
 
@@ -76,12 +72,12 @@ function* createAuthorSaga(
   action: ReturnType<typeof createAuthorRequest>
 ): Generator<any, void, any> {
   try {
-    const response: any = yield call(authorsApi.createAuthor, action.payload);
-    yield put(createAuthorSuccess(response));
+    yield call(authorsApi.createAuthor, action.payload);
+    yield put(createAuthorSuccess());
+    window.location.href = "/vantage-point/authors";
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка создания автора";
-    yield put(createAuthorFailure(message));
+    yield call(showApiError, error);
+    yield put(createAuthorFailure("Ошибка создания автора"));
   }
 }
 
@@ -89,14 +85,12 @@ function* updateAuthorSaga(
   action: ReturnType<typeof updateAuthorRequest>
 ): Generator<any, void, any> {
   try {
-    const response: any = yield call(authorsApi.updateAuthor, action.payload);
-    yield put(updateAuthorSuccess(response));
+    yield call(authorsApi.updateAuthor, action.payload);
+    yield put(updateAuthorSuccess());
+    window.location.href = "/vantage-point/authors";
   } catch (error) {
-    const message =
-      error instanceof ApiException
-        ? error.message
-        : "Ошибка обновления автора";
-    yield put(updateAuthorFailure(message));
+    yield call(showApiError, error);
+    yield put(updateAuthorFailure("Ошибка обновления автора"));
   }
 }
 
@@ -107,22 +101,20 @@ function* deleteAuthorSaga(
     yield call(authorsApi.deleteAuthor, action.payload);
     yield put(deleteAuthorSuccess(action.payload));
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка удаления автора";
-    yield put(deleteAuthorFailure(message));
+    yield call(showApiError, error);
+    yield put(deleteAuthorFailure("Ошибка удаления автора"));
   }
 }
 
-function* bulkDeleteAuthorsSaga(
+function* deleteBulkAuthorsSaga(
   action: ReturnType<typeof deleteBulkAuthorsRequest>
 ): Generator<any, void, any> {
   try {
-    yield call(authorsApi.bulkDeleteAuthors, action.payload);
+    yield call(authorsApi.deleteBulkAuthors, action.payload);
     yield put(deleteBulkAuthorsSuccess(action.payload));
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка удаления авторов";
-    yield put(deleteBulkAuthorsFailure(message));
+    yield call(showApiError, error);
+    yield put(deleteBulkAuthorsFailure("Ошибка массового удаления авторов"));
   }
 }
 
@@ -132,5 +124,5 @@ export function* authorsSaga(): Generator<any, void, any> {
   yield takeEvery(createAuthorRequest.type, createAuthorSaga);
   yield takeEvery(updateAuthorRequest.type, updateAuthorSaga);
   yield takeEvery(deleteAuthorRequest.type, deleteAuthorSaga);
-  yield takeEvery(deleteBulkAuthorsRequest.type, bulkDeleteAuthorsSaga);
+  yield takeEvery(deleteBulkAuthorsRequest.type, deleteBulkAuthorsSaga);
 }
