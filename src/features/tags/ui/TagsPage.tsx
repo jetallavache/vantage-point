@@ -16,12 +16,13 @@ import {
   deleteTagRequest,
   deleteBulkTagsRequest,
 } from "../model/actions";
+import { selectTagsItems, selectTagsLoading } from "../model/selectors";
 import {
-  selectTagsItems,
-  selectTagsLoading,
-  selectTagsPagination,
-} from "../model/selectors";
-import { HashTag, useIsMobile, MultipleRemoveItem } from "../../../shared";
+  HashTag,
+  useIsMobile,
+  MultipleRemoveItem,
+  SafeAreaWrapper,
+} from "../../../shared";
 import { TableRowSelection } from "antd/es/table/interface";
 import { Tag } from "../model/types";
 
@@ -30,7 +31,6 @@ const TagsPage: React.FC = () => {
   const navigate = useNavigate();
   const tags = useSelector(selectTagsItems);
   const loading = useSelector(selectTagsLoading);
-  const pagination = useSelector(selectTagsPagination);
   const isMobile = useIsMobile();
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
@@ -62,10 +62,6 @@ const TagsPage: React.FC = () => {
 
   const handleDelete = (id: number) => {
     dispatch(deleteTagRequest(id));
-  };
-
-  const handlePageChange = (page: number) => {
-    dispatch(fetchTagsRequest({ page }));
   };
 
   const handleAdd = () => {
@@ -148,10 +144,8 @@ const TagsPage: React.FC = () => {
     },
   ];
 
-  const showPagination = pagination.total > pagination.pageSize;
-
   return (
-    <div style={{ padding: isMobile ? "8px" : "0" }}>
+    <SafeAreaWrapper>
       <div
         style={{
           marginBottom: 16,
@@ -186,26 +180,11 @@ const TagsPage: React.FC = () => {
           style: { cursor: "pointer" },
         })}
         scroll={{ x: 300 }}
-        pagination={
-          showPagination
-            ? {
-                current: pagination.current,
-                total: pagination.total,
-                pageSize: pagination.pageSize,
-                onChange: handlePageChange,
-                showSizeChanger: false,
-                showQuickJumper: true,
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} из ${total}`,
-                size: "small",
-              }
-            : false
-        }
         style={{
           fontSize: "14px",
         }}
       />
-    </div>
+    </SafeAreaWrapper>
   );
 };
 
