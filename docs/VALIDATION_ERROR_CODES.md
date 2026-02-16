@@ -1,0 +1,178 @@
+# Коды ошибок валидации
+
+Система кодов ошибок валидации форм для единообразной обработки и отображения ошибок пользователю.
+
+## Структура кода ошибки
+
+Каждое сообщение об ошибке валидации содержит:
+- **Текстовое описание** - понятное пользователю объяснение проблемы
+- **Код ошибки** - уникальный идентификатор типа ошибки в скобках
+
+**Формат**: `Описание ошибки (КОД)`
+
+**Пример**: `Укажите название статьи (001)` или `Обнаружено недопустимое содержимое (002)`
+
+## Категории кодов ошибок
+
+### 001-099: Общие ошибки
+
+| Код | Константа | Описание | Пример использования |
+|-----|-----------|----------|---------------------|
+| 001 | REQUIRED | Обязательное поле не заполнено | "Укажите название статьи (001)" |
+| 002 | SUSPICIOUS_CONTENT | Обнаружено потенциально опасное содержимое (XSS, инъекции) | "Обнаружено недопустимое содержимое (002)" |
+| 003 | INVALID_FORMAT | Неверный формат данных | "Неверный формат данных (003)" |
+
+### 100-199: Ошибки длины и диапазона
+
+| Код | Константа | Описание | Пример использования |
+|-----|-----------|----------|---------------------|
+| 100 | TOO_SHORT | Значение слишком короткое | "Текст статьи должен содержать минимум 10 символов (100)" |
+| 101 | TOO_LONG | Значение слишком длинное | "Название не должно превышать 400 символов (101)" |
+| 102 | OUT_OF_RANGE | Значение вне допустимого диапазона | "Код должен быть от 1 до 99999 (102)" |
+
+### 200-299: Ошибки формата
+
+| Код | Константа | Описание | Пример использования |
+|-----|-----------|----------|---------------------|
+| 200 | INVALID_EMAIL | Некорректный email адрес | "Укажите корректный email адрес (200)" |
+| 201 | INVALID_URL | Некорректный URL адрес | "Укажите корректный URL адрес (201)" |
+| 202 | INVALID_PATTERN | Значение не соответствует требуемому паттерну | "Значение не соответствует требуемому формату (202)" |
+| 203 | DIGITS_ONLY | Поле должно содержать только цифры | "Код должен содержать только цифры (203)" |
+| 204 | LETTERS_ONLY | Поле должно содержать только буквы | "Код должен содержать только буквы (204)" |
+
+### 300-399: Ошибки выбора
+
+| Код | Константа | Описание | Пример использования |
+|-----|-----------|----------|---------------------|
+| 300 | NO_SELECTION | Не выбран обязательный элемент | "Выберите автора статьи (300)" |
+| 301 | INVALID_SELECTION | Выбран недопустимый элемент | "Выбран недопустимый элемент (301)" |
+| 302 | MIN_SELECTION | Не выбрано минимальное количество элементов | "Выберите хотя бы один тег (302)" |
+
+## Использование в коде
+
+### Импорт
+
+```typescript
+import { ValidationErrorCodes, errorMsg } from "../../../shared/lib";
+```
+
+### Создание сообщения об ошибке
+
+```typescript
+// Базовое использование
+errorMsg("Укажите название статьи", ValidationErrorCodes.REQUIRED)
+// Результат: "Укажите название статьи (001)"
+
+// В Zod схеме
+export const postSchema = z.object({
+  title: z
+    .string()
+    .min(1, errorMsg("Укажите название статьи", ValidationErrorCodes.REQUIRED))
+    .max(400, errorMsg("Название не должно превышать 400 символов", ValidationErrorCodes.TOO_LONG))
+    .refine(
+      (val) => !hasSuspiciousContent(val), 
+      errorMsg("Обнаружено недопустимое содержимое", ValidationErrorCodes.SUSPICIOUS_CONTENT)
+    ),
+});
+```
+
+## Примеры по модулям
+
+### Посты (Posts)
+
+```typescript
+code: errorMsg("Укажите код статьи", ValidationErrorCodes.REQUIRED)
+code: errorMsg("Код должен содержать только цифры", ValidationErrorCodes.DIGITS_ONLY)
+code: errorMsg("Код должен быть от 1 до 99999", ValidationErrorCodes.OUT_OF_RANGE)
+
+title: errorMsg("Укажите название статьи", ValidationErrorCodes.REQUIRED)
+title: errorMsg("Название не должно превышать 400 символов", ValidationErrorCodes.TOO_LONG)
+title: errorMsg("Обнаружено недопустимое содержимое", ValidationErrorCodes.SUSPICIOUS_CONTENT)
+
+text: errorMsg("Текст статьи должен содержать минимум 10 символов", ValidationErrorCodes.TOO_SHORT)
+text: errorMsg("Текст статьи не должен превышать 1500 символов", ValidationErrorCodes.TOO_LONG)
+
+authorId: errorMsg("Выберите автора статьи", ValidationErrorCodes.NO_SELECTION)
+tagIds: errorMsg("Выберите хотя бы один тег", ValidationErrorCodes.MIN_SELECTION)
+```
+
+### Авторы (Authors)
+
+```typescript
+name: errorMsg("Укажите имя автора", ValidationErrorCodes.REQUIRED)
+name: errorMsg("Имя должно содержать минимум 2 символа", ValidationErrorCodes.TOO_SHORT)
+name: errorMsg("Имя не должно превышать 50 символов", ValidationErrorCodes.TOO_LONG)
+
+lastName: errorMsg("Укажите фамилию автора", ValidationErrorCodes.REQUIRED)
+description: errorMsg("Описание не должно превышать 1000 символов", ValidationErrorCodes.TOO_LONG)
+```
+
+### Теги (Tags)
+
+```typescript
+code: errorMsg("Укажите код тега", ValidationErrorCodes.REQUIRED)
+code: errorMsg("Код должен содержать только цифры", ValidationErrorCodes.DIGITS_ONLY)
+
+name: errorMsg("Укажите название тега", ValidationErrorCodes.REQUIRED)
+sort: errorMsg("Порядок сортировки не может быть отрицательным", ValidationErrorCodes.OUT_OF_RANGE)
+```
+
+### Аутентификация (Auth)
+
+```typescript
+email: errorMsg("Укажите корректный email адрес", ValidationErrorCodes.INVALID_EMAIL)
+password: errorMsg("Пароль должен содержать минимум 8 символов", ValidationErrorCodes.TOO_SHORT)
+```
+
+### Меню (Menu)
+
+```typescript
+id: errorMsg("Укажите ID типа меню", ValidationErrorCodes.REQUIRED)
+name: errorMsg("Укажите название пункта меню", ValidationErrorCodes.REQUIRED)
+url: errorMsg("Укажите корректный URL адрес", ValidationErrorCodes.INVALID_URL)
+sort: errorMsg("Порядок сортировки не может быть отрицательным", ValidationErrorCodes.OUT_OF_RANGE)
+```
+
+## Преимущества системы
+
+### Для разработчиков
+- **Единообразие** - все ошибки следуют одному формату
+- **Типобезопасность** - коды определены как константы TypeScript
+- **Легкость поддержки** - централизованное управление кодами
+- **Простота использования** - функция `errorMsg()` для генерации сообщений
+
+### Для пользователей
+- **Понятность** - четкие формулировки на русском языке
+- **Конкретность** - указывается что именно не так
+- **Идентификация** - код ошибки для обращения в поддержку
+
+### Для поддержки
+- **Быстрая диагностика** - по коду можно определить тип проблемы
+- **Логирование** - коды удобно использовать в логах и аналитике
+- **Документирование** - единая справочная система
+
+## Расширение системы
+
+Для добавления новых кодов ошибок:
+
+1. Добавьте константу в `ValidationErrorCodes`:
+```typescript
+export const ValidationErrorCodes = {
+  // ...существующие коды
+  NEW_ERROR: "400", // Новая категория
+} as const;
+```
+
+2. Обновите документацию в этом файле
+
+3. Используйте в схемах валидации:
+```typescript
+.refine(condition, errorMsg("Описание ошибки", ValidationErrorCodes.NEW_ERROR))
+```
+
+## Связанные файлы
+
+- **Определение кодов**: `src/shared/lib/validation-errors.ts`
+- **Схемы валидации**: `src/features/*/validation/schemas.ts`
+- **Защита от инъекций**: [SECURITY_INJECTIONS.md](./SECURITY_INJECTIONS.md)
+- **Тесты безопасности**: [SECURITY_TESTS.md](./SECURITY_TESTS.md)
