@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Form, Input, Button, Upload, Select, Card, Alert, Spin } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Upload,
+  Select,
+  Card,
+  Spin,
+  Typography,
+  message,
+} from "antd";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   createPostRequest,
@@ -17,15 +27,18 @@ import {
 } from "../model/selectors";
 import { selectTagsItems } from "../../tags/model/selectors";
 import { selectAuthorsItems } from "../../authors/model/selectors";
-import { useIsMobile, SafeAreaWrapper } from "../../../shared";
+import { useIsMobile, SafeAreaWrapper, useZodRules } from "../../../shared";
+import { PostFormData, postSchema } from "../validation/schemas";
 
 const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const PostFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<PostFormData>();
+  const rules = useZodRules(postSchema);
 
   const loading = useSelector(selectPostsLoading);
   const error = useSelector(selectPostsError);
@@ -34,7 +47,6 @@ const PostFormPage: React.FC = () => {
   const authors = useSelector(selectAuthorsItems);
 
   const [fileList, setFileList] = useState<any[]>([]);
-  const [validationErrors, _setValidationErrors] = useState<any>({});
   const isMobile = useIsMobile();
 
   const isEditing = !!id;
@@ -72,11 +84,17 @@ const PostFormPage: React.FC = () => {
     }
   }, [currentPost, isEditing, form]);
 
+  useEffect(() => {
+    if (error) {
+      message.error(error);
+    }
+  }, [error]);
+
   const handleBack = () => {
     navigate(-1);
   };
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: PostFormData) => {
     const data = {
       code: values.code,
       title: values.title,
@@ -91,6 +109,10 @@ const PostFormPage: React.FC = () => {
     } else {
       dispatch(createPostRequest(data));
     }
+
+    message.success(
+      isEditing ? "Статья успешно обновлена" : "Статья успешно создана"
+    );
   };
 
   const uploadProps = {
@@ -99,6 +121,34 @@ const PostFormPage: React.FC = () => {
     onChange: ({ fileList: newFileList }: any) => setFileList(newFileList),
     maxCount: 1,
     accept: "image/*",
+  };
+
+  const title = (isEditing: boolean, name: string | null) => {
+    return (
+      <span>
+        {isEditing ? (
+          <Text type="secondary" italic>
+            (ред.)
+          </Text>
+        ) : (
+          <Text type="warning" italic>
+            (new)
+          </Text>
+        )}{" "}
+        {name && (
+          <span
+            style={{
+              maxWidth: "auto",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {name}
+          </span>
+        )}
+      </span>
+    );
   };
 
   if (loading) {
@@ -121,45 +171,23 @@ const PostFormPage: React.FC = () => {
         {isMobile ? "Назад" : "Назад к списку"}
       </Button>
 
-      <Card title={isEditing ? "Редактировать пост" : "Добавить пост"}>
-        {error && (
-          <Alert
-            message="Ошибка"
-            description={error}
-            type="error"
-            style={{ marginBottom: 16 }}
-          />
+      <Card
+        title={title(
+          isEditing,
+          isEditing && currentPost ? currentPost?.title : "Новая статья"
         )}
-
+      >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item
-            name="code"
-            label="Код"
-            rules={[{ required: true, message: "Введите код поста" }]}
-            validateStatus={validationErrors.code ? "error" : ""}
-            help={validationErrors.code}
-          >
-            <Input placeholder="Уникальный код поста" />
+          <Form.Item name="code" label="Код статьи" rules={rules.code}>
+            <Input placeholder="99880" />
           </Form.Item>
 
-          <Form.Item
-            name="title"
-            label="Заголовок"
-            rules={[{ required: true, message: "Введите заголовок поста" }]}
-            validateStatus={validationErrors.title ? "error" : ""}
-            help={validationErrors.title}
-          >
-            <Input placeholder="Заголовок поста" />
+          <Form.Item name="title" label="Заголовок" rules={rules.title}>
+            <Input placeholder="Очень страшное кино..." />
           </Form.Item>
 
-          <Form.Item
-            name="authorId"
-            label="Автор"
-            rules={[{ required: true, message: "Выберите автора" }]}
-            validateStatus={validationErrors.authorId ? "error" : ""}
-            help={validationErrors.authorId}
-          >
-            <Select placeholder="Выберите автора">
+          <Form.Item name="authorId" label="Автор" rules={rules.authorId}>
+            <Select placeholder="Олег Константинович Малявский">
               {authors.map((author) => (
                 <Select.Option key={author.id} value={author.id}>
                   {`${author.lastName} ${author.name} ${author.secondName}`}
@@ -168,13 +196,8 @@ const PostFormPage: React.FC = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="tagIds"
-            label="Теги"
-            validateStatus={validationErrors.tagIds ? "error" : ""}
-            help={validationErrors.tagIds}
-          >
-            <Select mode="multiple" placeholder="Выберите теги">
+          <Form.Item name="tagIds" label="Теги" rules={rules.tagIds}>
+            <Select mode="multiple" placeholder="#кино #рецензия">
               {tags.map((tag) => (
                 <Select.Option key={tag.id} value={tag.id}>
                   {tag.name}
@@ -183,21 +206,17 @@ const PostFormPage: React.FC = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name="text"
-            label="Текст"
-            rules={[{ required: true, message: "Введите текст поста" }]}
-            validateStatus={validationErrors.text ? "error" : ""}
-            help={validationErrors.text}
-          >
-            <TextArea rows={6} placeholder="Содержание поста" />
+          <Form.Item name="text" label="Содержание" rules={rules.text}>
+            <TextArea
+              rows={6}
+              placeholder="Тут должен быть текст вашей статьи. Напишите подробно что хотели рассказать!"
+            />
           </Form.Item>
 
           <Form.Item
             name="previewPicture"
-            label="Превью изображение"
-            validateStatus={validationErrors.previewPicture ? "error" : ""}
-            help={validationErrors.previewPicture}
+            label="Обложка"
+            rules={rules.previewPicture}
           >
             <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />}>Выбрать файл</Button>
