@@ -6,6 +6,7 @@ import {
   TagOutlined,
   LogoutOutlined,
   MenuOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -41,6 +42,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       key: "/tags",
       icon: <TagOutlined />,
       label: "Теги",
+    },
+    {
+      key: "/menu",
+      icon: <AppstoreOutlined />,
+      label: "Меню",
     },
   ];
 

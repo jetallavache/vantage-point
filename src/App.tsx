@@ -31,6 +31,9 @@ const TagFormPage = React.lazy(() =>
 const TagDetailPage = React.lazy(() =>
   import("./features/tags").then((m) => ({ default: m.TagDetailPage }))
 );
+const MenuManagePage = React.lazy(() =>
+  import("./features/menu").then((m) => ({ default: m.MenuManagePage }))
+);
 
 const LoadingSpinner = () => (
   <div
@@ -211,6 +214,19 @@ function App() {
             <AdminLayout>
               <Suspense fallback={<LoadingSpinner />}>
                 <TagFormPage />
+              </Suspense>
+            </AdminLayout>
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path="/menu"
+        element={
+          <PrivateRoute>
+            <AdminLayout>
+              <Suspense fallback={<LoadingSpinner />}>
+                <MenuManagePage />
               </Suspense>
             </AdminLayout>
           </PrivateRoute>
