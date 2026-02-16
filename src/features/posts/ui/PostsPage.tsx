@@ -4,7 +4,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchPostsRequest, deletePostRequest } from "../model/actions";
-import { HashTag, useIsMobile } from "../../../shared";
+import { HashTag, SafeAreaWrapper, useIsMobile } from "../../../shared";
 import {
   selectPostsItems,
   selectPostsLoading,
@@ -63,7 +63,7 @@ const PostsPage: React.FC = () => {
       title: "Код",
       dataIndex: "code",
       key: "code",
-      width: 50,
+      width: 60,
     },
     {
       title: "Заголовок",
@@ -157,10 +157,8 @@ const PostsPage: React.FC = () => {
     },
   ];
 
-  const showPagination = pagination.total > pagination.pageSize;
-
   return (
-    <div style={{ padding: isMobile ? "8px" : "0" }}>
+    <SafeAreaWrapper>
       <div
         style={{
           marginBottom: 16,
@@ -189,26 +187,21 @@ const PostsPage: React.FC = () => {
           onClick: () => handleViewDetail(record.id),
           style: { cursor: "pointer" },
         })}
-        pagination={
-          showPagination
-            ? {
-                current: pagination.current,
-                total: pagination.total,
-                pageSize: pagination.pageSize,
-                onChange: handlePageChange,
-                showSizeChanger: false,
-                showQuickJumper: true,
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} из ${total}`,
-                size: "small",
-              }
-            : false
-        }
+        pagination={{
+          current: pagination.current,
+          total: pagination.total,
+          pageSize: pagination.pageSize,
+          onChange: handlePageChange,
+          showSizeChanger: false,
+          showQuickJumper: true,
+          showTotal: (total, range) => `${range[0]}-${range[1]} из ${total}`,
+          size: "small",
+        }}
         style={{
           fontSize: "14px",
         }}
       />
-    </div>
+    </SafeAreaWrapper>
   );
 };
 
