@@ -37,6 +37,7 @@
 - **React Router DOM** - маршрутизация
 - **Ant Design** - UI компоненты
 - **Zod** - валидация форм
+- **Защита от XSS и SQL-инъекций**
 
 ## Структура проекта
 
@@ -134,3 +135,28 @@ npm run test:coverage
 - **JWT с refresh** - автоматическое обновление токенов
 - **Адаптивный дизайн** - корректное отображение на мобильных устройствах
 - **Vite** - быстрая сборка и запуск проекта для разработки
+- **Zod валидация** - единый подход к валидации форм через Zod схемы
+
+## Валидация форм
+
+Проект использует Zod для валидации всех форм.
+
+Пример использования:
+
+```typescript
+import { useZodRules } from "../../../shared";
+import { postSchema, PostFormData } from "../validation/schemas";
+
+const PostForm = () => {
+  const [form] = Form.useForm<PostFormData>();
+  const rules = useZodRules(postSchema);
+
+  return (
+    <Form form={form} onFinish={handleSubmit}>
+      <Form.Item name="title" rules={rules.title}>
+        <Input />
+      </Form.Item>
+    </Form>
+  );
+};
+```

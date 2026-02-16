@@ -28,7 +28,11 @@ import {
   selectAuthorsLoading,
   selectAuthorsPagination,
 } from "../model/selectors";
-import { MultipleRemoveItem, useIsMobile } from "../../../shared";
+import {
+  MultipleRemoveItem,
+  SafeAreaWrapper,
+  useIsMobile,
+} from "../../../shared";
 import { TableRowSelection } from "antd/lib/table/interface";
 import { Author } from "../model/types";
 
@@ -154,7 +158,7 @@ const AuthorsPage: React.FC = () => {
   const showPagination = pagination.total > pagination.pageSize;
 
   return (
-    <div style={{ padding: isMobile ? "8px" : "0" }}>
+    <SafeAreaWrapper>
       <div
         style={{
           marginBottom: 16,
@@ -188,26 +192,26 @@ const AuthorsPage: React.FC = () => {
           onClick: () => handleViewDetail(record.id),
           style: { cursor: "pointer" },
         })}
-        pagination={
-          showPagination
-            ? {
-                current: pagination.current,
-                total: pagination.total,
-                pageSize: pagination.pageSize,
-                onChange: handlePageChange,
-                showSizeChanger: false,
-                showQuickJumper: true,
-                showTotal: (total, range) =>
-                  `${range[0]}-${range[1]} из ${total}`,
-                size: "small",
-              }
-            : false
-        }
+        // pagination={
+        //   showPagination
+        //     ? {
+        //         current: pagination.current,
+        //         total: pagination.total,
+        //         pageSize: pagination.pageSize,
+        //         onChange: handlePageChange,
+        //         showSizeChanger: false,
+        //         showQuickJumper: true,
+        //         showTotal: (total, range) =>
+        //           `${range[0]}-${range[1]} из ${total}`,
+        //         size: "small",
+        //       }
+        //     : false
+        // }
         style={{
           fontSize: "14px",
         }}
       />
-    </div>
+    </SafeAreaWrapper>
   );
 };
 

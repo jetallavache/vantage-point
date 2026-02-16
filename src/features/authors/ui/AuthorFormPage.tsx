@@ -16,7 +16,7 @@ import {
 } from "../model/selectors";
 import { CreateAuthorRequest, UpdateAuthorRequest } from "../model/types";
 import { authorSchema, AuthorFormData } from "../validation/schemas";
-import { useIsMobile, SafeAreaWrapper } from "../../../shared";
+import { useIsMobile, SafeAreaWrapper, useZodRules } from "../../../shared";
 
 const { TextArea } = Input;
 
@@ -27,7 +27,8 @@ const AuthorFormPage: React.FC = () => {
   const author = useSelector(selectCurrentAuthor);
   const loading = useSelector(selectAuthorsLoading);
   const error = useSelector(selectAuthorsError);
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<AuthorFormData>();
+  const rules = useZodRules(authorSchema);
   const [fileList, setFileList] = useState<any[]>([]);
 
   const isEditing = Boolean(id);
@@ -124,27 +125,27 @@ const AuthorFormPage: React.FC = () => {
           onFinish={handleSubmit}
           style={{ maxWidth: 600 }}
         >
-          <Form.Item
-            name="name"
-            label="Имя"
-            rules={[{ required: true, message: "Введите имя автора" }]}
-          >
+          <Form.Item name="name" label="Имя" rules={rules.name}>
             <Input placeholder="Имя автора" />
           </Form.Item>
 
-          <Form.Item name="secondName" label="Отчество">
+          <Form.Item
+            name="secondName"
+            label="Отчество"
+            rules={rules.secondName}
+          >
             <Input placeholder="Отчество автора" />
           </Form.Item>
 
-          <Form.Item
-            name="lastName"
-            label="Фамилия"
-            rules={[{ required: true, message: "Введите фамилию автора" }]}
-          >
+          <Form.Item name="lastName" label="Фамилия" rules={rules.lastName}>
             <Input placeholder="Фамилия автора" />
           </Form.Item>
 
-          <Form.Item name="shortDescription" label="Краткое описание">
+          <Form.Item
+            name="shortDescription"
+            label="Краткое описание"
+            rules={rules.shortDescription}
+          >
             <TextArea
               placeholder="Краткое описание автора"
               rows={3}
@@ -153,7 +154,11 @@ const AuthorFormPage: React.FC = () => {
             />
           </Form.Item>
 
-          <Form.Item name="description" label="Полное описание">
+          <Form.Item
+            name="description"
+            label="Полное описание"
+            rules={rules.description}
+          >
             <TextArea
               placeholder="Полное описание автора"
               rows={5}
