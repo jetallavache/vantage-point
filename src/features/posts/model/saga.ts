@@ -17,7 +17,7 @@ import {
   deletePostFailure,
 } from "./actions";
 import { postsApi } from "../api";
-import { ApiException } from "../../../shared";
+import { showApiError } from "../../../shared/lib";
 
 function* fetchPostsSaga(
   action: ReturnType<typeof fetchPostsRequest>
@@ -44,9 +44,8 @@ function* fetchPostsSaga(
       })
     );
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка загрузки постов";
-    yield put(fetchPostsFailure(message));
+    yield call(showApiError, error);
+    yield put(fetchPostsFailure("Ошибка загрузки постов"));
   }
 }
 
@@ -57,9 +56,8 @@ function* fetchPostDetailSaga(
     const response: any = yield call(postsApi.fetchPostDetail, action.payload);
     yield put(fetchPostDetailSuccess(response.data || response));
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка загрузки поста";
-    yield put(fetchPostDetailFailure(message));
+    yield call(showApiError, error);
+    yield put(fetchPostDetailFailure("Ошибка загрузки поста"));
   }
 }
 
@@ -71,9 +69,8 @@ function* createPostSaga(
     yield put(createPostSuccess());
     window.location.href = "/vantage-point/posts";
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка создания поста";
-    yield put(createPostFailure(message));
+    yield call(showApiError, error);
+    yield put(createPostFailure("Ошибка создания поста"));
   }
 }
 
@@ -85,9 +82,8 @@ function* updatePostSaga(
     yield put(updatePostSuccess());
     window.location.href = "/vantage-point/posts";
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка обновления поста";
-    yield put(updatePostFailure(message));
+    yield call(showApiError, error);
+    yield put(updatePostFailure("Ошибка обновления поста"));
   }
 }
 
@@ -98,9 +94,8 @@ function* deletePostSaga(
     yield call(postsApi.deletePost, action.payload);
     yield put(deletePostSuccess(action.payload));
   } catch (error) {
-    const message =
-      error instanceof ApiException ? error.message : "Ошибка удаления поста";
-    yield put(deletePostFailure(message));
+    yield call(showApiError, error);
+    yield put(deletePostFailure("Ошибка удаления поста"));
   }
 }
 
