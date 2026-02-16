@@ -1,5 +1,13 @@
-import React, { useEffect } from "react";
-import { Form, Input, Button, InputNumber, Card, message } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Form,
+  Input,
+  Button,
+  InputNumber,
+  Card,
+  message,
+  Typography,
+} from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,7 +23,10 @@ import {
 } from "../model/selectors";
 import { CreateTagRequest, UpdateTagRequest } from "../model/types";
 import { tagSchema, TagFormData } from "../validation/schemas";
-import { useIsMobile, SafeAreaWrapper } from "../../../shared";
+import { useIsMobile, SafeAreaWrapper, useZodRules } from "../../../shared";
+import { capitalize } from "../lib/capitalize";
+
+const { Text } = Typography;
 
 const TagFormPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,10 +35,11 @@ const TagFormPage: React.FC = () => {
   const tags = useSelector(selectTagsItems);
   const loading = useSelector(selectTagsLoading);
   const error = useSelector(selectTagsError);
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<TagFormData>();
+  const rules = useZodRules(tagSchema);
   const isMobile = useIsMobile();
 
-  const isEditing = Boolean(id);
+  const isEditing = !!id;
   const tag = isEditing ? tags.find((t: any) => t.id === Number(id)) : null;
 
   useEffect(() => {
@@ -53,28 +65,45 @@ const TagFormPage: React.FC = () => {
   }, [error]);
 
   const handleSubmit = (values: TagFormData) => {
-    try {
-      tagSchema.parse(values);
+    const data = {
+      code: values.code,
+      name: capitalize(values.name),
+      sort: values.sort,
+    };
 
-      const data = {
-        code: values.code,
-        name: values.name,
-        sort: values.sort,
-      };
-
-      if (isEditing && tag) {
-        dispatch(updateTagRequest({ ...data, id: tag.id } as UpdateTagRequest));
-      } else {
-        dispatch(createTagRequest(data as CreateTagRequest));
-      }
-
-      message.success(
-        isEditing ? "Тег успешно обновлен" : "Тег успешно создан"
-      );
-      navigate("/tags");
-    } catch (error) {
-      message.error("Проверьте правильность заполнения формы");
+    if (isEditing && tag) {
+      dispatch(updateTagRequest({ ...data, id: tag.id } as UpdateTagRequest));
+    } else {
+      dispatch(createTagRequest(data as CreateTagRequest));
     }
+
+    message.success(isEditing ? "Тег успешно обновлен" : "Тег успешно создан");
+  };
+
+  const title = (isEditing: boolean, name: string | null) => {
+    return (
+      <span>
+        {isEditing ? (
+          <Text type="secondary" italic>
+            (ред.)
+          </Text>
+        ) : (
+          <Text type="warning">(New)</Text>
+        )}{" "}
+        {name && (
+          <Text
+            style={{
+              maxWidth: "auto",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {name}
+          </Text>
+        )}
+      </span>
+    );
   };
 
   return (
@@ -89,34 +118,22 @@ const TagFormPage: React.FC = () => {
         {isMobile ? "Назад" : "Назад к списку"}
       </Button>
 
-      <Card title={isEditing ? "Редактировать тег" : "Добавить тег"}>
+      <Card title={title(isEditing, isEditing && tag ? tag?.name : "")}>
         <Form
           form={form}
           layout="vertical"
           onFinish={handleSubmit}
           style={{ maxWidth: 600 }}
         >
-          <Form.Item
-            name="code"
-            label="Код"
-            rules={[{ required: true, message: "Введите код тега" }]}
-          >
+          <Form.Item name="code" label="Код" rules={rules.code}>
             <Input placeholder="Код тега" />
           </Form.Item>
 
-          <Form.Item
-            name="name"
-            label="Название"
-            rules={[{ required: true, message: "Введите название тега" }]}
-          >
+          <Form.Item name="name" label="Название" rules={rules.name}>
             <Input placeholder="Название тега" />
           </Form.Item>
 
-          <Form.Item
-            name="sort"
-            label="Сортировка"
-            rules={[{ required: true, message: "Введите порядок сортировки" }]}
-          >
+          <Form.Item name="sort" label="Сортировка" rules={rules.sort}>
             <InputNumber
               placeholder="Порядок сортировки"
               min={0}
