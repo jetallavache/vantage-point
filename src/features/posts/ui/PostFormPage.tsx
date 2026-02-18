@@ -66,9 +66,8 @@ const PostFormPage: React.FC = () => {
         code: currentPost.code || "",
         title: currentPost.title || "",
         text: currentPost.text || "",
-        authorId: currentPost.authorId || currentPost.author?.id,
-        tagIds:
-          currentPost.tagIds || currentPost.tags?.map((tag) => tag.id) || [],
+        authorId: currentPost.author?.id,
+        tagIds: currentPost.tags?.map((tag) => tag.id) || [],
       });
 
       if (currentPost.previewPicture) {
@@ -168,7 +167,7 @@ const PostFormPage: React.FC = () => {
         style={{ marginBottom: isMobile ? 16 : 24 }}
         size={isMobile ? "small" : "middle"}
       >
-        {isMobile ? "Назад" : "Назад к списку"}
+        Назад
       </Button>
 
       <Card

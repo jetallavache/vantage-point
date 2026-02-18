@@ -3,6 +3,7 @@ import {
   CreatePostRequest,
   UpdatePostRequest,
   FetchPostsRequest,
+  FetchPostDetailRequest,
 } from "./types";
 
 export const fetchPostsRequest = createAction<FetchPostsRequest>(

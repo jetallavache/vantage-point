@@ -24,6 +24,7 @@ import {
   selectPostsLoading,
   selectPostsPagination,
 } from "../model/selectors";
+import { autoBatchEnhancer } from "@reduxjs/toolkit";
 
 const { Text } = Typography;
 
@@ -119,23 +120,36 @@ const PostsPage: React.FC = () => {
                           paddingRight: "8px",
                         }}
                       >
-                        {/* <Title level={5}>{post.title}</Title> */}
                         <Text type="secondary" style={{ fontSize: 14 }}>
                           Автор: {post.authorName}
                         </Text>
                         {post.tagNames && post.tagNames.length > 0 && (
-                          <Space size={[4, 8]} wrap>
+                          <Space size={isMobile ? [4, 0] : [4, 4]} wrap>
                             {post.tagNames.slice(0, 3).map((tag, i) => (
                               <Tag
                                 key={tag}
                                 icon={<TagOutlined />}
                                 variant="outlined"
+                                style={{
+                                  whiteSpace: "nowrap",
+                                  overflow: "clip",
+                                  textOverflow: "ellipsis",
+                                  maxWidth: "96px",
+                                }}
                               >
                                 {tag}
                               </Tag>
                             ))}
                             {post.tagNames.length > 3 && (
-                              <Tag variant="outlined">
+                              <Tag
+                                variant="outlined"
+                                style={{
+                                  whiteSpace: "nowrap",
+                                  overflow: "clip",
+                                  textOverflow: "ellipsis",
+                                  maxWidth: "36px",
+                                }}
+                              >
                                 +{post.tagNames.length - 3}
                               </Tag>
                             )}
