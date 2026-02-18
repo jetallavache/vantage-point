@@ -9,8 +9,6 @@ export const formatPublishDate = (dateString: string): string => {
     minute: "2-digit",
   });
 
-  console.log(diffDays);
-
   if (diffDays === 1) return `Сегодня, в ${time}`;
   if (diffDays === 2) return `Вчера, в ${time}`;
   if (diffDays <= 5) return `${diffDays} дня назад, в ${time}`;
