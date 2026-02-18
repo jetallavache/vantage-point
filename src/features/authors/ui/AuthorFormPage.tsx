@@ -68,16 +68,17 @@ const AuthorFormPage: React.FC = () => {
     try {
       authorSchema.parse(values);
 
-      const data = {
+      const data: any = {
         name: values.name,
         lastName: values.lastName,
         secondName: values.secondName,
         shortDescription: values.shortDescription,
         description: values.description,
         avatar: fileList[0]?.originFileObj,
-        removeAvatar: values.removeAvatar,
+        removeAvatar: +values.removeAvatar,
       };
 
+      console.log(data);
       if (isEditing && author) {
         dispatch(
           updateAuthorRequest({

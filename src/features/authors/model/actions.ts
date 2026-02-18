@@ -32,7 +32,7 @@ export const clearCurrentAuthor = createAction("authors/clearCurrentAuthor");
 export const createAuthorRequest = createAction<CreateAuthorRequest>(
   "authors/createAuthorRequest"
 );
-export const createAuthorSuccess = createAction<Author>(
+export const createAuthorSuccess = createAction<CreateAuthorRequest>(
   "authors/createAuthorSuccess"
 );
 export const createAuthorFailure = createAction<string>(
@@ -42,7 +42,7 @@ export const createAuthorFailure = createAction<string>(
 export const updateAuthorRequest = createAction<UpdateAuthorRequest>(
   "authors/updateAuthorRequest"
 );
-export const updateAuthorSuccess = createAction<Author>(
+export const updateAuthorSuccess = createAction<UpdateAuthorRequest>(
   "authors/updateAuthorSuccess"
 );
 export const updateAuthorFailure = createAction<string>(

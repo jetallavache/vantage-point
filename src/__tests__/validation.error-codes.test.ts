@@ -16,7 +16,9 @@ describe("Validation Error Messages with Codes", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].message).toContain("(001)");
-      expect(result.error.issues[0].message).toContain("Укажите название статьи");
+      expect(result.error.issues[0].message).toContain(
+        "Укажите название статьи"
+      );
     }
   });
 
@@ -32,7 +34,9 @@ describe("Validation Error Messages with Codes", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].message).toContain("(101)");
-      expect(result.error.issues[0].message).toContain("не должно превышать 400 символов");
+      expect(result.error.issues[0].message).toContain(
+        "не должно превышать 400 символов"
+      );
     }
   });
 
@@ -48,7 +52,9 @@ describe("Validation Error Messages with Codes", () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.issues[0].message).toContain("(002)");
-      expect(result.error.issues[0].message).toContain("недопустимое содержимое");
+      expect(result.error.issues[0].message).toContain(
+        "недопустимое содержимое"
+      );
     }
   });
 

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Layout, Menu, Button, Drawer, Typography } from "antd";
+import { Layout, Menu, Button, Drawer, Typography, Badge } from "antd";
 import {
   FileTextOutlined,
   UserOutlined,
@@ -9,8 +9,9 @@ import {
   AppstoreOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/auth/model/actions";
+import { selectPostsTotal } from "../../features/posts/model/selectors";
 import { useIsMobile } from "../hooks/useIsMobile";
 
 const { Header, Sider, Content } = Layout;
@@ -26,12 +27,17 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
   const [drawerVisible, setDrawerVisible] = useState(false);
   const isMobile = useIsMobile();
+  const postsTotal = useSelector(selectPostsTotal);
 
   const menuItems = [
     {
       key: "/posts",
       icon: <FileTextOutlined />,
-      label: "Посты",
+      label: (
+        <Badge count={postsTotal} offset={[10, 0]} overflowCount={999}>
+          Посты
+        </Badge>
+      ),
     },
     {
       key: "/authors",

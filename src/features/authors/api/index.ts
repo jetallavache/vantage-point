@@ -49,7 +49,7 @@ export const authorsApi = {
       formData.append("avatar", data.avatar);
     }
     if (data.removeAvatar) {
-      formData.append("removeAvatar", "true");
+      formData.append("removeAvatar", "1");
     }
     return apiClient.post(`/manage/authors/edit?id=${data.id}`, formData);
   },
