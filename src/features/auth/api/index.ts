@@ -1,5 +1,5 @@
 import { apiClient } from "../../../shared";
-import { LoginRequest, TokenResponse } from "../model/types";
+import { LoginRequest, TokenResponse, UserProfile } from "../model/types";
 
 export const authApi = {
   login: (data: LoginRequest): Promise<TokenResponse> => {
@@ -19,5 +19,9 @@ export const authApi = {
     return apiClient.post("/auth/token-refresh", formData, {
       requireAuth: false,
     });
+  },
+
+  getProfile: (): Promise<UserProfile> => {
+    return apiClient.get("/profile");
   },
 };
