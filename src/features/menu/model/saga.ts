@@ -1,4 +1,4 @@
-import { call, put, takeEvery } from "redux-saga/effects";
+import { call, put, takeEvery, select } from "redux-saga/effects";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { menuApi } from "../api";
 import * as actions from "./actions";
@@ -8,9 +8,7 @@ import {
   UpdateMenuTypeRequest,
   CreateMenuItemRequest,
   UpdateMenuItemRequest,
-  SaveMenuStructureRequest,
 } from "./types";
-import { ConsoleSqlOutlined } from "@ant-design/icons";
 
 function* fetchMenuTypesSaga(): Generator<any, void, any> {
   try {
@@ -63,7 +61,6 @@ function* fetchMenuTreeSaga(
 ): Generator<any, void, any> {
   try {
     const response: any = yield call(menuApi.fetchMenuTree, action.payload);
-    console.log("Saga response get MenuTree: ", response);
     yield put(actions.fetchMenuTreeSuccess(response.data));
   } catch (error: any) {
     yield call(showApiError, error);
@@ -76,7 +73,6 @@ function* fetchMenuTreeListSaga(
 ): Generator<any, void, any> {
   try {
     const response: any = yield call(menuApi.fetchMenuTreeList, action.payload);
-    console.log("Saga response get MenuTreeList: ", response);
     yield put(actions.fetchMenuTreeListSuccess(response.data));
   } catch (error: any) {
     yield call(showApiError, error);
@@ -89,7 +85,6 @@ function* addMenuItemSaga(
 ): Generator<any, void, any> {
   try {
     const response: any = yield call(menuApi.addMenuItem, action.payload);
-    console.log("Saga response add MenuItem: ", response);
     yield put(actions.addMenuItemSuccess(response.data));
   } catch (error: any) {
     yield call(showApiError, error);
@@ -113,25 +108,20 @@ function* removeMenuItemSaga(
   action: PayloadAction<string>
 ): Generator<any, void, any> {
   try {
-    yield call(menuApi.removeMenuItem, action.payload);
+    const state: any = yield select();
+    const activeTypeId = state.menu.activeTypeId;
+
+    if (!activeTypeId) {
+      throw new Error("No active menu type");
+    }
+
+    yield call(menuApi.removeMenuItem, activeTypeId, action.payload);
     yield put(actions.removeMenuItemSuccess(action.payload));
   } catch (error: any) {
     yield call(showApiError, error);
     yield put(actions.removeMenuItemFailure(error.message));
   }
 }
-
-// function* saveMenuStructureSaga(
-//   action: PayloadAction<SaveMenuStructureRequest>
-// ): Generator<any, void, any> {
-//   try {
-//     yield call(menuApi.saveMenuStructure, action.payload);
-//     yield put(actions.saveMenuStructureSuccess());
-//   } catch (error: any) {
-//     yield call(showApiError, error);
-//     yield put(actions.saveMenuStructureFailure(error.message));
-//   }
-// }
 
 export function* menuSaga() {
   yield takeEvery(actions.fetchMenuTypesRequest.type, fetchMenuTypesSaga);
@@ -144,6 +134,4 @@ export function* menuSaga() {
   yield takeEvery(actions.addMenuItemRequest.type, addMenuItemSaga);
   yield takeEvery(actions.editMenuItemRequest.type, editMenuItemSaga);
   yield takeEvery(actions.removeMenuItemRequest.type, removeMenuItemSaga);
-
-  // yield takeEvery(actions.saveMenuStructureRequest.type, saveMenuStructureSaga);
 }
