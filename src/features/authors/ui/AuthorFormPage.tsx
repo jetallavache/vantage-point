@@ -116,7 +116,7 @@ const AuthorFormPage: React.FC = () => {
         style={{ marginBottom: isMobile ? 16 : 24 }}
         size={isMobile ? "small" : "middle"}
       >
-        {isMobile ? "Назад" : "Назад к списку"}
+        Назад
       </Button>
 
       <Card title={isEditing ? "Редактировать автора" : "Добавить автора"}>
