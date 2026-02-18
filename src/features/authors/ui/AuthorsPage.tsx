@@ -192,21 +192,6 @@ const AuthorsPage: React.FC = () => {
           onClick: () => handleViewDetail(record.id),
           style: { cursor: "pointer" },
         })}
-        // pagination={
-        //   showPagination
-        //     ? {
-        //         current: pagination.current,
-        //         total: pagination.total,
-        //         pageSize: pagination.pageSize,
-        //         onChange: handlePageChange,
-        //         showSizeChanger: false,
-        //         showQuickJumper: true,
-        //         showTotal: (total, range) =>
-        //           `${range[0]}-${range[1]} из ${total}`,
-        //         size: "small",
-        //       }
-        //     : false
-        // }
         style={{
           fontSize: "14px",
         }}

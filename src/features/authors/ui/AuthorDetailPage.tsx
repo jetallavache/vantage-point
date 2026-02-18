@@ -102,7 +102,9 @@ const AuthorDetailPage: React.FC = () => {
         <div
           style={{
             display: "flex",
-            alignItems: "flex-start",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
             gap: 24,
             marginBottom: isMobile ? "16px" : "24px",
           }}

@@ -73,7 +73,7 @@ function* createAuthorSaga(
 ): Generator<any, void, any> {
   try {
     yield call(authorsApi.createAuthor, action.payload);
-    yield put(createAuthorSuccess());
+    yield put(createAuthorSuccess(action.payload));
     window.location.href = "/vantage-point/authors";
   } catch (error) {
     yield call(showApiError, error);
@@ -86,7 +86,7 @@ function* updateAuthorSaga(
 ): Generator<any, void, any> {
   try {
     yield call(authorsApi.updateAuthor, action.payload);
-    yield put(updateAuthorSuccess());
+    yield put(updateAuthorSuccess(action.payload));
     window.location.href = "/vantage-point/authors";
   } catch (error) {
     yield call(showApiError, error);
@@ -110,7 +110,7 @@ function* deleteBulkAuthorsSaga(
   action: ReturnType<typeof deleteBulkAuthorsRequest>
 ): Generator<any, void, any> {
   try {
-    yield call(authorsApi.deleteBulkAuthors, action.payload);
+    yield call(authorsApi.bulkDeleteAuthors, action.payload);
     yield put(deleteBulkAuthorsSuccess(action.payload));
   } catch (error) {
     yield call(showApiError, error);

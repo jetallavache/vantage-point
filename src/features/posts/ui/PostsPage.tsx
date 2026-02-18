@@ -1,15 +1,31 @@
 import React, { useEffect } from "react";
-import { Table, Button, Space, Popconfirm, Image, Tooltip } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Button,
+  Space,
+  Popconfirm,
+  Pagination,
+  Row,
+  Col,
+  Typography,
+  Tag,
+} from "antd";
+import { PlusOutlined, TagOutlined, ScheduleOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { fetchPostsRequest, deletePostRequest } from "../model/actions";
-import { HashTag, SafeAreaWrapper, useIsMobile } from "../../../shared";
+import {
+  formatPublishDate,
+  SafeAreaWrapper,
+  useIsMobile,
+} from "../../../shared";
 import {
   selectPostsItems,
   selectPostsLoading,
   selectPostsPagination,
 } from "../model/selectors";
+
+const { Text } = Typography;
 
 const PostsPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -35,128 +51,6 @@ const PostsPage: React.FC = () => {
     navigate(`/posts/detail/${id}`);
   };
 
-  const columns = [
-    {
-      title: "ID",
-      dataIndex: "id",
-      key: "id",
-      width: 50,
-      responsive: ["lg"] as any,
-    },
-    {
-      title: "Превью",
-      dataIndex: "previewPicture",
-      key: "previewPicture",
-      width: 100,
-      responsive: ["lg"] as any,
-      render: (previewPicture: any) => (
-        <Image
-          width={60}
-          height={40}
-          src={previewPicture?.url}
-          fallback="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAADDCAYAAADQvc6UAAABRWlDQ1BJQ0MgUHJvZmlsZQAAKJFjYGASSSwoyGFhYGDIzSspCnJ3UoiIjFJgf8LAwSDCIMogwMCcmFxc4BgQ4ANUwgCjUcG3awyMIPqyLsis7PPOq3QdDFcvjV3jOD1boQVTPQrgSkktTgbSf4A4LbmgqISBgTEFyFYuLykAsTuAbJEioKOA7DkgdjqEvQHEToKwj4DVhAQ5A9k3gGyB5IxEoBmML4BsnSQk8XQkNtReEOBxcfXxUQg1Mjc0dyHgXNJBSWpFCYh2zi+oLMpMzyhRcASGUqqCZ16yno6CkYGRAQMDKMwhqj/fAIcloxgHQqxAjIHBEugw5sUIsSQpBobtQPdLciLEVJYzMPBHMDBsayhILEqEO4DxG0txmrERhM29nYGBddr//5/DGRjYNRkY/l7////39v///y4Dmn+LgeHANwDrkl1AuO+pmgAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAAwqADAAQAAAABAAAAwwAAAAD9b/HnAAAHlklEQVR4Ae3dP3Ik1RnG4W+FgYxN"
-          style={{ objectFit: "cover" }}
-        />
-      ),
-    },
-    {
-      title: "Код",
-      dataIndex: "code",
-      key: "code",
-      width: 60,
-    },
-    {
-      title: "Заголовок",
-      dataIndex: "title",
-      key: "title",
-      ellipsis: true,
-    },
-    {
-      title: "Автор",
-      dataIndex: "authorName",
-      key: "authorName",
-      width: 150,
-      responsive: ["md"] as any,
-    },
-    {
-      title: "Теги",
-      dataIndex: "tagNames",
-      key: "tagNames",
-      width: 200,
-      responsive: ["lg"] as any,
-      render: (tags: any[]) => (
-        <Space size={[0, 4]} wrap>
-          {tags?.slice(0, 2).map((tag, i) => (
-            <HashTag
-              key={tag.id || i}
-              tag={tag.name || tag}
-              id={tag.id}
-              index={i}
-            />
-          ))}
-          {tags?.length > 2 && (
-            <span
-              style={{
-                background: "#f0f0f0",
-                padding: "2px 8px",
-                borderRadius: "12px",
-                fontSize: "12px",
-                color: "#9b9b9bff",
-              }}
-            >
-              +{tags.length - 2}
-            </span>
-          )}
-        </Space>
-      ),
-    },
-    {
-      title: "Дата",
-      dataIndex: "createdAt",
-      key: "createdAt",
-      width: 120,
-      responsive: ["sm"] as any,
-      render: (date: string) => new Date(date).toLocaleDateString(),
-    },
-    {
-      title: "Действия",
-      key: "actions",
-      width: 85,
-      fixed: "right" as any,
-      render: (_: any, record: any) => (
-        <Space onClick={(e) => e.stopPropagation()}>
-          <Tooltip title="Изменить">
-            <Button
-              type="text"
-              size="small"
-              icon={<EditOutlined />}
-              onClick={(e) => {
-                e.stopPropagation();
-                navigate(`/posts/form/${record.id}`);
-              }}
-            />
-          </Tooltip>
-          <Popconfirm
-            title="Удалить пост?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Да"
-            cancelText="Нет"
-          >
-            <Tooltip title="Удалить">
-              <Button
-                type="text"
-                danger
-                size="small"
-                icon={<DeleteOutlined />}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </Tooltip>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
-
   return (
     <SafeAreaWrapper>
       <div
@@ -177,32 +71,168 @@ const PostsPage: React.FC = () => {
         </Button>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={posts}
-        loading={loading}
-        rowKey="id"
-        size="small"
-        onRow={(record) => ({
-          onClick: () => handleViewDetail(record.id),
-          style: { cursor: "pointer" },
+      <Row gutter={[16, 16]}>
+        {posts.map((post) => {
+          return (
+            <Col xs={24} sm={24} md={12} lg={8} key={post.id}>
+              <Card
+                loading={loading}
+                styles={{
+                  header: {
+                    minHeight: "32px",
+                    backgroundColor: "var(--ant-color-bg-layout)",
+                    // borderBottom: 'unset',
+                  },
+                }}
+                key={post.id}
+                hoverable
+                title={<Text type="secondary">№{post.code}</Text>}
+                extra={[
+                  <ScheduleOutlined
+                    key="icon"
+                    style={{ fontSize: "16px", paddingRight: "8px" }}
+                  />,
+                  <Text key="date">{formatPublishDate(post.createdAt)}</Text>,
+                ]}
+                onClick={() => navigate(`/posts/detail/${post.id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                <Card.Meta
+                  title={post.title}
+                  description={
+                    <Space
+                      orientation="horizontal"
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        paddingBottom: isMobile ? "8px" : "",
+                        borderTop: "1px dashed var(--ant-color-border)",
+                        paddingTop: "8px",
+                      }}
+                    >
+                      <Space
+                        orientation="vertical"
+                        size="small"
+                        style={{
+                          display: "flex",
+                          borderRight: "1px dashed var(--ant-color-border)",
+                          paddingRight: "8px",
+                        }}
+                      >
+                        {/* <Title level={5}>{post.title}</Title> */}
+                        <Text type="secondary" style={{ fontSize: 14 }}>
+                          Автор: {post.authorName}
+                        </Text>
+                        {post.tagNames && post.tagNames.length > 0 && (
+                          <Space size={[4, 8]} wrap>
+                            {post.tagNames.slice(0, 3).map((tag, i) => (
+                              <Tag
+                                key={tag}
+                                icon={<TagOutlined />}
+                                variant="outlined"
+                              >
+                                {tag}
+                              </Tag>
+                            ))}
+                            {post.tagNames.length > 3 && (
+                              <Tag variant="outlined">
+                                +{post.tagNames.length - 3}
+                              </Tag>
+                            )}
+                          </Space>
+                        )}
+                      </Space>
+                      <Space
+                        orientation="vertical"
+                        size="small"
+                        style={{ display: "flex" }}
+                      >
+                        <Button
+                          key="edit"
+                          size="small"
+                          color="default"
+                          variant="outlined"
+                          style={{ minWidth: "86px" }}
+                          // icon={<EditOutlined />}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/posts/form/${post.id}`);
+                          }}
+                        >
+                          Изменить
+                        </Button>
+                        <Popconfirm
+                          key="delete"
+                          title="Удалить пост?"
+                          onConfirm={() => handleDelete(post.id)}
+                          okText="Да"
+                          cancelText="Нет"
+                        >
+                          <Button
+                            key="delete"
+                            variant="outlined"
+                            size="small"
+                            danger
+                            style={{ minWidth: "86px" }}
+                            // icon={<DeleteOutlined />}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Удалить
+                          </Button>
+                        </Popconfirm>
+                      </Space>
+                    </Space>
+                  }
+                />
+              </Card>
+            </Col>
+          );
         })}
-        pagination={{
-          current: pagination.current,
-          total: pagination.total,
-          pageSize: pagination.pageSize,
-          onChange: handlePageChange,
-          showSizeChanger: false,
-          showQuickJumper: true,
-          showTotal: (total, range) => `${range[0]}-${range[1]} из ${total}`,
-          size: "small",
-        }}
-        style={{
-          fontSize: "14px",
-        }}
-      />
+      </Row>
+
+      <div style={{ marginTop: 24, textAlign: "center" }}>
+        <Pagination
+          current={pagination.current}
+          total={pagination.total}
+          pageSize={pagination.pageSize}
+          onChange={handlePageChange}
+          showSizeChanger={false}
+          showQuickJumper={!isMobile}
+          showTotal={(total, range) => `${range[0]}-${range[1]} из ${total}`}
+        />
+      </div>
     </SafeAreaWrapper>
   );
 };
 
 export default PostsPage;
+
+{
+  /* actions={[
+  <Button
+    key="edit"
+    type="text"
+    icon={<EditOutlined />}
+    onClick={(e) => {
+      e.stopPropagation();
+      navigate(`/posts/form/${post.id}`);
+    }}
+  >
+  </Button>,
+  <Popconfirm
+    key="delete"
+    title="Удалить пост?"
+    onConfirm={() => handleDelete(post.id)}
+    okText="Да"
+    cancelText="Нет"
+  >
+    <Button
+      type="text"
+      danger
+      icon={<DeleteOutlined />}
+      onClick={(e) => e.stopPropagation()}
+    >
+    </Button>
+  </Popconfirm>,
+]}*/
+}

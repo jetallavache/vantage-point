@@ -4,15 +4,24 @@ export const formatPublishDate = (dateString: string): string => {
   const diffTime = Math.abs(now.getTime() - date.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return "Сегодня";
-  if (diffDays === 1) return "Вчера";
-  if (diffDays <= 4) return `${diffDays} дня назад`;
-  if (diffDays <= 7) return `${diffDays} дней назад`;
+  const time = date.toLocaleTimeString("ru-RU", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  console.log(diffDays);
+
+  if (diffDays === 1) return `Сегодня, в ${time}`;
+  if (diffDays === 2) return `Вчера, в ${time}`;
+  if (diffDays <= 5) return `${diffDays} дня назад, в ${time}`;
+  if (diffDays <= 8) return `${diffDays} дней назад, в ${time}`;
 
   const options: Intl.DateTimeFormatOptions = {
     day: "numeric",
-    month: "long",
+    month: "short",
     year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+    hour: "2-digit",
+    minute: "2-digit",
   };
 
   return date.toLocaleDateString("ru-RU", options);

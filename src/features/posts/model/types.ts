@@ -2,24 +2,8 @@ export interface Post {
   id: number;
   code: string;
   title: string;
-  text: string;
-  authorId?: number;
   authorName?: string;
-  author?: {
-    id: number;
-    fullName: string;
-    avatar?: {
-      id: number;
-      name: string;
-      url: string;
-    };
-  };
-  tagIds?: number[];
-  tags?: Array<{
-    id: number;
-    name: string;
-    color?: string;
-  }>;
+  tagNames?: Array<string>;
   previewPicture?: {
     id: number;
     name: string;

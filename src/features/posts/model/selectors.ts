@@ -16,3 +16,5 @@ export const selectPostsPagination = createSelector(
     pageSize: posts?.perPage || 10,
   })
 );
+
+export const selectPostsTotal = (state: RootState) => state.posts?.total || 0;
