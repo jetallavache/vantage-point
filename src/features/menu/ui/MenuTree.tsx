@@ -1,14 +1,15 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Tree, Button, Space, Popconfirm } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import type { DataNode } from "antd/es/tree";
 import * as actions from "../model/actions";
-import { MenuItemTree } from "../model/types";
+import * as selectors from "../model/selectors";
+import { MenuItemTree, MenuItemFlat } from "../model/types";
 
 interface MenuTreeProps {
   data: MenuItemTree[];
-  onEdit: (item: any) => void;
+  onEdit: (item: MenuItemFlat) => void;
   onDelete: (itemId: string) => void;
   onAdd: (parentId?: string) => void;
 }
@@ -20,6 +21,11 @@ export const MenuTree: React.FC<MenuTreeProps> = ({
   onAdd,
 }) => {
   const dispatch = useDispatch();
+  const treeList = useSelector(selectors.selectMenuTreeList);
+
+  const findFlatItem = (id: string): MenuItemFlat | undefined => {
+    return treeList.find((item) => item.id === id);
+  };
 
   const convertToTreeData = (items: MenuItemTree[]): DataNode[] => {
     return items.map((item) => ({
@@ -32,7 +38,9 @@ export const MenuTree: React.FC<MenuTreeProps> = ({
             alignItems: "center",
           }}
         >
-          <span>{item.name}</span>
+          <span>
+            {item.name} <span style={{ color: "grey" }}>~{item.customUrl}</span>
+          </span>
           <Space size="small">
             <Button
               type="text"
@@ -49,7 +57,8 @@ export const MenuTree: React.FC<MenuTreeProps> = ({
               icon={<EditOutlined />}
               onClick={(e) => {
                 e.stopPropagation();
-                onEdit(item);
+                const flatItem = findFlatItem(item.id);
+                if (flatItem) onEdit(flatItem);
               }}
             />
             <Popconfirm

@@ -13,9 +13,39 @@ export interface Post {
   updatedAt: string;
 }
 
+export type TagItem = {
+  id: number;
+  name: string;
+  code: string;
+};
+
+export interface FetchPostDetailRequest {
+  id: number;
+  title: string;
+  code: string;
+  text: string;
+  author: {
+    id: number;
+    fullName: string;
+    avatar: {
+      id: number;
+      name: string;
+      url: string;
+    };
+  };
+  previewPicture: {
+    id: number;
+    name: string;
+    url: string;
+  };
+  tags: Array<TagItem>;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PostsState {
   items: Post[];
-  currentPost: Post | null;
+  currentPost: FetchPostDetailRequest | null;
   loading: boolean;
   error: string | null;
   currentPage: number;

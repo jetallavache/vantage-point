@@ -61,14 +61,7 @@ export const menuItemSchema = z.object({
       )
     )
     .transform(sanitizeText),
-  url: z
-    .string()
-    .url(
-      errorMsg("Укажите корректный URL адрес", ValidationErrorCodes.INVALID_URL)
-    )
-    .nullable()
-    .optional()
-    .or(z.literal("")),
+  url: z.string().nullable().optional().or(z.literal("")),
   sort: z
     .number()
     .min(

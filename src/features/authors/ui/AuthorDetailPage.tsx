@@ -87,7 +87,7 @@ const AuthorDetailPage: React.FC = () => {
           style={{ marginRight: 16 }}
           size={isMobile ? "small" : "middle"}
         >
-          {isMobile ? "Назад" : "Назад к списку"}
+          Назад
         </Button>
         <Button
           type="primary"

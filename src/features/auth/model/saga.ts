@@ -7,11 +7,14 @@ import {
   refreshTokenRequest,
   refreshTokenSuccess,
   refreshTokenFailure,
+  fetchProfileRequest,
+  fetchProfileSuccess,
+  fetchProfileFailure,
 } from "./actions";
 import { authApi } from "../api";
 import { tokenStorage } from "../../../shared";
 import { showApiError } from "../../../shared/lib";
-import { TokenResponse } from "./types";
+import { TokenResponse, UserProfile } from "./types";
 
 function* loginSaga(
   action: ReturnType<typeof loginRequest>
@@ -51,6 +54,16 @@ function* refreshTokenSaga(): Generator<any, void, any> {
   }
 }
 
+function* fetchProfileSaga(): Generator<any, void, any> {
+  try {
+    const profile: UserProfile = yield call(authApi.getProfile);
+    yield put(fetchProfileSuccess(profile));
+  } catch (error) {
+    yield call(showApiError, error);
+    yield put(fetchProfileFailure("Ошибка загрузки профиля"));
+  }
+}
+
 function* logoutSaga(): Generator<any, void, any> {
   tokenStorage.clearTokens();
   window.location.href = "/vantage-point/";
@@ -59,5 +72,6 @@ function* logoutSaga(): Generator<any, void, any> {
 export function* authSaga(): Generator<any, void, any> {
   yield takeEvery(loginRequest.type, loginSaga);
   yield takeLatest(refreshTokenRequest.type, refreshTokenSaga);
+  yield takeEvery(fetchProfileRequest.type, fetchProfileSaga);
   yield takeEvery(logout.type, logoutSaga);
 }

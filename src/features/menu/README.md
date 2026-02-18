@@ -1,32 +1,15 @@
-# Menu Feature
+## Mock Storage для элементов меню
 
-Полнофункциональная система управления меню для админ-панели.
+Поскольку REST API не поддерживает создание/редактирование элементов меню (возвращает 500 ошибку), реализовано мокап-хранилище на базе localStorage:
 
-## Структура
+- **Создание элементов** - работает через `mockMenuStorage`
+- **Редактирование элементов** - работает через `mockMenuStorage`
+- **Удаление элементов** - работает через `mockMenuStorage`
+- **Получение списка** - сначала пытается загрузить с сервера, при ошибке использует локальное хранилище
 
-```
-features/menu/
-├── api/
-│   └── index.ts           # API вызовы
-├── model/
-│   ├── actions.ts         # Redux actions
-│   ├── reducer.ts         # Redux reducer
-│   ├── saga.ts           # Redux-Saga effects
-│   ├── selectors.ts      # Redux selectors
-│   └── types.ts          # TypeScript типы
-├── ui/
-│   ├── MenuManagePage.tsx # Главная страница управления
-│   ├── MenuTypeForm.tsx   # Форма типов меню
-│   ├── MenuItemForm.tsx   # Форма пунктов меню
-│   ├── MenuTree.tsx      # Дерево с drag & drop
-│   └── MenuSider.tsx     # Навигационное меню
-├── lib/
-│   └── utils.ts          # Утилиты для работы с деревом
-├── validation/
-│   └── schemas.ts        # Zod схемы валидации
-└── index.ts              # Экспорты
+Данные сохраняются в localStorage с ключом `vantage_point_menu_items_{typeId}`.
 
-```
+Типы меню работают через реальный API.
 
 ## Функциональность
 
@@ -55,14 +38,14 @@ features/menu/
 
 ## API Endpoints
 
-### Menu Types
+### Menu Types - Request API
 
 - `GET /manage/menu/types` - получить типы меню
 - `POST /manage/menu/types/add` - добавить тип меню
 - `POST /manage/menu/types/edit` - редактировать тип меню
 - `DELETE /manage/menu/types/remove` - удалить тип меню
 
-### Menu Items
+### Menu Items - Request Mockup Storage
 
 - `GET /manage/menu/items/tree` - получить дерево для навигации
 - `GET /manage/menu/items/tree-list` - получить плоский список для управления
@@ -70,65 +53,3 @@ features/menu/
 - `POST /manage/menu/items/edit` - редактировать пункт меню
 - `DELETE /manage/menu/items/remove` - удалить пункт меню
 - `POST /manage/menu/items/save-structure` - сохранить структуру
-
-## Использование
-
-### Управление меню
-
-```typescript
-import { MenuManagePage } from "features/menu";
-
-// В роутинге
-<Route path="/menu" element={<MenuManagePage />} />
-```
-
-### Навигационное меню
-
-```typescript
-import { MenuSider } from "features/menu";
-
-// В компоненте
-<MenuSider
-  typeId="main-menu"
-  onMenuClick={(key, item) => {
-    // Обработка клика по пункту меню
-    if (item.route) {
-      navigate(item.route);
-    } else if (item.customUrl) {
-      window.open(item.customUrl, '_blank');
-    }
-  }}
-/>
-```
-
-## Особенности реализации
-
-### Drag & Drop
-
-- Перетаскивание работает только в админке
-- Изменения сохраняются локально до нажатия "Сохранить"
-- Поддерживается вложенность и изменение порядка
-
-### Состояние
-
-- `dirty` флаг показывает наличие несохраненных изменений
-- Автоматическое обновление после операций CRUD
-- Раздельное управление tree (навигация) и tree-list (админка)
-
-### Валидация
-
-- Zod схемы для форм
-- Проверка URL для внешних ссылок
-- Обязательные поля с сообщениями об ошибках
-
-## Тестирование
-
-Покрыто тестами:
-
-- Валидация форм
-- Утилиты работы с деревом
-- Преобразование данных
-
-```bash
-npm test menu
-```

@@ -8,6 +8,9 @@ import {
   refreshTokenRequest,
   refreshTokenSuccess,
   refreshTokenFailure,
+  fetchProfileRequest,
+  fetchProfileSuccess,
+  fetchProfileFailure,
 } from "./actions";
 import { tokenStorage } from "../../../shared";
 
@@ -15,6 +18,7 @@ const initialState: AuthState = {
   isAuthenticated: !!tokenStorage.getAccessToken(),
   loading: false,
   error: null,
+  profile: null,
 };
 
 export const authReducer = createReducer(initialState, (builder) => {
@@ -36,6 +40,7 @@ export const authReducer = createReducer(initialState, (builder) => {
     .addCase(logout, (state) => {
       state.isAuthenticated = false;
       state.error = null;
+      state.profile = null;
     })
     .addCase(refreshTokenRequest, (state) => {
       state.loading = true;
@@ -47,5 +52,17 @@ export const authReducer = createReducer(initialState, (builder) => {
     .addCase(refreshTokenFailure, (state) => {
       state.loading = false;
       state.isAuthenticated = false;
+    })
+    .addCase(fetchProfileRequest, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(fetchProfileSuccess, (state, action) => {
+      state.loading = false;
+      state.profile = action.payload;
+    })
+    .addCase(fetchProfileFailure, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
     });
 });

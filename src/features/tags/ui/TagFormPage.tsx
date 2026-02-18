@@ -115,7 +115,7 @@ const TagFormPage: React.FC = () => {
         style={{ marginBottom: isMobile ? 16 : 24 }}
         size={isMobile ? "small" : "middle"}
       >
-        {isMobile ? "Назад" : "Назад к списку"}
+        Назад
       </Button>
 
       <Card title={title(isEditing, isEditing && tag ? tag?.name : "")}>

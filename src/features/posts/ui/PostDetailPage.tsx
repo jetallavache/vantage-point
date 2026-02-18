@@ -10,8 +10,13 @@ import {
   Result,
   Spin,
   Avatar,
+  Tag,
 } from "antd";
-import { ArrowLeftOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  TagOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { fetchPostDetailRequest } from "../model/actions";
 import {
   selectCurrentPost,
@@ -25,6 +30,7 @@ import {
   formatPublishDate,
   formatDateTime,
 } from "../../../shared";
+import { TagItem } from "../model/types";
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -42,6 +48,14 @@ const PostDetailPage: React.FC = () => {
       dispatch(fetchPostDetailRequest(Number(id)));
     }
   }, [dispatch, id]);
+
+  const handleViewTag = (id: number) => {
+    navigate(`/tags/detail/${id}`);
+  };
+
+  const handleViewAuthor = (id: number) => {
+    navigate(`/authors/detail/${id}`);
+  };
 
   if (loading) {
     return (
@@ -94,7 +108,7 @@ const PostDetailPage: React.FC = () => {
           size={isMobile ? "small" : "middle"}
           type="text"
         >
-          {isMobile ? "Назад" : "Назад к списку"}
+          Назад
         </Button>
         <Button
           type="primary"
@@ -173,7 +187,7 @@ const PostDetailPage: React.FC = () => {
                 style={{ width: "100%" }}
               >
                 {post.author && (
-                  <div>
+                  <a>
                     <Text
                       type="secondary"
                       style={{ display: "block", marginBottom: "8px" }}
@@ -186,9 +200,11 @@ const PostDetailPage: React.FC = () => {
                         icon={<UserOutlined />}
                         size="small"
                       />
-                      <Text>{post.author.fullName}</Text>
+                      <Text onClick={() => handleViewAuthor(post.author.id)}>
+                        {post.author.fullName}
+                      </Text>
                     </Space>
-                  </div>
+                  </a>
                 )}
 
                 {post.tags && post.tags.length > 0 && (
@@ -199,14 +215,22 @@ const PostDetailPage: React.FC = () => {
                     >
                       Теги
                     </Text>
-                    <Space size={[0, 8]} wrap>
-                      {post.tags.map((tag: any, i: number) => (
-                        <HashTag
-                          key={tag.id || i}
-                          tag={tag.name || tag}
-                          id={tag.id}
-                          index={i}
-                        />
+                    <Space size={isMobile ? [4, 0] : [4, 4]} wrap>
+                      {post.tags.map((t: TagItem, i) => (
+                        <Tag
+                          key={i}
+                          icon={<TagOutlined />}
+                          variant="outlined"
+                          onClick={() => handleViewTag(t.id)}
+                          style={{
+                            whiteSpace: "nowrap",
+                            overflow: "clip",
+                            textOverflow: "ellipsis",
+                            maxWidth: "142px",
+                          }}
+                        >
+                          <a>{t.name}</a>
+                        </Tag>
                       ))}
                     </Space>
                   </div>

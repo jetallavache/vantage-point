@@ -11,13 +11,7 @@ import {
 } from "antd";
 import * as actions from "../model/actions";
 import * as selectors from "../model/selectors";
-import { buildTree } from "../lib/utils";
-import {
-  CreateMenuItemRequest,
-  MenuItemFlat,
-  MenuType,
-  UpdateMenuItemRequest,
-} from "../model/types";
+import { MenuItemFlat, MenuType } from "../model/types";
 import { menuItemSchema } from "../validation/schemas";
 import { useZodRules } from "../../../shared";
 
@@ -56,7 +50,7 @@ export const MenuItemForm: React.FC<MenuItemFormProps> = ({
 }) => {
   const dispatch = useDispatch();
   const treeList = useSelector(selectors.selectMenuTreeList);
-  const [form] = Form.useForm<CreateMenuItemRequest | UpdateMenuItemRequest>();
+  const [form] = Form.useForm();
   const rules = useZodRules(menuItemSchema);
 
   useEffect(() => {
@@ -73,7 +67,7 @@ export const MenuItemForm: React.FC<MenuItemFormProps> = ({
           });
         }
       } else {
-        // onCancel();
+        onCancel();
         message.error("Не выбран тип меню");
       }
     }
@@ -82,18 +76,16 @@ export const MenuItemForm: React.FC<MenuItemFormProps> = ({
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
+      values.typeId = activeType?.id || "";
 
       if (activeItem) {
-        // dispatch(
-        //   actions.editMenuItemRequest({
-        //     typeId: activeType.id,
-        //     ...values,
-        //   })
-        // );
+        dispatch(
+          actions.editMenuItemRequest({
+            ...values,
+            id: activeItem.id,
+          })
+        );
       } else {
-        values.typeId = activeType?.id || "";
-
-        console.log(values);
         dispatch(actions.addMenuItemRequest(values));
       }
 
@@ -102,8 +94,6 @@ export const MenuItemForm: React.FC<MenuItemFormProps> = ({
       console.error("Validation failed:", error);
     }
   };
-
-  // const tree = buildTree(treeList);
 
   const parentOptions = [
     { label: "Корневой уровень (null)", value: null },
@@ -125,14 +115,6 @@ export const MenuItemForm: React.FC<MenuItemFormProps> = ({
       cancelText="Отмена"
     >
       <Form form={form} layout="vertical">
-        {/* <Form.Item
-          name="typeId"
-          label="Type ID"
-          // rules={[{ required: true, message: "" }]}
-        >
-          <Input placeholder={typeId!} disabled />
-        </Form.Item> */}
-
         <Form.Item name="name" label="Название" rules={rules.name}>
           <Input placeholder="Введите название" />
         </Form.Item>
@@ -144,14 +126,6 @@ export const MenuItemForm: React.FC<MenuItemFormProps> = ({
             allowClear
           />
         </Form.Item>
-
-        {/* <Form.Item
-          name="parentId"
-          label="Parent ID"
-          rules={[{ required: true, message: "Введите идент. родителя" }]}
-        >
-          <Input placeholder="1" value={""} />
-        </Form.Item> */}
 
         <Form.Item name="url" label="Внешняя ссылка" rules={rules.url}>
           <Input placeholder="https://example.com" />

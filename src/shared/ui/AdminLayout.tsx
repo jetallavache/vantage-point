@@ -1,5 +1,16 @@
-import React, { useState } from "react";
-import { Layout, Menu, Button, Drawer, Typography, Badge } from "antd";
+import React, { useState, useEffect } from "react";
+import {
+  Layout,
+  Menu,
+  Button,
+  Drawer,
+  Typography,
+  Badge,
+  Space,
+  Modal,
+  Descriptions,
+  Tag,
+} from "antd";
 import {
   FileTextOutlined,
   UserOutlined,
@@ -10,12 +21,13 @@ import {
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { logout } from "../../features/auth/model/actions";
+import { logout, fetchProfileRequest } from "../../features/auth/model/actions";
 import { selectPostsTotal } from "../../features/posts/model/selectors";
+import { selectUserProfile } from "../../features/auth/model/selectors";
 import { useIsMobile } from "../hooks/useIsMobile";
 
 const { Header, Sider, Content } = Layout;
-const { Title } = Typography;
+const { Title, Text, Link } = Typography;
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -26,18 +38,20 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
   const isMobile = useIsMobile();
   const postsTotal = useSelector(selectPostsTotal);
+  const profile = useSelector(selectUserProfile);
+
+  useEffect(() => {
+    dispatch(fetchProfileRequest());
+  }, [dispatch]);
 
   const menuItems = [
     {
       key: "/posts",
       icon: <FileTextOutlined />,
-      label: (
-        <Badge count={postsTotal} offset={[10, 0]} overflowCount={999}>
-          Посты
-        </Badge>
-      ),
+      label: "Посты",
     },
     {
       key: "/authors",
@@ -54,7 +68,23 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       icon: <AppstoreOutlined />,
       label: "Меню",
     },
-  ];
+  ].map((item) =>
+    item.key === "/posts"
+      ? {
+          ...item,
+          label: (
+            <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {item.label}
+              <Badge
+                count={postsTotal}
+                overflowCount={999}
+                style={{ backgroundColor: "#52c41a" }}
+              />
+            </span>
+          ),
+        }
+      : item
+  );
 
   const handleMenuClick = ({ key }: { key: string }) => {
     navigate(key);
@@ -74,10 +104,17 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       selectedKeys={[location.pathname]}
       items={menuItems}
       onClick={handleMenuClick}
-      style={{
-        fontSize: "16px",
-        fontWeight: 500,
-      }}
+      style={
+        isMobile
+          ? {
+              fontSize: "16px",
+              color: "rgba(0, 0, 0, 0.88)",
+            }
+          : {
+              fontSize: "16px",
+              fontWeight: 500,
+            }
+      }
     />
   );
 
@@ -130,15 +167,35 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               </Title>
             </div>
           )}
-          <Button
-            type="text"
-            icon={<LogoutOutlined />}
-            onClick={handleLogout}
-            size="large"
-            style={{ fontSize: "16px" }}
-          >
-            Выйти
-          </Button>
+          <Space size="middle">
+            {profile && (
+              <Link
+                onClick={() => setProfileModalVisible(true)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontSize: "14px",
+                }}
+              >
+                <UserOutlined />
+                {!isMobile && (
+                  <span>
+                    {profile.name} {profile.lastName}
+                  </span>
+                )}
+              </Link>
+            )}
+            <Button
+              type="text"
+              icon={<LogoutOutlined />}
+              onClick={handleLogout}
+              size="large"
+              style={{ fontSize: "16px" }}
+            >
+              {!isMobile && "Выйти"}
+            </Button>
+          </Space>
         </Header>
 
         <Content
@@ -166,9 +223,55 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           onClose={() => setDrawerVisible(false)}
           open={drawerVisible}
           styles={{ body: { padding: 0 } }}
+          size={210}
         >
           {renderMenu()}
         </Drawer>
+      )}
+
+      {profile && (
+        <Modal
+          title={
+            <Space>
+              <UserOutlined />
+              <span>Профиль пользователя</span>
+            </Space>
+          }
+          open={profileModalVisible}
+          onCancel={() => setProfileModalVisible(false)}
+          footer={[
+            <Button key="close" onClick={() => setProfileModalVisible(false)}>
+              Закрыть
+            </Button>,
+          ]}
+          width={600}
+        >
+          <Descriptions column={1} bordered>
+            <Descriptions.Item label="ID">{profile.id}</Descriptions.Item>
+            <Descriptions.Item label="Имя">{profile.name}</Descriptions.Item>
+            <Descriptions.Item label="Фамилия">
+              {profile.lastName}
+            </Descriptions.Item>
+            <Descriptions.Item label="Отчество">
+              {profile.secondName || "—"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Email">{profile.email}</Descriptions.Item>
+            <Descriptions.Item label="Телефон">
+              {profile.phone || "—"}
+            </Descriptions.Item>
+            <Descriptions.Item label="Статус">
+              <Tag color={profile.isActive ? "green" : "red"}>
+                {profile.isActive ? "Активен" : "Неактивен"}
+              </Tag>
+            </Descriptions.Item>
+            <Descriptions.Item label="Создан">
+              {new Date(profile.createdAt).toLocaleString("ru-RU")}
+            </Descriptions.Item>
+            <Descriptions.Item label="Обновлен">
+              {new Date(profile.updatedAt).toLocaleString("ru-RU")}
+            </Descriptions.Item>
+          </Descriptions>
+        </Modal>
       )}
     </Layout>
   );
