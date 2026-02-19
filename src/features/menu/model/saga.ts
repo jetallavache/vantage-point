@@ -24,9 +24,9 @@ function* addMenuTypeSaga(
   action: PayloadAction<CreateMenuTypeRequest>
 ): Generator<any, void, any> {
   try {
-    const response: any = yield call(menuApi.addMenuType, action.payload);
-    yield put(actions.addMenuTypeSuccess(response));
-    yield put(actions.setActiveMenuType(response.id));
+    yield call(menuApi.addMenuType, action.payload);
+    yield put(actions.fetchMenuTypesRequest());
+    yield put(actions.setActiveMenuType(action.payload.id));
   } catch (error: any) {
     yield call(showApiError, error);
     yield put(actions.addMenuTypeFailure(error.message));
