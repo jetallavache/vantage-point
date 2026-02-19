@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Select, Button, Space, Spin, Empty } from "antd";
+import { Select, Button, Space, Spin, Empty, Popconfirm } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
   OrderedListOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import * as actions from "../model/actions";
 import * as selectors from "../model/selectors";
@@ -60,6 +61,12 @@ export const MenuManagePage: React.FC = () => {
     setTypeFormVisible(true);
   };
 
+  const handleDeleteType = () => {
+    if (activeType) {
+      dispatch(actions.removeMenuTypeRequest(activeType.id));
+    }
+  };
+
   /* Menu Item */
   const handleAddItem = (parentId?: string) => {
     setActiveItem(null);
@@ -94,33 +101,56 @@ export const MenuManagePage: React.FC = () => {
           </Space.Addon>
           <Select
             placeholder="Выберите тип меню"
-            style={{ width: 200 }}
+            style={{
+              width: isMobile ? 120 : 200,
+            }}
             size={isMobile ? "small" : "middle"}
             value={activeTypeId}
             onChange={handleTypeChange}
-            options={menuTypes.map((type) => ({
-              label: type.name,
-              value: type.id,
-            }))}
+            options={menuTypes
+              .filter((type) => type?.name && type?.id)
+              .map((type) => ({
+                label: type.name,
+                value: type.id,
+              }))}
           />
           {activeTypeId && (
             <Button
-              variant="outlined"
+              variant="solid"
+              color="blue"
               icon={<EditOutlined />}
               onClick={handleEditType}
               size={isMobile ? "small" : "middle"}
+              style={{ width: 60 }}
+            ></Button>
+          )}
+          {activeTypeId && (
+            <Popconfirm
+              key="delete"
+              title="Удалить тип меню?"
+              description="Это действие нельзя отменить"
+              onConfirm={handleDeleteType}
+              okText="Да"
+              cancelText="Нет"
             >
-              Ред.
-            </Button>
+              <Button
+                variant="solid"
+                color="red"
+                danger
+                icon={<DeleteOutlined />}
+                size={isMobile ? "small" : "middle"}
+                style={{ width: 60 }}
+              ></Button>
+            </Popconfirm>
           )}
           <Button
-            type="primary"
+            variant="solid"
+            color="green"
             icon={<PlusOutlined />}
             size={isMobile ? "small" : "middle"}
             onClick={handleAddType}
-          >
-            Новое меню
-          </Button>
+            style={{ width: 60 }}
+          ></Button>
         </Space.Compact>
       </div>
 

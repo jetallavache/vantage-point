@@ -25,7 +25,8 @@ function* addMenuTypeSaga(
 ): Generator<any, void, any> {
   try {
     const response: any = yield call(menuApi.addMenuType, action.payload);
-    yield put(actions.addMenuTypeSuccess(response.data));
+    yield put(actions.addMenuTypeSuccess(response));
+    yield put(actions.setActiveMenuType(response.id));
   } catch (error: any) {
     yield call(showApiError, error);
     yield put(actions.addMenuTypeFailure(error.message));
@@ -37,7 +38,7 @@ function* editMenuTypeSaga(
 ): Generator<any, void, any> {
   try {
     const response: any = yield call(menuApi.editMenuType, action.payload);
-    yield put(actions.editMenuTypeSuccess(response.data));
+    yield put(actions.editMenuTypeSuccess(response));
   } catch (error: any) {
     yield call(showApiError, error);
     yield put(actions.editMenuTypeFailure(error.message));
