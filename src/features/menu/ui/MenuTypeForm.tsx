@@ -14,7 +14,7 @@ interface MenuTypeFormProps {
 
 export const MenuTypeForm: React.FC<MenuTypeFormProps> = ({
   visible,
-  activeType = null, // ссылаемся на то что при создании нового у нас еще нет никакого MenuType
+  activeType = null /* ссылаемся на то, что при создании нового у нас еще нет никакого MenuType */,
   onCancel,
 }) => {
   const dispatch = useDispatch();

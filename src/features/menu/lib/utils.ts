@@ -4,7 +4,7 @@ export function buildTree(flatList: MenuItemFlat[]): MenuItemTree[] {
   const itemMap = new Map<string, MenuItemTree>();
   const rootItems: MenuItemTree[] = [];
 
-  // Create map of all items
+  /* Create map of all items */
   flatList.forEach((item) => {
     itemMap.set(item.id, {
       ...item,
@@ -12,7 +12,7 @@ export function buildTree(flatList: MenuItemFlat[]): MenuItemTree[] {
     });
   });
 
-  // Build tree structure
+  /* Build tree structure */
   flatList.forEach((item) => {
     const treeItem = itemMap.get(item.id)!;
 
@@ -25,7 +25,7 @@ export function buildTree(flatList: MenuItemFlat[]): MenuItemTree[] {
     }
   });
 
-  // Sort items by sort field
+  /* Sort items by sort field */
   const sortItems = (items: MenuItemTree[]) => {
     items.sort((a, b) => a.sort - b.sort);
     items.forEach((item) => {

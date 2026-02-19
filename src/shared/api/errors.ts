@@ -26,18 +26,18 @@ export const createApiError = (
   let validationErrors: Array<{ field: string; message: string }> | undefined;
 
   if (data) {
-    // 400 Bad Request format
+    /* 400 Bad Request format */
     if (data.message) {
       message = data.message;
     }
 
-    // 422 Validation errors format
+    /* 422 Validation errors format */
     if (Array.isArray(data)) {
       validationErrors = data;
       message = "Ошибка валидации данных";
     }
 
-    // Legacy errors format
+    /* Legacy errors format */
     if (data.errors) {
       errors = data.errors;
     }

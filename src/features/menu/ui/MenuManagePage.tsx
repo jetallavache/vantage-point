@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Select, Button, Space, Spin, Empty } from "antd";
 import {
   PlusOutlined,
-  SaveOutlined,
   EditOutlined,
   OrderedListOutlined,
 } from "@ant-design/icons";
@@ -20,12 +19,8 @@ export const MenuManagePage: React.FC = () => {
   const dispatch = useDispatch();
   const menuTypes = useSelector(selectors.selectMenuTypes);
   const activeTypeId = useSelector(selectors.selectActiveTypeId);
-
   const treeList = useSelector(selectors.selectMenuTreeList);
-
   const loading = useSelector(selectors.selectMenuLoading);
-  const dirty = useSelector(selectors.selectMenuDirty);
-  // const error = useSelector(selectors.selectMenuError);
 
   const [typeFormVisible, setTypeFormVisible] = useState(false);
   const [itemFormVisible, setItemFormVisible] = useState(false);
@@ -47,7 +42,6 @@ export const MenuManagePage: React.FC = () => {
   }, [dispatch, activeTypeId]);
 
   /* Menu Type */
-
   const handleTypeChange = (typeId: string) => {
     dispatch(actions.setActiveMenuType(typeId));
 
@@ -67,7 +61,6 @@ export const MenuManagePage: React.FC = () => {
   };
 
   /* Menu Item */
-
   const handleAddItem = (parentId?: string) => {
     setActiveItem(null);
     setItemFormVisible(true);
@@ -80,13 +73,6 @@ export const MenuManagePage: React.FC = () => {
 
   const handleDeleteItem = (itemId: string) => {
     dispatch(actions.removeMenuItemRequest(itemId));
-  };
-
-  const handleSaveStructure = () => {
-    const tree = buildTree(treeList);
-    const flattenedItems = flattenTree(tree);
-
-    dispatch(actions.saveMenuStructureRequest({ items: flattenedItems }));
   };
 
   const tree = buildTree(treeList);

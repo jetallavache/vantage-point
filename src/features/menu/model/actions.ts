@@ -10,7 +10,7 @@ import {
   SaveMenuStructureRequest,
 } from "./types";
 
-// Menu Types
+/* Menu Types */
 export const fetchMenuTypesRequest = createAction("menu/fetchMenuTypesRequest");
 export const fetchMenuTypesSuccess = createAction<MenuType[]>(
   "menu/fetchMenuTypesSuccess"
@@ -49,7 +49,7 @@ export const removeMenuTypeFailure = createAction<string>(
   "menu/removeMenuTypeFailure"
 );
 
-// Menu Items
+/* Menu Items */
 export const fetchMenuTreeRequest = createAction<string>(
   "menu/fetchMenuTreeRequest"
 );
@@ -100,7 +100,7 @@ export const removeMenuItemFailure = createAction<string>(
   "menu/removeMenuItemFailure"
 );
 
-// Drag & Drop
+/* Drag & Drop */
 export const moveMenuItemRequest = createAction<{
   dragId: string;
   dropId: string;
@@ -117,7 +117,7 @@ export const saveMenuStructureFailure = createAction<string>(
   "menu/saveMenuStructureFailure"
 );
 
-// UI Actions
+/* UI Actions */
 export const setActiveMenuType = createAction<string | null>(
   "menu/setActiveMenuType"
 );

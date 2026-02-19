@@ -68,7 +68,7 @@ export const MenuItemForm: React.FC<MenuItemFormProps> = ({
         }
       } else {
         onCancel();
-        message.error("Не выбран тип меню");
+        message.error("Меню не выбрано");
       }
     }
   }, [visible, activeItem, form, treeList]);

@@ -52,4 +52,3 @@
 - `POST /manage/menu/items/add` - добавить пункт меню
 - `POST /manage/menu/items/edit` - редактировать пункт меню
 - `DELETE /manage/menu/items/remove` - удалить пункт меню
-- `POST /manage/menu/items/save-structure` - сохранить структуру

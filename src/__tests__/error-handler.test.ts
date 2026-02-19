@@ -3,7 +3,7 @@ import { message } from "antd";
 import { showApiError } from "../shared/lib/error-handler";
 import { ApiException } from "../shared/api/errors";
 
-// Mock antd message
+/* Mock antd message */
 vi.mock("antd", () => ({
   message: {
     error: vi.fn(),

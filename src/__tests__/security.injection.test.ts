@@ -154,8 +154,8 @@ describe("Security: XSS and Injection Protection", () => {
 
       sqlPatterns.forEach((pattern) => {
         const text = `Текст с ${pattern} инъекцией`;
-        // API должен обрабатывать это на бэкенде
-        // Здесь проверяем, что текст проходит через sanitizer
+        /* API должен обрабатывать это на бэкенде */
+        /* Здесь проверяем, что текст проходит через sanitizer */
         const sanitized = sanitizeText(text);
         expect(sanitized).toBeDefined();
       });

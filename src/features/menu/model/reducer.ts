@@ -14,7 +14,7 @@ const initialState: MenuState = {
 
 export const menuReducer = createReducer(initialState, (builder) => {
   builder
-    // Menu Types
+    /* Menu Types */
     .addCase(actions.fetchMenuTypesRequest, (state) => {
       state.loading = true;
       state.error = null;
@@ -79,7 +79,7 @@ export const menuReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
-    // Menu Items
+    /* Menu Items */
     .addCase(actions.fetchMenuTreeRequest, (state) => {
       state.loading = true;
       state.error = null;
@@ -153,7 +153,7 @@ export const menuReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
-    // Drag & Drop
+    /* Drag & Drop */
     .addCase(actions.moveMenuItemRequest, (state, action) => {
       const { dragId, dropId, position } = action.payload;
       const dragIndex = state.treeList.findIndex((item) => item.id === dragId);
@@ -170,7 +170,7 @@ export const menuReducer = createReducer(initialState, (builder) => {
         dragItem.parentId = dropItem.parentId;
       }
 
-      // Update sort orders
+      /* Update sort orders */
       const siblings = state.treeList.filter(
         (item) => item.parentId === dragItem.parentId && item.id !== dragId
       );
@@ -214,7 +214,7 @@ export const menuReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
 
-    // UI Actions
+    /* UI Actions */
     .addCase(actions.setActiveMenuType, (state, action) => {
       state.activeTypeId = action.payload;
     })
