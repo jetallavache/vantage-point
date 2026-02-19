@@ -109,6 +109,7 @@ const PostFormPage: React.FC = () => {
       dispatch(createPostRequest(data));
     }
 
+    handleBack();
     message.success(
       isEditing ? "Статья успешно обновлена" : "Статья успешно создана"
     );
