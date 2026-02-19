@@ -234,5 +234,3 @@ export const ValidationErrorCodes = {
 
 - **Определение кодов**: `src/shared/lib/validation-errors.ts`
 - **Схемы валидации**: `src/features/*/validation/schemas.ts`
-- **Защита от инъекций**: [SECURITY_INJECTIONS.md](./SECURITY_INJECTIONS.md)
-- **Тесты безопасности**: [SECURITY_TESTS.md](./SECURITY_TESTS.md)

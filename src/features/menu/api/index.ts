@@ -9,7 +9,7 @@ import {
 import { mockMenuStorage } from "../lib/mockStorage";
 
 export const menuApi = {
-  // Menu Types
+  /* Menu Types */
   fetchMenuTypes: () => {
     return apiClient.get("/manage/menu/types");
   },
@@ -31,7 +31,7 @@ export const menuApi = {
     return apiClient.delete(`/manage/menu/types/remove?id=${id}`);
   },
 
-  // Menu Items
+  /* Menu Items */
   fetchMenuTree: (typeId: string) => {
     return apiClient.get(`/manage/menu/items/tree?typeId=${typeId}`);
   },

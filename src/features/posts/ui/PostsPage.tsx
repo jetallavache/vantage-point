@@ -82,7 +82,7 @@ const PostsPage: React.FC = () => {
                   header: {
                     minHeight: "32px",
                     backgroundColor: "var(--ant-color-bg-layout)",
-                    // borderBottom: 'unset',
+                    /* borderBottom: 'unset', */
                   },
                 }}
                 key={post.id}
@@ -167,7 +167,7 @@ const PostsPage: React.FC = () => {
                           color="default"
                           variant="outlined"
                           style={{ minWidth: "86px" }}
-                          // icon={<EditOutlined />}
+                          /* icon={<EditOutlined />} */
                           onClick={(e) => {
                             e.stopPropagation();
                             navigate(`/posts/form/${post.id}`);
@@ -188,7 +188,7 @@ const PostsPage: React.FC = () => {
                             size="small"
                             danger
                             style={{ minWidth: "86px" }}
-                            // icon={<DeleteOutlined />}
+                            /* icon={<DeleteOutlined />} */
                             onClick={(e) => e.stopPropagation()}
                           >
                             Удалить
