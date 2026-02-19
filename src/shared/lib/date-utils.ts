@@ -3,16 +3,6 @@ export const formatPublishDate = (dateString: string): string => {
   const now = new Date();
   const diffTime = Math.abs(now.getTime() - date.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  console.log(
-    "now.getTime()",
-    now.getTime(),
-    "date.getTime()",
-    date.getTime(),
-    "diffTime",
-    diffTime,
-    "diffDays",
-    diffDays
-  );
 
   const time = date.toLocaleTimeString("ru-RU", {
     hour: "2-digit",

@@ -77,6 +77,7 @@ const TagFormPage: React.FC = () => {
       dispatch(createTagRequest(data as CreateTagRequest));
     }
 
+    navigate(-1);
     message.success(isEditing ? "Тег успешно обновлен" : "Тег успешно создан");
   };
 

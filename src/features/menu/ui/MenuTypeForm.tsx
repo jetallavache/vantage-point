@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { Modal, Form, Input } from "antd";
+import { Modal, Form, Input, Button, Popconfirm } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import * as actions from "../model/actions";
 import { MenuType } from "../model/types";
 import { menuTypeSchema } from "../validation/schemas";
 import { useZodRules } from "../../../shared";
+import { redirect } from "react-router-dom";
 
 interface MenuTypeFormProps {
   visible: boolean;
@@ -52,6 +54,13 @@ export const MenuTypeForm: React.FC<MenuTypeFormProps> = ({
     }
   };
 
+  const handleDelete = () => {
+    if (activeType) {
+      dispatch(actions.removeMenuTypeRequest(activeType.id));
+      onCancel();
+    }
+  };
+
   return (
     <Modal
       title={activeType ? "Редактировать тип меню" : "Добавить тип меню"}
@@ -60,6 +69,28 @@ export const MenuTypeForm: React.FC<MenuTypeFormProps> = ({
       onCancel={onCancel}
       okText={activeType ? "Обновить" : "Создать"}
       cancelText="Отмена"
+      footer={[
+        activeType && (
+          <Popconfirm
+            key="delete"
+            title="Удалить тип меню?"
+            description="Это действие нельзя отменить"
+            onConfirm={handleDelete}
+            okText="Да"
+            cancelText="Нет"
+          >
+            <Button danger icon={<DeleteOutlined />}>
+              Удалить
+            </Button>
+          </Popconfirm>
+        ),
+        <Button key="cancel" onClick={onCancel}>
+          Отмена
+        </Button>,
+        <Button key="submit" type="primary" onClick={handleSubmit}>
+          {activeType ? "Обновить" : "Создать"}
+        </Button>,
+      ]}
     >
       <Form form={form} layout="vertical">
         <Form.Item name="id" label="ID" rules={rules.id}>

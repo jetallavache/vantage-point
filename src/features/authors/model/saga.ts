@@ -74,7 +74,6 @@ function* createAuthorSaga(
   try {
     yield call(authorsApi.createAuthor, action.payload);
     yield put(createAuthorSuccess(action.payload));
-    window.location.href = "/vantage-point/authors";
   } catch (error) {
     yield call(showApiError, error);
     yield put(createAuthorFailure("Ошибка создания автора"));
@@ -87,7 +86,6 @@ function* updateAuthorSaga(
   try {
     yield call(authorsApi.updateAuthor, action.payload);
     yield put(updateAuthorSuccess(action.payload));
-    window.location.href = "/vantage-point/authors";
   } catch (error) {
     yield call(showApiError, error);
     yield put(updateAuthorFailure("Ошибка обновления автора"));

@@ -67,7 +67,6 @@ function* createPostSaga(
   try {
     yield call(postsApi.createPost, action.payload);
     yield put(createPostSuccess());
-    window.location.href = "/vantage-point/posts";
   } catch (error) {
     yield call(showApiError, error);
     yield put(createPostFailure("Ошибка создания поста"));
@@ -80,7 +79,6 @@ function* updatePostSaga(
   try {
     yield call(postsApi.updatePost, action.payload);
     yield put(updatePostSuccess());
-    window.location.href = "/vantage-point/posts";
   } catch (error) {
     yield call(showApiError, error);
     yield put(updatePostFailure("Ошибка обновления поста"));

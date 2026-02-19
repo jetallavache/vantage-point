@@ -78,7 +78,6 @@ function* createTagSaga(
       ...action.payload,
     };
     yield put(createTagSuccess(t));
-    window.location.href = "/vantage-point/tags";
   } catch (error) {
     yield call(showApiError, error);
     yield put(createTagFailure("Ошибка создания тега"));
@@ -96,7 +95,6 @@ function* updateTagSaga(
       ...action.payload,
     };
     yield put(updateTagSuccess(t));
-    window.location.href = "/vantage-point/tags";
   } catch (error) {
     yield call(showApiError, error);
     yield put(updateTagFailure("Ошибка обновления тега"));

@@ -78,7 +78,6 @@ const AuthorFormPage: React.FC = () => {
         removeAvatar: +values.removeAvatar,
       };
 
-      console.log(data);
       if (isEditing && author) {
         dispatch(
           updateAuthorRequest({
@@ -93,7 +92,8 @@ const AuthorFormPage: React.FC = () => {
       message.success(
         isEditing ? "Автор успешно обновлен" : "Автор успешно создан"
       );
-      navigate("/authors");
+
+      navigate(-1);
     } catch (error) {
       message.error("Проверьте правильность заполнения формы");
     }

@@ -42,6 +42,7 @@ const PostsPage: React.FC = () => {
 
   const handleDelete = (id: number) => {
     dispatch(deletePostRequest(id));
+    // navigate(-1);
   };
 
   const handlePageChange = (page: number) => {
@@ -95,7 +96,7 @@ const PostsPage: React.FC = () => {
                   />,
                   <Text key="date">{formatPublishDate(post.createdAt)}</Text>,
                 ]}
-                onClick={() => navigate(`/posts/detail/${post.id}`)}
+                onClick={() => handleViewDetail(post.id)}
                 style={{ cursor: "pointer" }}
               >
                 <Card.Meta
@@ -181,6 +182,7 @@ const PostsPage: React.FC = () => {
                           onConfirm={() => handleDelete(post.id)}
                           okText="Да"
                           cancelText="Нет"
+                          onPopupClick={(e) => e.stopPropagation()}
                         >
                           <Button
                             key="delete"

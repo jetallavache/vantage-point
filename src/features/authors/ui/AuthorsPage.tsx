@@ -75,10 +75,6 @@ const AuthorsPage: React.FC = () => {
     dispatch(deleteAuthorRequest(id));
   };
 
-  const handlePageChange = (page: number) => {
-    dispatch(fetchAuthorsRequest({ page }));
-  };
-
   const handleViewDetail = (id: number) => {
     navigate(`/authors/detail/${id}`);
   };
