@@ -18,3 +18,9 @@ export const selectPostsPagination = createSelector(
 );
 
 export const selectPostsTotal = (state: RootState) => state.posts?.total || 0;
+
+export const selectPostValidationErrors = (state: RootState) =>
+  state.posts?.validationErrors;
+export const selectPostFormError = (state: RootState) => state.posts?.formError;
+export const selectPostIsSubmitting = (state: RootState) =>
+  state.posts?.isSubmitting || false;

@@ -18,6 +18,7 @@ import {
 } from "./actions";
 import { postsApi } from "../api";
 import { showApiError } from "../../../shared/lib";
+import { normalizeError } from "../../../shared/api";
 
 function* fetchPostsSaga(
   action: ReturnType<typeof fetchPostsRequest>
@@ -68,8 +69,8 @@ function* createPostSaga(
     yield call(postsApi.createPost, action.payload);
     yield put(createPostSuccess());
   } catch (error) {
-    yield call(showApiError, error);
-    yield put(createPostFailure("Ошибка создания поста"));
+    const domainError = normalizeError(error);
+    yield put(createPostFailure(domainError));
   }
 }
 
@@ -80,8 +81,8 @@ function* updatePostSaga(
     yield call(postsApi.updatePost, action.payload);
     yield put(updatePostSuccess());
   } catch (error) {
-    yield call(showApiError, error);
-    yield put(updatePostFailure("Ошибка обновления поста"));
+    const domainError = normalizeError(error);
+    yield put(updatePostFailure(domainError));
   }
 }
 
