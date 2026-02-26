@@ -6,6 +6,7 @@ import {
   FetchAuthorsRequest,
   FetchAuthorsSuccess,
 } from "./types";
+import { DomainError } from "../../../shared/api";
 
 export const fetchAuthorsRequest = createAction<FetchAuthorsRequest>(
   "authors/fetchAuthorsRequest"
@@ -35,7 +36,7 @@ export const createAuthorRequest = createAction<CreateAuthorRequest>(
 export const createAuthorSuccess = createAction<CreateAuthorRequest>(
   "authors/createAuthorSuccess"
 );
-export const createAuthorFailure = createAction<string>(
+export const createAuthorFailure = createAction<DomainError>(
   "authors/createAuthorFailure"
 );
 
@@ -45,7 +46,7 @@ export const updateAuthorRequest = createAction<UpdateAuthorRequest>(
 export const updateAuthorSuccess = createAction<UpdateAuthorRequest>(
   "authors/updateAuthorSuccess"
 );
-export const updateAuthorFailure = createAction<string>(
+export const updateAuthorFailure = createAction<DomainError>(
   "authors/updateAuthorFailure"
 );
 
@@ -67,4 +68,8 @@ export const deleteBulkAuthorsSuccess = createAction<number[]>(
 );
 export const deleteBulkAuthorsFailure = createAction<string>(
   "Authors/deleteBulkAuthorsFailure"
+);
+
+export const clearAuthorFormErrors = createAction(
+  "authors/clearAuthorFormErrors"
 );

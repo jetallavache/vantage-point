@@ -21,6 +21,7 @@ import {
 } from "./actions";
 import { authorsApi } from "../api";
 import { showApiError } from "../../../shared/lib";
+import { normalizeError } from "../../../shared/api";
 
 function* fetchAuthorsSaga(
   action: ReturnType<typeof fetchAuthorsRequest>
@@ -75,8 +76,8 @@ function* createAuthorSaga(
     yield call(authorsApi.createAuthor, action.payload);
     yield put(createAuthorSuccess(action.payload));
   } catch (error) {
-    yield call(showApiError, error);
-    yield put(createAuthorFailure("Ошибка создания автора"));
+    const domainError = normalizeError(error);
+    yield put(createAuthorFailure(domainError));
   }
 }
 
@@ -87,8 +88,8 @@ function* updateAuthorSaga(
     yield call(authorsApi.updateAuthor, action.payload);
     yield put(updateAuthorSuccess(action.payload));
   } catch (error) {
-    yield call(showApiError, error);
-    yield put(updateAuthorFailure("Ошибка обновления автора"));
+    const domainError = normalizeError(error);
+    yield put(updateAuthorFailure(domainError));
   }
 }
 

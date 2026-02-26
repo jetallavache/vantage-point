@@ -6,7 +6,6 @@ import {
   Popconfirm,
   Avatar,
   Tooltip,
-  Tag,
   Modal,
   message,
 } from "antd";
@@ -23,11 +22,7 @@ import {
   deleteAuthorRequest,
   deleteBulkAuthorsRequest,
 } from "../model/actions";
-import {
-  selectAuthorsItems,
-  selectAuthorsLoading,
-  selectAuthorsPagination,
-} from "../model/selectors";
+import { selectAuthorsItems, selectAuthorsLoading } from "../model/selectors";
 import {
   MultipleRemoveItem,
   SafeAreaWrapper,
@@ -41,7 +36,6 @@ const AuthorsPage: React.FC = () => {
   const navigate = useNavigate();
   const authors = useSelector(selectAuthorsItems);
   const loading = useSelector(selectAuthorsLoading);
-  const pagination = useSelector(selectAuthorsPagination);
   const isMobile = useIsMobile();
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
 
@@ -150,8 +144,6 @@ const AuthorsPage: React.FC = () => {
       ),
     },
   ];
-
-  const showPagination = pagination.total > pagination.pageSize;
 
   return (
     <SafeAreaWrapper>
