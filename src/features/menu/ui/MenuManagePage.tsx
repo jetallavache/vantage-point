@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Select, Button, Space, Spin, Empty, Popconfirm, Row, Col } from "antd";
-import {
-  PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
-} from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import * as actions from "../model/actions";
 import * as selectors from "../model/selectors";
 import { MenuTree } from "./MenuTree";
