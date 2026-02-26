@@ -3,20 +3,25 @@ import { Form, Input, Button, Upload, Card, message, Checkbox } from "antd";
 import { UploadOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createAuthorRequest,
   updateAuthorRequest,
   fetchAuthorDetailRequest,
   clearCurrentAuthor,
+  clearAuthorFormErrors,
 } from "../model/actions";
 import {
   selectCurrentAuthor,
-  selectAuthorsLoading,
   selectAuthorsError,
+  selectAuthorValidationErrors,
+  selectAuthorFormError,
+  selectAuthorIsSubmitting,
 } from "../model/selectors";
 import { CreateAuthorRequest, UpdateAuthorRequest } from "../model/types";
 import { authorSchema, AuthorFormData } from "../validation/schemas";
-import { useIsMobile, SafeAreaWrapper, useZodRules } from "../../../shared";
+import { useIsMobile, SafeAreaWrapper } from "../../../shared";
 
 const { TextArea } = Input;
 
@@ -25,14 +30,25 @@ const AuthorFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const author = useSelector(selectCurrentAuthor);
-  const loading = useSelector(selectAuthorsLoading);
   const error = useSelector(selectAuthorsError);
-  const [form] = Form.useForm<AuthorFormData>();
-  const rules = useZodRules(authorSchema);
+  const validationErrors = useSelector(selectAuthorValidationErrors);
+  const formError = useSelector(selectAuthorFormError);
+  const isSubmitting = useSelector(selectAuthorIsSubmitting);
   const [fileList, setFileList] = useState<any[]>([]);
 
   const isEditing = Boolean(id);
   const isMobile = useIsMobile();
+
+  const {
+    control,
+    handleSubmit,
+    setError,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = useForm<AuthorFormData>({
+    resolver: zodResolver(authorSchema),
+  });
 
   useEffect(() => {
     if (isEditing && id) {
@@ -43,12 +59,13 @@ const AuthorFormPage: React.FC = () => {
       if (isEditing) {
         dispatch(clearCurrentAuthor());
       }
+      dispatch(clearAuthorFormErrors());
     };
   }, [dispatch, isEditing, id]);
 
   useEffect(() => {
     if (author) {
-      form.setFieldsValue({
+      reset({
         name: author.name || "",
         lastName: author.lastName || "",
         secondName: author.secondName || "",
@@ -56,7 +73,7 @@ const AuthorFormPage: React.FC = () => {
         description: author.description || "",
       });
     }
-  }, [author, form]);
+  }, [author, reset]);
 
   useEffect(() => {
     if (error) {
@@ -64,38 +81,59 @@ const AuthorFormPage: React.FC = () => {
     }
   }, [error]);
 
-  const handleSubmit = (values: any) => {
-    try {
-      authorSchema.parse(values);
+  useEffect(() => {
+    if (validationErrors) {
+      Object.entries(validationErrors).forEach(([field, msg]) => {
+        setError(field as keyof AuthorFormData, {
+          type: "server",
+          message: msg,
+        });
+      });
+    }
+  }, [validationErrors, setError]);
 
-      const data: any = {
-        name: values.name,
-        lastName: values.lastName,
-        secondName: values.secondName,
-        shortDescription: values.shortDescription,
-        description: values.description,
-        avatar: fileList[0]?.originFileObj,
-        removeAvatar: +values.removeAvatar,
-      };
+  const [wasSubmitting, setWasSubmitting] = React.useState(false);
 
-      if (isEditing && author) {
-        dispatch(
-          updateAuthorRequest({
-            ...data,
-            id: author.id,
-          } as UpdateAuthorRequest)
-        );
-      } else {
-        dispatch(createAuthorRequest(data as CreateAuthorRequest));
-      }
-
+  useEffect(() => {
+    if (wasSubmitting && !isSubmitting && !validationErrors && !formError) {
+      navigate(-1);
       message.success(
         isEditing ? "Автор успешно обновлен" : "Автор успешно создан"
       );
+    }
+    setWasSubmitting(isSubmitting);
+  }, [
+    isSubmitting,
+    wasSubmitting,
+    validationErrors,
+    formError,
+    navigate,
+    isEditing,
+  ]);
 
-      navigate(-1);
-    } catch (error) {
-      message.error("Проверьте правильность заполнения формы");
+  const onSubmit = (values: AuthorFormData) => {
+    dispatch(clearAuthorFormErrors());
+    clearErrors();
+
+    const data: any = {
+      name: values.name,
+      lastName: values.lastName,
+      secondName: values.secondName,
+      shortDescription: values.shortDescription,
+      description: values.description,
+      avatar: fileList[0]?.originFileObj,
+      removeAvatar: values.removeAvatar ? 1 : 0,
+    };
+
+    if (isEditing && author) {
+      dispatch(
+        updateAuthorRequest({
+          ...data,
+          id: author.id,
+        } as UpdateAuthorRequest)
+      );
+    } else {
+      dispatch(createAuthorRequest(data as CreateAuthorRequest));
     }
   };
 
@@ -121,62 +159,156 @@ const AuthorFormPage: React.FC = () => {
 
       <Card title={isEditing ? "Редактировать автора" : "Добавить автора"}>
         <Form
-          form={form}
           layout="vertical"
-          onFinish={handleSubmit}
+          onFinish={handleSubmit(onSubmit)}
           style={{ maxWidth: 600 }}
         >
-          <Form.Item name="name" label="Имя" rules={rules.name}>
-            <Input placeholder="Имя автора" />
+          <Form.Item
+            label="Имя"
+            validateStatus={errors.name ? "error" : ""}
+            help={errors.name?.message}
+          >
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Имя автора"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.name) {
+                      clearErrors("name");
+                      dispatch(clearAuthorFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
           </Form.Item>
 
           <Form.Item
-            name="secondName"
             label="Отчество"
-            rules={rules.secondName}
+            validateStatus={errors.secondName ? "error" : ""}
+            help={errors.secondName?.message}
           >
-            <Input placeholder="Отчество автора" />
-          </Form.Item>
-
-          <Form.Item name="lastName" label="Фамилия" rules={rules.lastName}>
-            <Input placeholder="Фамилия автора" />
+            <Controller
+              name="secondName"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Отчество автора"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.secondName) {
+                      clearErrors("secondName");
+                      dispatch(clearAuthorFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
           </Form.Item>
 
           <Form.Item
-            name="shortDescription"
+            label="Фамилия"
+            validateStatus={errors.lastName ? "error" : ""}
+            help={errors.lastName?.message}
+          >
+            <Controller
+              name="lastName"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Фамилия автора"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.lastName) {
+                      clearErrors("lastName");
+                      dispatch(clearAuthorFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
+          </Form.Item>
+
+          <Form.Item
             label="Краткое описание"
-            rules={rules.shortDescription}
+            validateStatus={errors.shortDescription ? "error" : ""}
+            help={errors.shortDescription?.message}
           >
-            <TextArea
-              placeholder="Краткое описание автора"
-              rows={3}
-              maxLength={200}
-              showCount
+            <Controller
+              name="shortDescription"
+              control={control}
+              render={({ field }) => (
+                <TextArea
+                  {...field}
+                  placeholder="Краткое описание автора"
+                  rows={3}
+                  maxLength={255}
+                  showCount
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.shortDescription) {
+                      clearErrors("shortDescription");
+                      dispatch(clearAuthorFormErrors());
+                    }
+                  }}
+                />
+              )}
             />
           </Form.Item>
 
           <Form.Item
-            name="description"
             label="Полное описание"
-            rules={rules.description}
+            validateStatus={errors.description ? "error" : ""}
+            help={errors.description?.message}
           >
-            <TextArea
-              placeholder="Полное описание автора"
-              rows={5}
-              maxLength={1000}
-              showCount
+            <Controller
+              name="description"
+              control={control}
+              render={({ field }) => (
+                <TextArea
+                  {...field}
+                  placeholder="Полное описание автора"
+                  rows={5}
+                  maxLength={1000}
+                  showCount
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.description) {
+                      clearErrors("description");
+                      dispatch(clearAuthorFormErrors());
+                    }
+                  }}
+                />
+              )}
             />
           </Form.Item>
 
-          <Form.Item name="avatar" label="Аватар">
+          <Form.Item label="Аватар">
             <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />}>Выбрать файл</Button>
             </Upload>
           </Form.Item>
 
           {isEditing && author?.avatar && (
-            <Form.Item name="removeAvatar" valuePropName="checked">
-              <Checkbox>Удалить текущий аватар</Checkbox>
+            <Form.Item>
+              <Controller
+                name="removeAvatar"
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    checked={field.value}
+                    onChange={(e) => field.onChange(e.target.checked)}
+                  >
+                    Удалить текущий аватар
+                  </Checkbox>
+                )}
+              />
             </Form.Item>
           )}
 
@@ -184,7 +316,7 @@ const AuthorFormPage: React.FC = () => {
             <Button
               type="primary"
               htmlType="submit"
-              loading={loading}
+              loading={isSubmitting}
               size={isMobile ? "small" : "middle"}
             >
               {isEditing ? "Сохранить" : "Создать"}

@@ -20,6 +20,7 @@ import {
   deleteBulkAuthorsRequest,
   deleteBulkAuthorsSuccess,
   deleteBulkAuthorsFailure,
+  clearAuthorFormErrors,
 } from "./actions";
 
 const initialState: AuthorsState = {
@@ -31,6 +32,7 @@ const initialState: AuthorsState = {
   totalPages: 1,
   total: 0,
   perPage: 9,
+  isSubmitting: false,
 };
 
 export const authorsReducer = createReducer(initialState, (builder) => {
@@ -67,24 +69,33 @@ export const authorsReducer = createReducer(initialState, (builder) => {
       state.currentAuthor = null;
     })
     .addCase(createAuthorRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(createAuthorSuccess, (state, action) => {
-      state.loading = false;
+      state.isSubmitting = false;
       state.items.unshift(action.payload);
       state.total += 1;
     })
     .addCase(createAuthorFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
     .addCase(updateAuthorRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(updateAuthorSuccess, (state, action) => {
-      state.loading = false;
+      state.isSubmitting = false;
       const index = state.items.findIndex(
         (item) => item.id === action.payload.id
       );
@@ -93,8 +104,15 @@ export const authorsReducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(updateAuthorFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
     .addCase(deleteAuthorRequest, (state) => {
       state.loading = true;
@@ -123,5 +141,9 @@ export const authorsReducer = createReducer(initialState, (builder) => {
     .addCase(deleteBulkAuthorsFailure, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    })
+    .addCase(clearAuthorFormErrors, (state) => {
+      state.validationErrors = undefined;
+      state.formError = undefined;
     });
 });

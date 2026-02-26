@@ -39,6 +39,9 @@ export interface MenuState {
   loading: boolean;
   dirty: boolean;
   error: string | null;
+  validationErrors?: Record<string, string>;
+  formError?: string;
+  isSubmitting: boolean;
 }
 
 export interface CreateMenuTypeRequest {

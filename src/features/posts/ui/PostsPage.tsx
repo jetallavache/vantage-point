@@ -24,7 +24,6 @@ import {
   selectPostsLoading,
   selectPostsPagination,
 } from "../model/selectors";
-import { autoBatchEnhancer } from "@reduxjs/toolkit";
 
 const { Text } = Typography;
 
@@ -126,7 +125,7 @@ const PostsPage: React.FC = () => {
                         </Text>
                         {post.tagNames && post.tagNames.length > 0 && (
                           <Space size={isMobile ? [4, 0] : [4, 4]} wrap>
-                            {post.tagNames.slice(0, 3).map((tag, i) => (
+                            {post.tagNames.slice(0, 3).map((tag) => (
                               <Tag
                                 key={tag}
                                 icon={<TagOutlined />}

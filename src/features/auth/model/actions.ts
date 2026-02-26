@@ -1,9 +1,10 @@
 import { createAction } from "@reduxjs/toolkit";
 import { LoginRequest, UserProfile } from "./types";
+import { DomainError } from "../../../shared/api";
 
 export const loginRequest = createAction<LoginRequest>("auth/loginRequest");
 export const loginSuccess = createAction("auth/loginSuccess");
-export const loginFailure = createAction<string>("auth/loginFailure");
+export const loginFailure = createAction<DomainError>("auth/loginFailure");
 export const logout = createAction("auth/logout");
 export const refreshTokenRequest = createAction("auth/refreshTokenRequest");
 export const refreshTokenSuccess = createAction("auth/refreshTokenSuccess");
@@ -15,3 +16,4 @@ export const fetchProfileSuccess = createAction<UserProfile>(
 export const fetchProfileFailure = createAction<string>(
   "auth/fetchProfileFailure"
 );
+export const clearAuthFormErrors = createAction("auth/clearAuthFormErrors");

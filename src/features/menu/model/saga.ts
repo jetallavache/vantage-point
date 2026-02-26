@@ -3,6 +3,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { menuApi } from "../api";
 import * as actions from "./actions";
 import { showApiError } from "../../../shared/lib";
+import { normalizeError } from "../../../shared/api";
 import {
   CreateMenuTypeRequest,
   UpdateMenuTypeRequest,
@@ -24,12 +25,13 @@ function* addMenuTypeSaga(
   action: PayloadAction<CreateMenuTypeRequest>
 ): Generator<any, void, any> {
   try {
-    yield call(menuApi.addMenuType, action.payload);
+    const response: any = yield call(menuApi.addMenuType, action.payload);
+    yield put(actions.addMenuTypeSuccess(response));
     yield put(actions.fetchMenuTypesRequest());
     yield put(actions.setActiveMenuType(action.payload.id));
   } catch (error: any) {
-    yield call(showApiError, error);
-    yield put(actions.addMenuTypeFailure(error.message));
+    const domainError = normalizeError(error);
+    yield put(actions.addMenuTypeFailure(domainError));
   }
 }
 
@@ -40,8 +42,8 @@ function* editMenuTypeSaga(
     const response: any = yield call(menuApi.editMenuType, action.payload);
     yield put(actions.editMenuTypeSuccess(response));
   } catch (error: any) {
-    yield call(showApiError, error);
-    yield put(actions.editMenuTypeFailure(error.message));
+    const domainError = normalizeError(error);
+    yield put(actions.editMenuTypeFailure(domainError));
   }
 }
 
@@ -87,9 +89,10 @@ function* addMenuItemSaga(
   try {
     const response: any = yield call(menuApi.addMenuItem, action.payload);
     yield put(actions.addMenuItemSuccess(response.data));
+    yield put(actions.fetchMenuTreeListRequest(action.payload.typeId));
   } catch (error: any) {
-    yield call(showApiError, error);
-    yield put(actions.addMenuItemFailure(error.message));
+    const domainError = normalizeError(error);
+    yield put(actions.addMenuItemFailure(domainError));
   }
 }
 
@@ -99,9 +102,10 @@ function* editMenuItemSaga(
   try {
     const response: any = yield call(menuApi.editMenuItem, action.payload);
     yield put(actions.editMenuItemSuccess(response.data));
+    yield put(actions.fetchMenuTreeListRequest(action.payload.typeId));
   } catch (error: any) {
-    yield call(showApiError, error);
-    yield put(actions.editMenuItemFailure(error.message));
+    const domainError = normalizeError(error);
+    yield put(actions.editMenuItemFailure(domainError));
   }
 }
 

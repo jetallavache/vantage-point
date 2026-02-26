@@ -21,28 +21,28 @@ describe("Auth reducer", () => {
     });
     const state = authReducer(initialState, action);
 
-    expect(state.loading).toBe(true);
-    expect(state.error).toBe(null);
+    expect(state.isSubmitting).toBe(true);
+    expect(state.validationErrors).toBeUndefined();
+    expect(state.formError).toBeUndefined();
   });
 
   it("should handle loginSuccess", () => {
-    const loadingState = { ...initialState, loading: true };
+    const loadingState = { ...initialState, isSubmitting: true };
     const action = loginSuccess();
     const state = authReducer(loadingState, action);
 
-    expect(state.loading).toBe(false);
+    expect(state.isSubmitting).toBe(false);
     expect(state.isAuthenticated).toBe(true);
-    expect(state.error).toBe(null);
   });
 
   it("should handle loginFailure", () => {
-    const loadingState = { ...initialState, loading: true };
-    const action = loginFailure("Login failed");
+    const loadingState = { ...initialState, isSubmitting: true };
+    const action = loginFailure({ kind: "form", message: "Login failed" });
     const state = authReducer(loadingState, action);
 
-    expect(state.loading).toBe(false);
+    expect(state.isSubmitting).toBe(false);
     expect(state.isAuthenticated).toBe(false);
-    expect(state.error).toBe("Login failed");
+    expect(state.formError).toBe("Login failed");
   });
 
   it("should handle logout", () => {

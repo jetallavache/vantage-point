@@ -1,55 +1,59 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Form,
-  Input,
-  Button,
-  Upload,
-  Select,
-  Card,
-  Spin,
-  Typography,
-  message,
-} from "antd";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, Input, Button, Upload, Select, Card, Spin, message } from "antd";
 import { ArrowLeftOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   createPostRequest,
   fetchPostDetailRequest,
   updatePostRequest,
+  clearPostFormErrors,
 } from "../model/actions";
 import { fetchTagsRequest } from "../../tags/model/actions";
 import { fetchAuthorsRequest } from "../../authors/model/actions";
 import {
   selectPostsLoading,
-  selectPostsError,
   selectCurrentPost,
+  selectPostValidationErrors,
+  selectPostFormError,
+  selectPostIsSubmitting,
 } from "../model/selectors";
 import { selectTagsItems } from "../../tags/model/selectors";
 import { selectAuthorsItems } from "../../authors/model/selectors";
-import { useIsMobile, SafeAreaWrapper, useZodRules } from "../../../shared";
+import { useIsMobile, SafeAreaWrapper, FormTitle } from "../../../shared";
 import { PostFormData, postSchema } from "../validation/schemas";
 
 const { TextArea } = Input;
-const { Title, Text } = Typography;
 
 const PostFormPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [form] = Form.useForm<PostFormData>();
-  const rules = useZodRules(postSchema);
 
   const loading = useSelector(selectPostsLoading);
-  const error = useSelector(selectPostsError);
   const currentPost = useSelector(selectCurrentPost);
   const tags = useSelector(selectTagsItems);
   const authors = useSelector(selectAuthorsItems);
+  const validationErrors = useSelector(selectPostValidationErrors);
+  const formError = useSelector(selectPostFormError);
+  const isSubmitting = useSelector(selectPostIsSubmitting);
 
   const [fileList, setFileList] = useState<any[]>([]);
   const isMobile = useIsMobile();
-
   const isEditing = !!id;
+
+  const {
+    control,
+    handleSubmit,
+    reset,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm<PostFormData>({
+    resolver: zodResolver(postSchema),
+  });
 
   useEffect(() => {
     dispatch(fetchTagsRequest({ page: 1 }));
@@ -58,11 +62,15 @@ const PostFormPage: React.FC = () => {
     if (isEditing && id) {
       dispatch(fetchPostDetailRequest(Number(id)));
     }
+
+    return () => {
+      dispatch(clearPostFormErrors());
+    };
   }, [dispatch, isEditing, id]);
 
   useEffect(() => {
     if (currentPost && isEditing) {
-      form.setFieldsValue({
+      reset({
         code: currentPost.code || "",
         title: currentPost.title || "",
         text: currentPost.text || "",
@@ -81,19 +89,56 @@ const PostFormPage: React.FC = () => {
         ]);
       }
     }
-  }, [currentPost, isEditing, form]);
+  }, [currentPost, isEditing, reset]);
 
   useEffect(() => {
-    if (error) {
-      message.error(error);
+    if (validationErrors) {
+      Object.entries(validationErrors).forEach(([field, msg]) => {
+        setError(field as keyof PostFormData, {
+          type: "server",
+          message: msg,
+        });
+      });
     }
-  }, [error]);
+  }, [validationErrors, setError]);
+
+  useEffect(() => {
+    if (formError) {
+      /* Выводим общую ошибку под поле text */
+      setError("text", {
+        type: "server",
+        message: formError,
+      });
+    }
+  }, [formError, setError]);
+
+  const [wasSubmitting, setWasSubmitting] = React.useState(false);
+
+  useEffect(() => {
+    if (wasSubmitting && !isSubmitting && !validationErrors && !formError) {
+      navigate(-1);
+      message.success(
+        isEditing ? "Статья успешно обновлена" : "Статья успешно создана"
+      );
+    }
+    setWasSubmitting(isSubmitting);
+  }, [
+    isSubmitting,
+    wasSubmitting,
+    validationErrors,
+    formError,
+    navigate,
+    isEditing,
+  ]);
 
   const handleBack = () => {
     navigate(-1);
   };
 
-  const handleSubmit = (values: PostFormData) => {
+  const onSubmit = (values: PostFormData) => {
+    dispatch(clearPostFormErrors());
+    clearErrors();
+
     const data = {
       code: values.code,
       title: values.title,
@@ -108,11 +153,6 @@ const PostFormPage: React.FC = () => {
     } else {
       dispatch(createPostRequest(data));
     }
-
-    handleBack();
-    message.success(
-      isEditing ? "Статья успешно обновлена" : "Статья успешно создана"
-    );
   };
 
   const uploadProps = {
@@ -121,34 +161,6 @@ const PostFormPage: React.FC = () => {
     onChange: ({ fileList: newFileList }: any) => setFileList(newFileList),
     maxCount: 1,
     accept: "image/*",
-  };
-
-  const title = (isEditing: boolean, name: string | null) => {
-    return (
-      <span>
-        {isEditing ? (
-          <Text type="secondary" italic>
-            (ред.)
-          </Text>
-        ) : (
-          <Text type="warning" italic>
-            (new)
-          </Text>
-        )}{" "}
-        {name && (
-          <span
-            style={{
-              maxWidth: "auto",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {name}
-          </span>
-        )}
-      </span>
-    );
   };
 
   if (loading) {
@@ -172,52 +184,149 @@ const PostFormPage: React.FC = () => {
       </Button>
 
       <Card
-        title={title(
-          isEditing,
-          isEditing && currentPost ? currentPost?.title : "Новая статья"
-        )}
+        title={
+          <FormTitle
+            isEditing={isEditing}
+            name={
+              isEditing && currentPost ? currentPost?.title : "Новая статья"
+            }
+          />
+        }
       >
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item name="code" label="Код статьи" rules={rules.code}>
-            <Input placeholder="99880" />
-          </Form.Item>
-
-          <Form.Item name="title" label="Заголовок" rules={rules.title}>
-            <Input placeholder="Очень страшное кино..." />
-          </Form.Item>
-
-          <Form.Item name="authorId" label="Автор" rules={rules.authorId}>
-            <Select placeholder="Олег Константинович Малявский">
-              {authors.map((author) => (
-                <Select.Option key={author.id} value={author.id}>
-                  {`${author.lastName} ${author.name} ${author.secondName}`}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="tagIds" label="Теги" rules={rules.tagIds}>
-            <Select mode="multiple" placeholder="#кино #рецензия">
-              {tags.map((tag) => (
-                <Select.Option key={tag.id} value={tag.id}>
-                  {tag.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item name="text" label="Содержание" rules={rules.text}>
-            <TextArea
-              rows={6}
-              placeholder="Тут должен быть текст вашей статьи. Напишите подробно что хотели рассказать!"
+        <Form layout="vertical" onFinish={handleSubmit(onSubmit)}>
+          <Form.Item
+            label="Код статьи"
+            validateStatus={errors.code ? "error" : ""}
+            help={errors.code?.message}
+          >
+            <Controller
+              name="code"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="99880"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.code) {
+                      clearErrors("code");
+                      dispatch(clearPostFormErrors());
+                    }
+                  }}
+                />
+              )}
             />
           </Form.Item>
 
           <Form.Item
-            name="previewPicture"
-            label="Обложка"
-            rules={rules.previewPicture}
+            label="Заголовок"
+            validateStatus={errors.title ? "error" : ""}
+            help={errors.title?.message}
           >
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Очень страшное кино..."
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.title) {
+                      clearErrors("title");
+                      dispatch(clearPostFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Автор"
+            validateStatus={errors.authorId ? "error" : ""}
+            help={errors.authorId?.message}
+          >
+            <Controller
+              name="authorId"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  placeholder="Олег Константинович Малявский"
+                  options={authors.map((author) => ({
+                    key: author.id,
+                    value: author.id,
+                    label: `${author.lastName} ${author.name} ${author.secondName}`,
+                  }))}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    if (validationErrors?.authorId) {
+                      clearErrors("authorId");
+                      dispatch(clearPostFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Теги"
+            validateStatus={errors.tagIds ? "error" : ""}
+            help={errors.tagIds?.message}
+          >
+            <Controller
+              name="tagIds"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  mode="multiple"
+                  placeholder="#кино #рецензия"
+                  options={tags.map((tag) => ({
+                    key: tag.id,
+                    value: tag.id,
+                    label: tag.name,
+                  }))}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    if (validationErrors?.tagIds) {
+                      clearErrors("tagIds");
+                      dispatch(clearPostFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="Содержание"
+            validateStatus={errors.text ? "error" : ""}
+            help={errors.text?.message}
+          >
+            <Controller
+              name="text"
+              control={control}
+              render={({ field }) => (
+                <TextArea
+                  {...field}
+                  rows={6}
+                  placeholder="Тут должен быть текст вашей статьи. Напишите подробно что хотели рассказать!"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.text) {
+                      clearErrors("text");
+                      dispatch(clearPostFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
+          </Form.Item>
+
+          <Form.Item label="Обложка">
             <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />}>Выбрать файл</Button>
             </Upload>
@@ -227,7 +336,7 @@ const PostFormPage: React.FC = () => {
             <Button
               type="primary"
               htmlType="submit"
-              loading={loading}
+              loading={isSubmitting}
               size={isMobile ? "small" : "middle"}
             >
               {isEditing ? "Сохранить" : "Создать"}

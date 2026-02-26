@@ -9,6 +9,7 @@ import {
   UpdateMenuItemRequest,
   SaveMenuStructureRequest,
 } from "./types";
+import { DomainError } from "../../../shared/api";
 
 /* Menu Types */
 export const fetchMenuTypesRequest = createAction("menu/fetchMenuTypesRequest");
@@ -25,7 +26,7 @@ export const addMenuTypeRequest = createAction<CreateMenuTypeRequest>(
 export const addMenuTypeSuccess = createAction<MenuType>(
   "menu/addMenuTypeSuccess"
 );
-export const addMenuTypeFailure = createAction<string>(
+export const addMenuTypeFailure = createAction<DomainError>(
   "menu/addMenuTypeFailure"
 );
 
@@ -35,7 +36,7 @@ export const editMenuTypeRequest = createAction<UpdateMenuTypeRequest>(
 export const editMenuTypeSuccess = createAction<MenuType>(
   "menu/editMenuTypeSuccess"
 );
-export const editMenuTypeFailure = createAction<string>(
+export const editMenuTypeFailure = createAction<DomainError>(
   "menu/editMenuTypeFailure"
 );
 
@@ -76,7 +77,7 @@ export const addMenuItemRequest = createAction<CreateMenuItemRequest>(
 export const addMenuItemSuccess = createAction<MenuItemFlat>(
   "menu/addMenuItemSuccess"
 );
-export const addMenuItemFailure = createAction<string>(
+export const addMenuItemFailure = createAction<DomainError>(
   "menu/addMenuItemFailure"
 );
 
@@ -86,7 +87,7 @@ export const editMenuItemRequest = createAction<UpdateMenuItemRequest>(
 export const editMenuItemSuccess = createAction<MenuItemFlat>(
   "menu/editMenuItemSuccess"
 );
-export const editMenuItemFailure = createAction<string>(
+export const editMenuItemFailure = createAction<DomainError>(
   "menu/editMenuItemFailure"
 );
 
@@ -122,3 +123,5 @@ export const setActiveMenuType = createAction<string | null>(
   "menu/setActiveMenuType"
 );
 export const setDirty = createAction<boolean>("menu/setDirty");
+
+export const clearMenuFormErrors = createAction("menu/clearMenuFormErrors");

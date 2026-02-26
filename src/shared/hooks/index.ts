@@ -1,2 +1,2 @@
 export { useIsMobile } from "./useIsMobile";
-export { useZodRules } from "./useZodRules";
+export { useTouchDrag } from "./useTouchDrag";

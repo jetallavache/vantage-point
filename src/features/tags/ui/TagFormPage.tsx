@@ -1,46 +1,50 @@
-import React, { useEffect, useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  InputNumber,
-  Card,
-  message,
-  Typography,
-} from "antd";
+import React, { useEffect } from "react";
+import { Form, Input, Button, InputNumber, Card, message } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createTagRequest,
   updateTagRequest,
   fetchTagsRequest,
+  clearTagFormErrors,
 } from "../model/actions";
 import {
   selectTagsItems,
-  selectTagsLoading,
-  selectTagsError,
+  selectTagValidationErrors,
+  selectTagFormError,
+  selectTagIsSubmitting,
 } from "../model/selectors";
 import { CreateTagRequest, UpdateTagRequest } from "../model/types";
 import { tagSchema, TagFormData } from "../validation/schemas";
-import { useIsMobile, SafeAreaWrapper, useZodRules } from "../../../shared";
+import { useIsMobile, SafeAreaWrapper, FormTitle } from "../../../shared";
 import { capitalize } from "../lib/capitalize";
-
-const { Text } = Typography;
 
 const TagFormPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const tags = useSelector(selectTagsItems);
-  const loading = useSelector(selectTagsLoading);
-  const error = useSelector(selectTagsError);
-  const [form] = Form.useForm<TagFormData>();
-  const rules = useZodRules(tagSchema);
+  const validationErrors = useSelector(selectTagValidationErrors);
+  const formError = useSelector(selectTagFormError);
+  const isSubmitting = useSelector(selectTagIsSubmitting);
   const isMobile = useIsMobile();
 
   const isEditing = !!id;
   const tag = isEditing ? tags.find((t: any) => t.id === Number(id)) : null;
+
+  const {
+    control,
+    handleSubmit,
+    setError,
+    clearErrors,
+    reset,
+    formState: { errors },
+  } = useForm<TagFormData>({
+    resolver: zodResolver(tagSchema),
+  });
 
   useEffect(() => {
     if (isEditing && !tag) {
@@ -50,21 +54,64 @@ const TagFormPage: React.FC = () => {
 
   useEffect(() => {
     if (tag) {
-      form.setFieldsValue({
+      reset({
         code: tag.code,
         name: tag.name,
         sort: tag.sort,
       });
     }
-  }, [tag, form]);
+  }, [tag, reset]);
 
   useEffect(() => {
-    if (error) {
-      message.error(error);
-    }
-  }, [error]);
+    return () => {
+      dispatch(clearTagFormErrors());
+    };
+  }, [dispatch]);
 
-  const handleSubmit = (values: TagFormData) => {
+  useEffect(() => {
+    if (validationErrors) {
+      Object.entries(validationErrors).forEach(([field, msg]) => {
+        setError(field as keyof TagFormData, {
+          type: "server",
+          message: msg,
+        });
+      });
+    }
+  }, [validationErrors, setError]);
+
+  useEffect(() => {
+    if (formError) {
+      /* Выводим общую ошибку под поле sort */
+      setError("sort", {
+        type: "server",
+        message: formError,
+      });
+    }
+  }, [formError, setError]);
+
+  const [wasSubmitting, setWasSubmitting] = React.useState(false);
+
+  useEffect(() => {
+    if (wasSubmitting && !isSubmitting && !validationErrors && !formError) {
+      navigate(-1);
+      message.success(
+        isEditing ? "Тег успешно обновлен" : "Тег успешно создан"
+      );
+    }
+    setWasSubmitting(isSubmitting);
+  }, [
+    isSubmitting,
+    wasSubmitting,
+    validationErrors,
+    formError,
+    navigate,
+    isEditing,
+  ]);
+
+  const onSubmit = (values: TagFormData) => {
+    dispatch(clearTagFormErrors());
+    clearErrors();
+
     const data = {
       code: values.code,
       name: capitalize(values.name),
@@ -76,35 +123,6 @@ const TagFormPage: React.FC = () => {
     } else {
       dispatch(createTagRequest(data as CreateTagRequest));
     }
-
-    navigate(-1);
-    message.success(isEditing ? "Тег успешно обновлен" : "Тег успешно создан");
-  };
-
-  const title = (isEditing: boolean, name: string | null) => {
-    return (
-      <span>
-        {isEditing ? (
-          <Text type="secondary" italic>
-            (ред.)
-          </Text>
-        ) : (
-          <Text type="warning">(New)</Text>
-        )}{" "}
-        {name && (
-          <Text
-            style={{
-              maxWidth: "auto",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {name}
-          </Text>
-        )}
-      </span>
-    );
   };
 
   return (
@@ -119,26 +137,90 @@ const TagFormPage: React.FC = () => {
         Назад
       </Button>
 
-      <Card title={title(isEditing, isEditing && tag ? tag?.name : "")}>
+      <Card
+        title={
+          <FormTitle
+            isEditing={isEditing}
+            name={isEditing && tag ? tag?.name : ""}
+          />
+        }
+      >
         <Form
-          form={form}
           layout="vertical"
-          onFinish={handleSubmit}
+          onFinish={handleSubmit(onSubmit)}
           style={{ maxWidth: 600 }}
         >
-          <Form.Item name="code" label="Код" rules={rules.code}>
-            <Input placeholder="Код тега" />
+          <Form.Item
+            label="Код"
+            validateStatus={errors.code ? "error" : ""}
+            help={errors.code?.message}
+          >
+            <Controller
+              name="code"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Код тега"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.code) {
+                      clearErrors("code");
+                      dispatch(clearTagFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
           </Form.Item>
 
-          <Form.Item name="name" label="Название" rules={rules.name}>
-            <Input placeholder="Название тега" />
+          <Form.Item
+            label="Название"
+            validateStatus={errors.name ? "error" : ""}
+            help={errors.name?.message}
+          >
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Название тега"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.name) {
+                      clearErrors("name");
+                      dispatch(clearTagFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
           </Form.Item>
 
-          <Form.Item name="sort" label="Сортировка" rules={rules.sort}>
-            <InputNumber
-              placeholder="Порядок сортировки"
-              min={0}
-              style={{ width: "100%" }}
+          <Form.Item
+            label="Сортировка"
+            validateStatus={errors.sort ? "error" : ""}
+            help={errors.sort?.message}
+          >
+            <Controller
+              name="sort"
+              control={control}
+              render={({ field }) => (
+                <InputNumber
+                  {...field}
+                  placeholder="Порядок сортировки"
+                  min={0}
+                  style={{ width: "100%" }}
+                  onChange={(value) => {
+                    field.onChange(value);
+                    if (validationErrors?.sort) {
+                      clearErrors("sort");
+                      dispatch(clearTagFormErrors());
+                    }
+                  }}
+                />
+              )}
             />
           </Form.Item>
 
@@ -146,7 +228,7 @@ const TagFormPage: React.FC = () => {
             <Button
               type="primary"
               htmlType="submit"
-              loading={loading}
+              loading={isSubmitting}
               size={isMobile ? "small" : "middle"}
             >
               {isEditing ? "Сохранить" : "Создать"}

@@ -13,6 +13,7 @@ import {
 } from "./actions";
 import { authApi } from "../api";
 import { tokenStorage } from "../../../shared";
+import { normalizeError } from "../../../shared/api";
 import { showApiError } from "../../../shared/lib";
 import { TokenResponse, UserProfile } from "./types";
 
@@ -21,15 +22,12 @@ function* loginSaga(
 ): Generator<any, void, any> {
   try {
     const response: TokenResponse = yield call(authApi.login, action.payload);
-
     tokenStorage.setTokens(response.access_token, response.refresh_token);
-
     yield put(loginSuccess());
-
     window.location.href = "/vantage-point/";
   } catch (error) {
-    yield call(showApiError, error);
-    yield put(loginFailure("Ошибка входа"));
+    const domainError = normalizeError(error);
+    yield put(loginFailure(domainError));
   }
 }
 
@@ -46,9 +44,8 @@ function* refreshTokenSaga(): Generator<any, void, any> {
     );
 
     tokenStorage.setTokens(response.access_token, response.refresh_token);
-
     yield put(refreshTokenSuccess());
-  } catch (error) {
+  } catch {
     yield put(refreshTokenFailure());
     yield put(logout());
   }

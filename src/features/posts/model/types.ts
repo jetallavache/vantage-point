@@ -52,6 +52,9 @@ export interface PostsState {
   totalPages: number;
   total: number;
   perPage: number;
+  validationErrors?: Record<string, string>;
+  formError?: string;
+  isSubmitting: boolean;
 }
 
 export interface CreatePostRequest {

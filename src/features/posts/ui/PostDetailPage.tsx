@@ -24,7 +24,6 @@ import {
   selectPostsError,
 } from "../model/selectors";
 import {
-  HashTag,
   useIsMobile,
   SafeAreaWrapper,
   formatPublishDate,

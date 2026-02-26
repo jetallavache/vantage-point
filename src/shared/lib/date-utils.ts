@@ -1,25 +1,27 @@
 export const formatPublishDate = (dateString: string): string => {
   const date = new Date(dateString);
   const now = new Date();
-  const diffTime = Math.abs(now.getTime() - date.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  const time = date.toLocaleTimeString("ru-RU", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const dateOnly = new Date(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate()
+  );
+  const nowOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diffDays = Math.floor(
+    (nowOnly.getTime() - dateOnly.getTime()) / (1000 * 60 * 60 * 24)
+  );
 
-  if (diffDays === 0) return `Сегодня, в ${time}`;
-  if (diffDays === 1) return `Вчера, в ${time}`;
-  if (diffDays <= 4) return `${diffDays} дня назад, в ${time}`;
-  if (diffDays <= 7) return `${diffDays} дней назад, в ${time}`;
+  if (diffDays === 0) return "сегодня";
+  if (diffDays === 1) return "вчера";
+  if (diffDays >= 2 && diffDays <= 7) {
+    return `${diffDays} ${diffDays <= 4 ? "дня" : "дней"} назад`;
+  }
 
   const options: Intl.DateTimeFormatOptions = {
     day: "numeric",
-    month: "short",
+    month: "long",
     year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
-    hour: "2-digit",
-    minute: "2-digit",
   };
 
   return date.toLocaleDateString("ru-RU", options);

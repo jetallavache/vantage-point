@@ -114,6 +114,7 @@ export const authorSchema = z.object({
     .transform(sanitizeText)
     .optional()
     .transform((val) => (val ? sanitizeText(val) : val)),
+  removeAvatar: z.boolean().optional(),
 });
 
 export type AuthorFormData = z.infer<typeof authorSchema>;

@@ -16,6 +16,7 @@ import {
   deletePostRequest,
   deletePostSuccess,
   deletePostFailure,
+  clearPostFormErrors,
 } from "./actions";
 
 const initialState: PostsState = {
@@ -27,6 +28,7 @@ const initialState: PostsState = {
   totalPages: 0,
   total: 0,
   perPage: 10,
+  isSubmitting: false,
 };
 
 export const postsReducer = createReducer(initialState, (builder) => {
@@ -59,26 +61,42 @@ export const postsReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
     .addCase(createPostRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(createPostSuccess, (state) => {
-      state.loading = false;
+      state.isSubmitting = false;
     })
     .addCase(createPostFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
     .addCase(updatePostRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(updatePostSuccess, (state) => {
-      state.loading = false;
+      state.isSubmitting = false;
     })
     .addCase(updatePostFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
     .addCase(deletePostRequest, (state) => {
       state.loading = true;
@@ -91,5 +109,9 @@ export const postsReducer = createReducer(initialState, (builder) => {
     .addCase(deletePostFailure, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    })
+    .addCase(clearPostFormErrors, (state) => {
+      state.validationErrors = undefined;
+      state.formError = undefined;
     });
 });

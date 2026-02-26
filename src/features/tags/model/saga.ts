@@ -21,6 +21,7 @@ import {
 } from "./actions";
 import { tagsApi } from "../api";
 import { showApiError } from "../../../shared/lib";
+import { normalizeError } from "../../../shared/api";
 import { Tag } from "./types";
 
 function* fetchTagsSaga(
@@ -79,8 +80,8 @@ function* createTagSaga(
     };
     yield put(createTagSuccess(t));
   } catch (error) {
-    yield call(showApiError, error);
-    yield put(createTagFailure("Ошибка создания тега"));
+    const domainError = normalizeError(error);
+    yield put(createTagFailure(domainError));
   }
 }
 
@@ -96,8 +97,8 @@ function* updateTagSaga(
     };
     yield put(updateTagSuccess(t));
   } catch (error) {
-    yield call(showApiError, error);
-    yield put(updateTagFailure("Ошибка обновления тега"));
+    const domainError = normalizeError(error);
+    yield put(updateTagFailure(domainError));
   }
 }
 

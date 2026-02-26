@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Card, Button, Typography, Space, Result, Spin, Divider } from "antd";
+import { Card, Button, Typography, Space, Result, Spin } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { fetchTagDetailRequest } from "../model/actions";
 import {
@@ -16,7 +16,7 @@ import {
   formatDateTime,
 } from "../../../shared";
 
-const { Title, Text, Paragraph } = Typography;
+const { Text } = Typography;
 
 const TagDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();

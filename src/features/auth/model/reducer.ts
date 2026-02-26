@@ -11,6 +11,7 @@ import {
   fetchProfileRequest,
   fetchProfileSuccess,
   fetchProfileFailure,
+  clearAuthFormErrors,
 } from "./actions";
 import { tokenStorage } from "../../../shared";
 
@@ -19,23 +20,31 @@ const initialState: AuthState = {
   loading: false,
   error: null,
   profile: null,
+  isSubmitting: false,
 };
 
 export const authReducer = createReducer(initialState, (builder) => {
   builder
     .addCase(loginRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(loginSuccess, (state) => {
-      state.loading = false;
+      state.isSubmitting = false;
       state.isAuthenticated = true;
-      state.error = null;
     })
     .addCase(loginFailure, (state, action) => {
-      state.loading = false;
+      state.isSubmitting = false;
       state.isAuthenticated = false;
-      state.error = action.payload;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
     .addCase(logout, (state) => {
       state.isAuthenticated = false;
@@ -64,5 +73,9 @@ export const authReducer = createReducer(initialState, (builder) => {
     .addCase(fetchProfileFailure, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    })
+    .addCase(clearAuthFormErrors, (state) => {
+      state.validationErrors = undefined;
+      state.formError = undefined;
     });
 });

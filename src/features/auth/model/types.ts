@@ -3,6 +3,9 @@ export interface AuthState {
   loading: boolean;
   error: string | null;
   profile: UserProfile | null;
+  validationErrors?: Record<string, string>;
+  formError?: string;
+  isSubmitting: boolean;
 }
 
 export interface LoginRequest {

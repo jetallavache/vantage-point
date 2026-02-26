@@ -33,3 +33,10 @@ export const selectAuthorsPagination = createSelector(
     pageSize,
   })
 );
+
+export const selectAuthorValidationErrors = (state: RootState) =>
+  state.authors?.validationErrors;
+export const selectAuthorFormError = (state: RootState) =>
+  state.authors?.formError;
+export const selectAuthorIsSubmitting = (state: RootState) =>
+  state.authors?.isSubmitting || false;

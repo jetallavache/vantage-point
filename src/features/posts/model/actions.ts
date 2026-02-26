@@ -3,8 +3,8 @@ import {
   CreatePostRequest,
   UpdatePostRequest,
   FetchPostsRequest,
-  FetchPostDetailRequest,
 } from "./types";
+import { DomainError } from "../../../shared/api";
 
 export const fetchPostsRequest = createAction<FetchPostsRequest>(
   "posts/fetchPostsRequest"
@@ -34,7 +34,7 @@ export const createPostRequest = createAction<CreatePostRequest>(
   "posts/createPostRequest"
 );
 export const createPostSuccess = createAction("posts/createPostSuccess");
-export const createPostFailure = createAction<string>(
+export const createPostFailure = createAction<DomainError>(
   "posts/createPostFailure"
 );
 
@@ -42,7 +42,7 @@ export const updatePostRequest = createAction<UpdatePostRequest>(
   "posts/updatePostRequest"
 );
 export const updatePostSuccess = createAction("posts/updatePostSuccess");
-export const updatePostFailure = createAction<string>(
+export const updatePostFailure = createAction<DomainError>(
   "posts/updatePostFailure"
 );
 
@@ -55,3 +55,5 @@ export const deletePostSuccess = createAction<number>(
 export const deletePostFailure = createAction<string>(
   "posts/deletePostFailure"
 );
+
+export const clearPostFormErrors = createAction("posts/clearPostFormErrors");

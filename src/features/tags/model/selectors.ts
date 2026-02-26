@@ -31,3 +31,9 @@ export const selectTagsPagination = createSelector(
     pageSize,
   })
 );
+
+export const selectTagValidationErrors = (state: RootState) =>
+  state.tags?.validationErrors;
+export const selectTagFormError = (state: RootState) => state.tags?.formError;
+export const selectTagIsSubmitting = (state: RootState) =>
+  state.tags?.isSubmitting || false;

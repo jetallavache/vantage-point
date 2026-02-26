@@ -2,23 +2,21 @@
   "name": "vantage-point",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
     "@babel/runtime": "^7.28.6",
+    "@hookform/resolvers": "^5.2.2",
     "@reduxjs/toolkit": "^2.11.2",
-    "@remix-run/router": "^1.23.2",
-    "@types/antd": "^1.0.4",
-    "@types/dompurify": "^3.2.0",
     "@types/he": "^1.2.3",
     "antd": "6.3.0",
-    "connected-react-router": "^6.9.3",
     "dompurify": "^3.3.1",
     "he": "^1.2.0",
     "history": "^5.3.0",
     "js-cookie": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-is": "^19.2.4",
+    "react-hook-form": "^7.71.2",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.8.0",
     "redux": "^4.2.1",
@@ -28,6 +26,7 @@
     "zod": "^3.20.2"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
@@ -36,10 +35,16 @@
     "@types/node": "^25.1.0",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "4.0.18",
+    "eslint": "^10.0.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "jest": "^27.5.1",
     "jsdom": "^27.4.0",
+    "prettier": "^3.8.1",
     "typescript": "^4.9.4",
     "vite": "^7.3.1",
     "vitest": "^4.0.18"
@@ -52,7 +57,9 @@
     "test": "vitest",
     "test:run": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix"
   },
   "eslintConfig": {
     "extends": [

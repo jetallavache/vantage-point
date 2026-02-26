@@ -27,7 +27,7 @@ import { selectUserProfile } from "../../features/auth/model/selectors";
 import { useIsMobile } from "../hooks/useIsMobile";
 
 const { Header, Sider, Content } = Layout;
-const { Title, Text, Link } = Typography;
+const { Title, Link } = Typography;
 
 interface AdminLayoutProps {
   children: React.ReactNode;

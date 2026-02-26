@@ -1,5 +1,4 @@
 import { tokenStorage } from "./token-storage";
-import { createApiError } from "./errors";
 
 const BASE_URL =
   import.meta.env.VITE_BASE_API_URL || "https://rest-test.machineheads.ru";
@@ -87,7 +86,7 @@ class ApiClient {
 
     if (!response.ok) {
       const data = await response.json().catch(() => null);
-      throw createApiError(response, data);
+      throw { status: response.status, data };
     }
 
     return response.json();
@@ -130,7 +129,7 @@ class ApiClient {
 
     if (!response.ok) {
       const data = await response.json().catch(() => null);
-      throw createApiError(response, data);
+      throw { status: response.status, data };
     }
 
     const data = await response.json();
