@@ -19,6 +19,7 @@ import {
   deleteBulkTagsRequest,
   deleteBulkTagsSuccess,
   deleteBulkTagsFailure,
+  clearTagFormErrors,
 } from "./actions";
 
 const initialState: TagsState = {
@@ -30,6 +31,7 @@ const initialState: TagsState = {
   totalPages: 1,
   total: 0,
   perPage: 9,
+  isSubmitting: false,
 };
 
 export const tagsReducer = createReducer(initialState, (builder) => {
@@ -63,24 +65,33 @@ export const tagsReducer = createReducer(initialState, (builder) => {
       state.error = action.payload;
     })
     .addCase(createTagRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(createTagSuccess, (state, action) => {
-      state.loading = false;
+      state.isSubmitting = false;
       state.items.unshift(action.payload);
       state.total += 1;
     })
     .addCase(createTagFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
     .addCase(updateTagRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(updateTagSuccess, (state, action) => {
-      state.loading = false;
+      state.isSubmitting = false;
       const index = state.items.findIndex(
         (item) => item.id === action.payload.id
       );
@@ -89,8 +100,15 @@ export const tagsReducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(updateTagFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
     .addCase(deleteTagRequest, (state) => {
       state.loading = true;
@@ -119,5 +137,9 @@ export const tagsReducer = createReducer(initialState, (builder) => {
     .addCase(deleteBulkTagsFailure, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    })
+    .addCase(clearTagFormErrors, (state) => {
+      state.validationErrors = undefined;
+      state.formError = undefined;
     });
 });

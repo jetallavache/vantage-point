@@ -64,7 +64,12 @@ export const tagSchema = z.object({
     )
     .transform(sanitizeText),
   sort: z
-    .number()
+    .number({
+      message: errorMsg(
+        "Введите числовое значение",
+        ValidationErrorCodes.DIGITS_ONLY
+      ),
+    })
     .min(
       0,
       errorMsg(

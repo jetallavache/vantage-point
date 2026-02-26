@@ -6,6 +6,7 @@ import {
   FetchTagsRequest,
   FetchTagsSuccess,
 } from "./types";
+import { DomainError } from "../../../shared/api";
 
 export const fetchTagsRequest = createAction<FetchTagsRequest>(
   "tags/fetchTagsRequest"
@@ -29,13 +30,17 @@ export const createTagRequest = createAction<CreateTagRequest>(
   "tags/createTagRequest"
 );
 export const createTagSuccess = createAction<Tag>("tags/createTagSuccess");
-export const createTagFailure = createAction<string>("tags/createTagFailure");
+export const createTagFailure = createAction<DomainError>(
+  "tags/createTagFailure"
+);
 
 export const updateTagRequest = createAction<UpdateTagRequest>(
   "tags/updateTagRequest"
 );
 export const updateTagSuccess = createAction<Tag>("tags/updateTagSuccess");
-export const updateTagFailure = createAction<string>("tags/updateTagFailure");
+export const updateTagFailure = createAction<DomainError>(
+  "tags/updateTagFailure"
+);
 
 export const deleteTagRequest = createAction<number>("tags/deleteTagRequest");
 export const deleteTagSuccess = createAction<number>("tags/deleteTagSuccess");
@@ -50,3 +55,5 @@ export const deleteBulkTagsSuccess = createAction<number[]>(
 export const deleteBulkTagsFailure = createAction<string>(
   "tags/deleteBulkTagsFailure"
 );
+
+export const clearTagFormErrors = createAction("tags/clearTagFormErrors");
