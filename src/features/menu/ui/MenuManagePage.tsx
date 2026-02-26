@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Select, Button, Space, Spin, Empty, Popconfirm } from "antd";
+import { Select, Button, Space, Spin, Empty, Popconfirm, Row, Col } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
@@ -11,8 +11,9 @@ import * as actions from "../model/actions";
 import * as selectors from "../model/selectors";
 import { MenuTree } from "./MenuTree";
 import { MenuTypeForm } from "./MenuTypeForm";
-import { MenuItemForm } from "./MenuItemForm";
-import { buildTree, flattenTree } from "../lib/utils";
+import { MenuItemAddForm } from "./MenuItemAddForm";
+import { MenuItemEditForm } from "./MenuItemEditForm";
+import { buildTree } from "../lib/utils";
 import { MenuItemFlat, MenuType } from "../model/types";
 import { SafeAreaWrapper, useIsMobile } from "../../../shared";
 
@@ -22,12 +23,15 @@ export const MenuManagePage: React.FC = () => {
   const activeTypeId = useSelector(selectors.selectActiveTypeId);
   const treeList = useSelector(selectors.selectMenuTreeList);
   const loading = useSelector(selectors.selectMenuLoading);
+  const isSubmitting = useSelector(selectors.selectMenuIsSubmitting);
+  const validationErrors = useSelector(selectors.selectMenuValidationErrors);
+  const formError = useSelector(selectors.selectMenuFormError);
 
   const [typeFormVisible, setTypeFormVisible] = useState(false);
-  const [itemFormVisible, setItemFormVisible] = useState(false);
+  const [editFormVisible, setEditFormVisible] = useState(false);
+  const [wasSubmitting, setWasSubmitting] = useState(false);
 
   const [activeType, setActiveType] = useState<MenuType | null>(null);
-
   const [activeItem, setActiveItem] = useState<MenuItemFlat | null>(null);
 
   const isMobile = useIsMobile();
@@ -39,8 +43,20 @@ export const MenuManagePage: React.FC = () => {
   useEffect(() => {
     if (activeTypeId) {
       dispatch(actions.fetchMenuTreeListRequest(activeTypeId));
+      const menuType = menuTypes.find((item) => item.id === activeTypeId);
+      if (menuType) {
+        setActiveType(menuType);
+      }
     }
-  }, [dispatch, activeTypeId]);
+  }, [dispatch, activeTypeId, menuTypes]);
+
+  useEffect(() => {
+    if (wasSubmitting && !isSubmitting && !validationErrors && !formError) {
+      setTypeFormVisible(false);
+      setEditFormVisible(false);
+    }
+    setWasSubmitting(isSubmitting);
+  }, [isSubmitting, wasSubmitting, validationErrors, formError]);
 
   /* Menu Type */
   const handleTypeChange = (typeId: string) => {
@@ -68,14 +84,9 @@ export const MenuManagePage: React.FC = () => {
   };
 
   /* Menu Item */
-  const handleAddItem = (parentId?: string) => {
-    setActiveItem(null);
-    setItemFormVisible(true);
-  };
-
   const handleEditItem = (item: MenuItemFlat) => {
     setActiveItem(item);
-    setItemFormVisible(true);
+    setEditFormVisible(true);
   };
 
   const handleDeleteItem = (itemId: string) => {
@@ -102,7 +113,7 @@ export const MenuManagePage: React.FC = () => {
           <Select
             placeholder="Выберите тип меню"
             style={{
-              width: isMobile ? 120 : 200,
+              width: isMobile ? (activeTypeId ? "54%" : "86%") : 200,
             }}
             size={isMobile ? "small" : "middle"}
             value={activeTypeId}
@@ -121,7 +132,7 @@ export const MenuManagePage: React.FC = () => {
               icon={<EditOutlined />}
               onClick={handleEditType}
               size={isMobile ? "small" : "middle"}
-              style={{ width: 60 }}
+              style={{ width: isMobile ? "16%" : 60 }}
             ></Button>
           )}
           {activeTypeId && (
@@ -139,7 +150,7 @@ export const MenuManagePage: React.FC = () => {
                 danger
                 icon={<DeleteOutlined />}
                 size={isMobile ? "small" : "middle"}
-                style={{ width: 60 }}
+                style={{ width: isMobile ? "16%" : 60 }}
               ></Button>
             </Popconfirm>
           )}
@@ -149,7 +160,7 @@ export const MenuManagePage: React.FC = () => {
             icon={<PlusOutlined />}
             size={isMobile ? "small" : "middle"}
             onClick={handleAddType}
-            style={{ width: 60 }}
+            style={{ width: isMobile ? "16%" : 60 }}
           ></Button>
         </Space.Compact>
       </div>
@@ -157,24 +168,38 @@ export const MenuManagePage: React.FC = () => {
       {loading && <Spin size="large" />}
 
       {activeTypeId && !loading && tree.length === 0 && (
-        <Empty description="Нет элементов меню" style={{ marginTop: 40 }}>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => handleAddItem()}
-          >
-            Создать первый пункт
-          </Button>
-        </Empty>
+        <Empty description="Нет элементов меню" style={{ marginTop: 40 }} />
       )}
 
-      {activeTypeId && !loading && tree.length > 0 && (
-        <MenuTree
-          data={tree}
-          onEdit={handleEditItem}
-          onDelete={handleDeleteItem}
-          onAdd={handleAddItem}
-        />
+      {activeTypeId && !loading && (
+        <Row gutter={[16, 16]}>
+          <Col xs={24} lg={16}>
+            <div
+              style={
+                isMobile
+                  ? {
+                      overflowY: "auto",
+                      maxHeight: "calc(100vh - 350px)",
+                    }
+                  : {
+                      maxHeight: "calc(100vh - 300px)",
+                      overflowY: "auto",
+                    }
+              }
+            >
+              {tree.length > 0 && (
+                <MenuTree
+                  data={tree}
+                  onEdit={handleEditItem}
+                  onDelete={handleDeleteItem}
+                />
+              )}
+            </div>
+          </Col>
+          <Col xs={24} lg={8}>
+            <MenuItemAddForm activeType={activeType} />
+          </Col>
+        </Row>
       )}
 
       <MenuTypeForm
@@ -183,11 +208,11 @@ export const MenuManagePage: React.FC = () => {
         onCancel={() => setTypeFormVisible(false)}
       />
 
-      <MenuItemForm
-        visible={itemFormVisible}
+      <MenuItemEditForm
+        visible={editFormVisible}
         activeItem={activeItem}
         activeType={activeType}
-        onCancel={() => setItemFormVisible(false)}
+        onCancel={() => setEditFormVisible(false)}
       />
     </SafeAreaWrapper>
   );

@@ -1,37 +1,53 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tree, Button, Space, Popconfirm } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import type { DataNode } from "antd/es/tree";
 import * as actions from "../model/actions";
 import * as selectors from "../model/selectors";
 import { MenuItemTree, MenuItemFlat } from "../model/types";
+import { useIsMobile, useTouchDrag } from "../../../shared/hooks";
 
 interface MenuTreeProps {
   data: MenuItemTree[];
   onEdit: (item: MenuItemFlat) => void;
   onDelete: (itemId: string) => void;
-  onAdd: (parentId?: string) => void;
 }
 
 export const MenuTree: React.FC<MenuTreeProps> = ({
   data,
   onEdit,
   onDelete,
-  onAdd,
 }) => {
   const dispatch = useDispatch();
   const treeList = useSelector(selectors.selectMenuTreeList);
+  const isMobile = useIsMobile();
 
   const findFlatItem = (id: string): MenuItemFlat | undefined => {
     return treeList.find((item) => item.id === id);
   };
+
+  const handleMove = useCallback(
+    (
+      dragId: string,
+      dropId: string,
+      position: "before" | "after" | "inside"
+    ) => {
+      dispatch(actions.moveMenuItemRequest({ dragId, dropId, position }));
+    },
+    [dispatch]
+  );
+
+  useTouchDrag(isMobile, {
+    onDrop: handleMove,
+  });
 
   const convertToTreeData = (items: MenuItemTree[]): DataNode[] => {
     return items.map((item) => ({
       key: item.id,
       title: (
         <div
+          data-node-key={item.id}
           style={{
             display: "flex",
             justifyContent: "space-between",
@@ -42,15 +58,6 @@ export const MenuTree: React.FC<MenuTreeProps> = ({
             {item.name} <span style={{ color: "grey" }}>~{item.customUrl}</span>
           </span>
           <Space size="small">
-            <Button
-              type="text"
-              size="small"
-              icon={<PlusOutlined />}
-              onClick={(e) => {
-                e.stopPropagation();
-                onAdd(item.id);
-              }}
-            />
             <Button
               type="text"
               size="small"
@@ -99,13 +106,7 @@ export const MenuTree: React.FC<MenuTreeProps> = ({
       position = "after";
     }
 
-    dispatch(
-      actions.moveMenuItemRequest({
-        dragId: dragNode.key,
-        dropId: node.key,
-        position,
-      })
-    );
+    handleMove(dragNode.key, node.key, position);
   };
 
   return (
