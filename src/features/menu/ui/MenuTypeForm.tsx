@@ -72,8 +72,6 @@ export const MenuTypeForm: React.FC<MenuTypeFormProps> = ({
     } else {
       dispatch(actions.addMenuTypeRequest(values));
     }
-
-    onCancel();
   };
 
   const handleDelete = () => {

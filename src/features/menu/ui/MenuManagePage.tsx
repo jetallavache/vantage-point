@@ -4,7 +4,6 @@ import { Select, Button, Space, Spin, Empty, Popconfirm, Row, Col } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
-  OrderedListOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
 import * as actions from "../model/actions";
@@ -111,9 +110,6 @@ export const MenuManagePage: React.FC = () => {
         }}
       >
         <Space.Compact>
-          <Space.Addon>
-            <OrderedListOutlined />
-          </Space.Addon>
           <Select
             placeholder="Выберите тип меню"
             style={{
@@ -125,7 +121,7 @@ export const MenuManagePage: React.FC = () => {
             options={menuTypes
               .filter((type) => type?.name && type?.id)
               .map((type) => ({
-                label: type.name,
+                label: `${type.name} (${type.id})`,
                 value: type.id,
               }))}
           />
