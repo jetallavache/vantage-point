@@ -75,7 +75,6 @@ export const MenuItemEditForm: React.FC<MenuItemEditFormProps> = ({
         id: activeItem.id,
       })
     );
-    onCancel();
   };
 
   const handleCancel = () => {
