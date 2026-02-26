@@ -35,13 +35,18 @@ describe("Menu Reducer", () => {
       loading: true,
       dirty: false,
       error: null,
+      isSubmitting: true,
     };
 
-    const action = addMenuTypeSuccess({ id: "footer", name: "Footer Menu" });
+    const action = addMenuTypeSuccess({
+      id: "footer",
+      name: "Footer Menu",
+      createdAt: "",
+      updatedAt: "",
+    });
     const newState = menuReducer(initialState, action);
-    expect(newState.loading).toBe(false);
-    expect(newState.menuTypes).toHaveLength(1);
-    expect(newState.menuTypes[0].id).toBe("footer");
+    expect(newState.isSubmitting).toBe(false);
+    expect(newState.menuTypes).toHaveLength(0); // Не добавляется, т.к. это делает fetchMenuTypesSuccess
   });
 
   it("should handle fetchMenuTypesFailure", () => {

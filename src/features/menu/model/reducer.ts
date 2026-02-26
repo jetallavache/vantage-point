@@ -10,6 +10,7 @@ const initialState: MenuState = {
   loading: false,
   dirty: false,
   error: null,
+  isSubmitting: false,
 };
 
 export const menuReducer = createReducer(initialState, (builder) => {
@@ -29,24 +30,32 @@ export const menuReducer = createReducer(initialState, (builder) => {
     })
 
     .addCase(actions.addMenuTypeRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
-    .addCase(actions.addMenuTypeSuccess, (state, action) => {
-      state.loading = false;
-      state.menuTypes.push(action.payload);
+    .addCase(actions.addMenuTypeSuccess, (state) => {
+      state.isSubmitting = false;
     })
     .addCase(actions.addMenuTypeFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
 
     .addCase(actions.editMenuTypeRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(actions.editMenuTypeSuccess, (state, action) => {
-      state.loading = false;
+      state.isSubmitting = false;
       const index = state.menuTypes.findIndex(
         (type) => type.id === action.payload.id
       );
@@ -55,8 +64,15 @@ export const menuReducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(actions.editMenuTypeFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
 
     .addCase(actions.removeMenuTypeRequest, (state) => {
@@ -108,24 +124,33 @@ export const menuReducer = createReducer(initialState, (builder) => {
     })
 
     .addCase(actions.addMenuItemRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(actions.addMenuItemSuccess, (state, action) => {
-      state.loading = false;
+      state.isSubmitting = false;
       state.treeList.push(action.payload);
     })
     .addCase(actions.addMenuItemFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
 
     .addCase(actions.editMenuItemRequest, (state) => {
-      state.loading = true;
-      state.error = null;
+      state.isSubmitting = true;
+      state.validationErrors = undefined;
+      state.formError = undefined;
     })
     .addCase(actions.editMenuItemSuccess, (state, action) => {
-      state.loading = false;
+      state.isSubmitting = false;
       const index = state.treeList.findIndex(
         (item) => item.id === action.payload.id
       );
@@ -134,8 +159,15 @@ export const menuReducer = createReducer(initialState, (builder) => {
       }
     })
     .addCase(actions.editMenuItemFailure, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.isSubmitting = false;
+      const error = action.payload;
+      if (error.kind === "validation") {
+        state.validationErrors = error.fields;
+      } else if (error.kind === "form") {
+        state.formError = error.message;
+      } else {
+        state.formError = error.message;
+      }
     })
 
     .addCase(actions.removeMenuItemRequest, (state) => {
@@ -220,5 +252,9 @@ export const menuReducer = createReducer(initialState, (builder) => {
     })
     .addCase(actions.setDirty, (state, action) => {
       state.dirty = action.payload;
+    })
+    .addCase(actions.clearMenuFormErrors, (state) => {
+      state.validationErrors = undefined;
+      state.formError = undefined;
     });
 });

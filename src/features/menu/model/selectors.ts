@@ -11,3 +11,8 @@ export const selectMenuLoading = (state: RootState) =>
   state.menu?.loading || false;
 export const selectMenuDirty = (state: RootState) => state.menu?.dirty || false;
 export const selectMenuError = (state: RootState) => state.menu?.error || null;
+export const selectMenuValidationErrors = (state: RootState) =>
+  state.menu?.validationErrors;
+export const selectMenuFormError = (state: RootState) => state.menu?.formError;
+export const selectMenuIsSubmitting = (state: RootState) =>
+  state.menu?.isSubmitting || false;

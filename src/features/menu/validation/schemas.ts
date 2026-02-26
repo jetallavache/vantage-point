@@ -24,6 +24,10 @@ export const menuTypeSchema = z.object({
       1,
       errorMsg("Укажите название типа меню", ValidationErrorCodes.REQUIRED)
     )
+    .max(
+      255,
+      errorMsg("Слишком длинное название", ValidationErrorCodes.TOO_LONG)
+    )
     .refine(
       (val) => !hasSuspiciousContent(val),
       errorMsg(
@@ -71,7 +75,12 @@ export const menuItemSchema = z.object({
     .optional()
     .or(z.literal("")),
   sort: z
-    .number()
+    .number({
+      message: errorMsg(
+        "Введите числовое значение",
+        ValidationErrorCodes.DIGITS_ONLY
+      ),
+    })
     .min(
       0,
       errorMsg(
@@ -81,5 +90,7 @@ export const menuItemSchema = z.object({
     ),
 });
 
+export const menuItemFormSchema = menuItemSchema.omit({ typeId: true });
+
 export type MenuTypeFormData = z.infer<typeof menuTypeSchema>;
-export type MenuItemFormData = z.infer<typeof menuItemSchema>;
+export type MenuItemFormData = z.infer<typeof menuItemFormSchema>;
