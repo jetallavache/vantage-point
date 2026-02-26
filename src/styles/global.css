@@ -83,3 +83,8 @@ h1 {
 .ant-layout-content {
   background: #fff;
 }
+
+.dragging {
+  opacity: 0.5;
+  background-color: #e6f7ff;
+}
