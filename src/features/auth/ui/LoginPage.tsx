@@ -1,21 +1,54 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Form, Input, Button, Card, Alert } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { loginRequest } from "../model/actions";
-import { selectAuthLoading, selectAuthError } from "../model/selectors";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginRequest, clearAuthFormErrors } from "../model/actions";
+import {
+  selectAuthValidationErrors,
+  selectAuthFormError,
+  selectAuthIsSubmitting,
+} from "../model/selectors";
 import { loginSchema, LoginFormData } from "../validation/schemas";
-import { SafeAreaWrapper, useIsMobile, useZodRules } from "../../../shared";
+import { SafeAreaWrapper } from "../../../shared";
 
 export const LoginPage: React.FC = () => {
   const dispatch = useDispatch();
-  const loading = useSelector(selectAuthLoading);
-  const error = useSelector(selectAuthError);
-  const isMobile = useIsMobile();
-  const [form] = Form.useForm<LoginFormData>();
-  const rules = useZodRules(loginSchema);
+  const validationErrors = useSelector(selectAuthValidationErrors);
+  const formError = useSelector(selectAuthFormError);
+  const isSubmitting = useSelector(selectAuthIsSubmitting);
 
-  const onFinish = (values: LoginFormData) => {
+  const {
+    control,
+    handleSubmit,
+    setError,
+    clearErrors,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  });
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearAuthFormErrors());
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (validationErrors) {
+      Object.entries(validationErrors).forEach(([field, msg]) => {
+        setError(field as keyof LoginFormData, {
+          type: "server",
+          message: msg,
+        });
+      });
+    }
+  }, [validationErrors, setError]);
+
+  const onSubmit = (values: LoginFormData) => {
+    dispatch(clearAuthFormErrors());
+    clearErrors();
     dispatch(loginRequest(values));
   };
 
@@ -35,40 +68,74 @@ export const LoginPage: React.FC = () => {
           maxWidth: 400,
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
         }}
-        styles={{
-          header: {
-            textAlign: "center",
-            fontSize: "18px",
-            fontWeight: 600,
-          },
-        }}
       >
-        {error && (
+        {formError && (
           <Alert
-            message={error}
+            description={formError}
             type="error"
+            closable
+            onClose={() => dispatch(clearAuthFormErrors())}
             style={{ marginBottom: 16 }}
-            showIcon
           />
         )}
 
-        <Form
-          form={form}
-          name="login"
-          onFinish={onFinish}
-          autoComplete="off"
-          size="large"
-        >
-          <Form.Item name="email" rules={rules.email}>
-            <Input prefix={<UserOutlined />} placeholder="Email" type="email" />
+        <Form layout="vertical" onFinish={handleSubmit(onSubmit)} size="large">
+          <Form.Item
+            validateStatus={errors.email ? "error" : ""}
+            help={errors.email?.message}
+          >
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  prefix={<UserOutlined />}
+                  placeholder="Email"
+                  type="email"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.email) {
+                      clearErrors("email");
+                      dispatch(clearAuthFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
           </Form.Item>
 
-          <Form.Item name="password" rules={rules.password}>
-            <Input.Password prefix={<LockOutlined />} placeholder="Пароль" />
+          <Form.Item
+            validateStatus={errors.password ? "error" : ""}
+            help={errors.password?.message}
+          >
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  prefix={<LockOutlined />}
+                  placeholder="Пароль"
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (validationErrors?.password || formError) {
+                      clearErrors("password");
+                      dispatch(clearAuthFormErrors());
+                    }
+                  }}
+                />
+              )}
+            />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading} block>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isSubmitting}
+              block
+            >
               Войти
             </Button>
           </Form.Item>
