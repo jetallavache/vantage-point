@@ -79,7 +79,7 @@ export const authorSchema = z.object({
   shortDescription: z
     .string()
     .max(
-      200,
+      255,
       errorMsg(
         "Краткое описание не должно превышать 200 символов",
         ValidationErrorCodes.TOO_LONG

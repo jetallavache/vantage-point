@@ -41,6 +41,7 @@ const PostFormPage: React.FC = () => {
   const isSubmitting = useSelector(selectPostIsSubmitting);
 
   const [fileList, setFileList] = useState<any[]>([]);
+  const [previewPictureError, setPreviewPictureError] = useState<string>("");
   const isMobile = useIsMobile();
   const isEditing = !!id;
 
@@ -94,10 +95,14 @@ const PostFormPage: React.FC = () => {
   useEffect(() => {
     if (validationErrors) {
       Object.entries(validationErrors).forEach(([field, msg]) => {
-        setError(field as keyof PostFormData, {
-          type: "server",
-          message: msg,
-        });
+        if (field === "previewPicture") {
+          setPreviewPictureError(msg);
+        } else {
+          setError(field as keyof PostFormData, {
+            type: "server",
+            message: msg,
+          });
+        }
       });
     }
   }, [validationErrors, setError]);
@@ -115,7 +120,13 @@ const PostFormPage: React.FC = () => {
   const [wasSubmitting, setWasSubmitting] = React.useState(false);
 
   useEffect(() => {
-    if (wasSubmitting && !isSubmitting && !validationErrors && !formError) {
+    if (
+      wasSubmitting &&
+      !isSubmitting &&
+      !validationErrors &&
+      !formError &&
+      !previewPictureError
+    ) {
       navigate(-1);
       message.success(
         isEditing ? "Статья успешно обновлена" : "Статья успешно создана"
@@ -127,6 +138,7 @@ const PostFormPage: React.FC = () => {
     wasSubmitting,
     validationErrors,
     formError,
+    previewPictureError,
     navigate,
     isEditing,
   ]);
@@ -138,6 +150,7 @@ const PostFormPage: React.FC = () => {
   const onSubmit = (values: PostFormData) => {
     dispatch(clearPostFormErrors());
     clearErrors();
+    setPreviewPictureError("");
 
     const data = {
       code: values.code,
@@ -158,7 +171,13 @@ const PostFormPage: React.FC = () => {
   const uploadProps = {
     beforeUpload: () => false,
     fileList,
-    onChange: ({ fileList: newFileList }: any) => setFileList(newFileList),
+    onChange: ({ fileList: newFileList }: any) => {
+      setFileList(newFileList);
+      if (previewPictureError) {
+        setPreviewPictureError("");
+        dispatch(clearPostFormErrors());
+      }
+    },
     maxCount: 1,
     accept: "image/*",
   };
@@ -326,7 +345,11 @@ const PostFormPage: React.FC = () => {
             />
           </Form.Item>
 
-          <Form.Item label="Обложка">
+          <Form.Item
+            label="Обложка"
+            validateStatus={previewPictureError ? "error" : ""}
+            help={previewPictureError}
+          >
             <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />}>Выбрать файл</Button>
             </Upload>

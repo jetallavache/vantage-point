@@ -35,6 +35,7 @@ const AuthorFormPage: React.FC = () => {
   const formError = useSelector(selectAuthorFormError);
   const isSubmitting = useSelector(selectAuthorIsSubmitting);
   const [fileList, setFileList] = useState<any[]>([]);
+  const [avatarError, setAvatarError] = useState<string>("");
 
   const isEditing = Boolean(id);
   const isMobile = useIsMobile();
@@ -84,10 +85,14 @@ const AuthorFormPage: React.FC = () => {
   useEffect(() => {
     if (validationErrors) {
       Object.entries(validationErrors).forEach(([field, msg]) => {
-        setError(field as keyof AuthorFormData, {
-          type: "server",
-          message: msg,
-        });
+        if (field === "avatar") {
+          setAvatarError(msg);
+        } else {
+          setError(field as keyof AuthorFormData, {
+            type: "server",
+            message: msg,
+          });
+        }
       });
     }
   }, [validationErrors, setError]);
@@ -95,7 +100,13 @@ const AuthorFormPage: React.FC = () => {
   const [wasSubmitting, setWasSubmitting] = React.useState(false);
 
   useEffect(() => {
-    if (wasSubmitting && !isSubmitting && !validationErrors && !formError) {
+    if (
+      wasSubmitting &&
+      !isSubmitting &&
+      !validationErrors &&
+      !formError &&
+      !avatarError
+    ) {
       navigate(-1);
       message.success(
         isEditing ? "Автор успешно обновлен" : "Автор успешно создан"
@@ -107,6 +118,7 @@ const AuthorFormPage: React.FC = () => {
     wasSubmitting,
     validationErrors,
     formError,
+    avatarError,
     navigate,
     isEditing,
   ]);
@@ -114,6 +126,7 @@ const AuthorFormPage: React.FC = () => {
   const onSubmit = (values: AuthorFormData) => {
     dispatch(clearAuthorFormErrors());
     clearErrors();
+    setAvatarError("");
 
     const data: any = {
       name: values.name,
@@ -140,7 +153,13 @@ const AuthorFormPage: React.FC = () => {
   const uploadProps = {
     beforeUpload: () => false,
     fileList,
-    onChange: ({ fileList: newFileList }: any) => setFileList(newFileList),
+    onChange: ({ fileList: newFileList }: any) => {
+      setFileList(newFileList);
+      if (avatarError) {
+        setAvatarError("");
+        dispatch(clearAuthorFormErrors());
+      }
+    },
     maxCount: 1,
     accept: "image/*",
   };
@@ -289,7 +308,11 @@ const AuthorFormPage: React.FC = () => {
             />
           </Form.Item>
 
-          <Form.Item label="Аватар">
+          <Form.Item
+            label="Аватар"
+            validateStatus={avatarError ? "error" : ""}
+            help={avatarError}
+          >
             <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />}>Выбрать файл</Button>
             </Upload>
