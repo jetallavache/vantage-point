@@ -96,7 +96,11 @@ export const MenuManagePage: React.FC = () => {
   const tree = buildTree(treeList);
 
   return (
-    <SafeAreaWrapper>
+    <SafeAreaWrapper
+      style={{
+        maxHeight: "70%",
+      }}
+    >
       <div
         style={{
           marginBottom: 16,
@@ -167,10 +171,6 @@ export const MenuManagePage: React.FC = () => {
 
       {loading && <Spin size="large" />}
 
-      {activeTypeId && !loading && tree.length === 0 && (
-        <Empty description="Нет элементов меню" style={{ marginTop: 40 }} />
-      )}
-
       {activeTypeId && !loading && (
         <Row gutter={[16, 16]}>
           <Col xs={24} lg={16}>
@@ -182,17 +182,24 @@ export const MenuManagePage: React.FC = () => {
                       maxHeight: "calc(100vh - 350px)",
                     }
                   : {
-                      maxHeight: "calc(100vh - 300px)",
+                      maxHeight: "calc(100vh - 200px)",
                       overflowY: "auto",
                     }
               }
             >
-              {tree.length > 0 && (
-                <MenuTree
-                  data={tree}
-                  onEdit={handleEditItem}
-                  onDelete={handleDeleteItem}
+              {tree.length === 0 ? (
+                <Empty
+                  description="Нет элементов меню"
+                  style={{ marginTop: 80 }}
                 />
+              ) : (
+                tree.length > 0 && (
+                  <MenuTree
+                    data={tree}
+                    onEdit={handleEditItem}
+                    onDelete={handleDeleteItem}
+                  />
+                )
               )}
             </div>
           </Col>

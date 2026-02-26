@@ -21,7 +21,7 @@ export const SafeAreaWrapper: React.FC<SafeAreaWrapperProps> = ({
       style={{
         padding: isMobile ? mobilePadding : desktopPadding,
         marginBottom: "calc(150px + env(safe-area-inset-bottom))",
-        minHeight: isMobile ? "-webkit-fill-available" : "",
+        minHeight: isMobile ? "-webkit-fill-available" : "auto",
         ...style,
       }}
     >
